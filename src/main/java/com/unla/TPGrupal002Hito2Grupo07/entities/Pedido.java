@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -27,21 +26,17 @@ public class Pedido {
     @JoinColumn(name = "festival_id", nullable = false)
     private Festival festival;
 
-    /* descomentar cuando este UV
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "unidad_venta_id", nullable = false)
     private UnidadDeVenta unidadVenta;
-     */
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "pedido_id")
     private Set<ItemPlato> ItemPlatos = new HashSet<>();
 
-    /* descomentar cuando este UV
     public Pedido(LocalDate fechaTransaccion, Festival festival, UnidadDeVenta unidadVenta){
         this.fechaTransaccion = fechaTransaccion;
         this.festival = festival;
         this.unidadVenta = unidadVenta;
     }
-     */
 }
