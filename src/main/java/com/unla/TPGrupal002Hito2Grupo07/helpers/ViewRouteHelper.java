@@ -24,10 +24,15 @@ public class ViewRouteHelper {
 	//PLATO
 	public final static String PLATO_INDEX = "plato/index";
 
+	//UNIDAD DE VENTA
+	public final static String UNIDAD_INDEX = "unidad/index";
+	public final static String UNIDAD_FORM = "unidad/form";
+
 
 	/**** Redirects ****/
 	public final static String ROUTE = "/index";
 	public final static String DEGREE_ROOT = "/degrees/";
 	public final static String PERSON_ROOT = "/person";
 	public final static String PLATO_ROOT = "/platos/";
+	public final static String UNIDAD_ROOT = "/unidades/";
 }

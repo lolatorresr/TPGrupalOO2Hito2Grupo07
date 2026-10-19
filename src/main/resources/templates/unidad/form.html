@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Unidad de Venta - Epicentro Gourmet</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+
+    <h2 class="mb-4" th:text="${unidad.idUnidadDeVenta > 0} ? 'Modificar Unidad de Venta' : 'Nueva Unidad de Venta'"></h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form th:action="@{/unidades/save}" th:object="${unidad}" method="post" class="row g-3">
+                <input type="hidden" th:field="*{idUnidadDeVenta}">
+
+                <div class="col-md-4">
+                    <label class="form-label">Tipo de unidad:</label>
+                    <select id="tipo" th:field="*{tipo}" class="form-select" required th:disabled="${unidad.idUnidadDeVenta > 0}">
+                        <option value="">-- Seleccionar --</option>
+                        <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.descripcion}"></option>
+                    </select>
+                    <!-- al modificar el select está deshabilitado y no se envía: se repite el valor en un hidden -->
+                    <input type="hidden" th:if="${unidad.idUnidadDeVenta > 0}" th:field="*{tipo}">
+                    <p th:if="${#fields.hasErrors('tipo')}" th:errors="*{tipo}" class="text-danger"></p>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Nombre comercial:</label>
+                    <input type="text" th:field="*{nombreComercial}" class="form-control" required placeholder="Burger Truck">
+                    <p th:if="${#fields.hasErrors('nombreComercial')}" th:errors="*{nombreComercial}" class="text-danger"></p>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Código (10 caracteres):</label>
+                    <input type="text" th:field="*{codigo}" class="form-control" required maxlength="10"
+                           placeholder="FT-ABC1234" style="text-transform: uppercase">
+                    <small class="text-muted">FT- para Food Truck, PD- para Puesto Desarmable, seguido de 7 letras o números.</small>
+                    <p th:if="${#fields.hasErrors('codigo')}" th:errors="*{codigo}" class="text-danger"></p>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Superficie (m²):</label>
+                    <input type="number" step="0.01" min="0" th:field="*{superficie}" class="form-control" required>
+                    <p th:if="${#fields.hasErrors('superficie')}" th:errors="*{superficie}" class="text-danger"></p>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Festival:</label>
+                    <select th:field="*{festivalId}" class="form-select">
+                        <option value="0">-- Sin asignar --</option>
+                        <option th:each="f : ${festivales}" th:value="${f.idFestival}" th:text="${f.nombre + ' (' + f.temporada + ')'}"></option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Responsable:</label>
+                    <select th:field="*{responsableId}" class="form-select">
+                        <option value="0">-- Sin asignar --</option>
+                        <option th:each="r : ${responsables}" th:value="${r.idPersona}" th:text="${r.apellido + ', ' + r.nombre + ' (DNI ' + r.dni + ')'}"></option>
+                    </select>
+                </div>
+
+                <!-- Campos de Food Truck -->
+                <div id="camposFoodTruck" class="col-12 row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Patente:</label>
+                        <input type="text" th:field="*{patente}" class="form-control" placeholder="AB123CD">
+                        <p th:if="${#fields.hasErrors('patente')}" th:errors="*{patente}" class="text-danger"></p>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <div class="form-check">
+                            <input type="checkbox" th:field="*{requiereConexionElectrica}" class="form-check-input">
+                            <label class="form-check-label" for="requiereConexionElectrica1">Requiere conexión eléctrica</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campos de Puesto Desarmable -->
+                <div id="camposPuesto" class="col-12 row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Cantidad de carpas:</label>
+                        <input type="number" min="0" th:field="*{cantidadCarpas}" class="form-control">
+                        <p th:if="${#fields.hasErrors('cantidadCarpas')}" th:errors="*{cantidadCarpas}" class="text-danger"></p>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Tiempo de montaje (minutos):</label>
+                        <input type="number" min="0" th:field="*{tiempoMontajeMinutos}" class="form-control">
+                        <p th:if="${#fields.hasErrors('tiempoMontajeMinutos')}" th:errors="*{tiempoMontajeMinutos}" class="text-danger"></p>
+                    </div>
+                </div>
+
+                <div class="col-12 text-end">
+                    <a th:href="@{/unidades/}" class="btn btn-outline-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-success">Guardar Unidad</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Muestra solo los campos del tipo de unidad elegido
+        function actualizarCampos() {
+            var tipo = document.getElementById('tipo').value;
+            document.getElementById('camposFoodTruck').style.display = (tipo === 'FOOD_TRUCK') ? '' : 'none';
+            document.getElementById('camposPuesto').style.display = (tipo === 'PUESTO_DESARMABLE') ? '' : 'none';
+        }
+        document.getElementById('tipo').addEventListener('change', actualizarCampos);
+        actualizarCampos();
+    </script>
+</body>
+</html>

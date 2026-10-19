@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "festival")
@@ -31,11 +32,8 @@ public class Festival {
     @Column(name = "fechaFin", nullable = false)
     private LocalDate fechaFin;
 
-    /* descomentar cuando este UV
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "festival_id")
-    private Set<UnidadDeVenta> unidades = new HashSet<>()
-     */
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "festival")
+    private Set<UnidadDeVenta> unidades = new HashSet<>();
 
     public Festival(String nombre, String temporada, LocalDate fechaInicio, LocalDate fechaFin) {
         this.nombre = nombre;

@@ -10,5 +10,11 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+    # Ejecuta data.sql DESPUÉS de que Hibernate cree/actualice las tablas
+    defer-datasource-initialization: true
+  sql:
+    init:
+      # Con MySQL, Spring Boot solo corre data.sql si se le indica explícitamente
+      mode: always
   thymeleaf:
     cache: false
