@@ -13,7 +13,7 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 
 | Método | Responsable |
 | :--- | :--- |
-| ABM Unidad de Venta (Food Truck / Puesto Desarmable), cálculo de canon y validación de código único | Lucia Daniela Ruiz - PR: _pendiente_ |
+| ABM Unidad de Venta (Food Truck / Puesto Desarmable), cálculo de canon y validación de código único | Lucia Daniela Ruiz - [PR #4](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/4) |
 
 ## Pasos para correr la aplicación
 1. Requisitos: Java 17, Maven 3.9+ y MySQL 8.
