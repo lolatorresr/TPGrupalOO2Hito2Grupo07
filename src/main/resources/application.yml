@@ -21,11 +21,12 @@ spring:
   # Servicio de envío de mail (Gmail por SMTP con STARTTLS en el puerto 587).
   # Usuario y contraseña se leen de las variables de entorno EMAIL_USER y EMAIL_PASSWORD
   # para no subir credenciales al repo; la contraseña es una "contraseña de aplicación" de Google.
+  # Si no están definidas quedan vacías: la app arranca igual y solo falla el envío.
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${EMAIL_USER}
-    password: ${EMAIL_PASSWORD}
+    username: ${EMAIL_USER:}
+    password: ${EMAIL_PASSWORD:}
     properties:
       mail:
         smtp:
