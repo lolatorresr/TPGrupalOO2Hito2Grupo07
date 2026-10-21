@@ -47,6 +47,9 @@ public class PersonaDTO {
     // Solo el id del usuario asociado; no se expone la entidad User (password, roles)
     private int userId;
 
+    // Solo en el alta: rol de la credencial que se genera automáticamente
+    private RolUsuario rol;
+
     // Cajero
     private String turnoTrabajo;
     @PositiveOrZero(message = "La recaudación total no puede ser negativa.")
@@ -59,4 +62,6 @@ public class PersonaDTO {
     // Solo lectura, para listados
     private String tipoDescripcion;
     private boolean activo = true;
+    // false si el alta se guardó pero no se pudo enviar el mail con las credenciales
+    private boolean mailEnviado = true;
 }

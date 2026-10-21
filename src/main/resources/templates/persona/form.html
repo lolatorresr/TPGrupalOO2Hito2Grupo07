@@ -63,17 +63,15 @@
                     <input type="email" th:field="*{email}" class="form-control" required maxlength="100" placeholder="nombre@epicentro.com">
                     <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></p>
                 </div>
-                <!-- Credencial: se muestra el combo solo si el controller manda la lista "usuarios";
-                     si no, se conserva la credencial que ya tenía la persona -->
-                <div class="col-md-6" th:if="${usuarios != null}">
-                    <label class="form-label">Usuario (credencial):</label>
-                    <select th:field="*{userId}" class="form-select">
-                        <option value="0">-- Sin asignar --</option>
-                        <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.username}"></option>
+                <!-- Rol: solo en el alta, la credencial (usuario = email, contraseña aleatoria) se genera y se envía por mail -->
+                <div class="col-md-6" th:if="${personaDTO.idPersona == 0}">
+                    <label class="form-label">Rol:</label>
+                    <select th:field="*{rol}" class="form-select" required>
+                        <option value="">-- Seleccionar --</option>
+                        <option th:each="r : ${roles}" th:value="${r}" th:text="${r.descripcion}"></option>
                     </select>
-                    <small class="text-muted">Sin usuario, el empleado no figura como activo.</small>
+                    <small class="text-muted">El usuario será el email y la contraseña se enviará por mail.</small>
                 </div>
-                <input type="hidden" th:if="${usuarios == null}" th:field="*{userId}">
 
                 <!-- Campos de Cajero -->
                 <div id="camposCajero" class="col-12 row g-3">

@@ -5,17 +5,22 @@ import com.unla.TPGrupal002Hito2Grupo07.dtos.TipoPersona;
 import com.unla.TPGrupal002Hito2Grupo07.entities.Cajero;
 import com.unla.TPGrupal002Hito2Grupo07.entities.Cocinero;
 import com.unla.TPGrupal002Hito2Grupo07.entities.Persona;
+import com.unla.TPGrupal002Hito2Grupo07.entities.User;
+import com.unla.TPGrupal002Hito2Grupo07.entities.UserRole;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IPersonaRepository;
-import com.unla.TPGrupal002Hito2Grupo07.repositories.IUserRepository;
+import com.unla.TPGrupal002Hito2Grupo07.repositories.IUserRoleRepository;
 import com.unla.TPGrupal002Hito2Grupo07.services.IPersonaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.mail.MailException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.UUID;
 
 @Service("personaService")
 public class PersonaService implements IPersonaService {
@@ -25,8 +30,14 @@ public class PersonaService implements IPersonaService {
     private IPersonaRepository personaRepository;
 
     @Autowired
-    @Qualifier("userRepository")
-    private IUserRepository userRepository;
+    @Qualifier("userRoleRepository")
+    private IUserRoleRepository userRoleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     @Transactional(readOnly = true)
@@ -64,13 +75,42 @@ public class PersonaService implements IPersonaService {
 
 
         Persona persona;
+        String passwordGenerada = null;
         if (dto.getIdPersona() > 0) {
             persona = personaRepository.findById(dto.getIdPersona()).orElseThrow();
         } else {
+            if (dto.getRol() == null) {
+                throw new IllegalArgumentException("Debe seleccionar el rol del empleado.");
+            }
             persona = crearSegunTipo(dto.getTipo());
+            // En el alta se genera la credencial: el usuario es el email y la contraseña es aleatoria.
+            // Se guarda encriptada porque el login la compara con BCrypt.
+            passwordGenerada = UUID.randomUUID().toString().substring(0, 8);
+            persona.setCredencial(new User(dto.getEmail(), passwordEncoder.encode(passwordGenerada), true));
         }
         copiarDatos(dto, persona);
-        return toDTO(personaRepository.save(persona));
+        Persona personaGuardada = personaRepository.save(persona);
+        PersonaDTO resultado = toDTO(personaGuardada);
+
+        if (passwordGenerada != null) {
+            UserRole userRole = new UserRole();
+            userRole.setUser(personaGuardada.getCredencial());
+            userRole.setRole(dto.getRol().getRole());
+            userRoleRepository.save(userRole);
+
+            resultado.setMailEnviado(enviarCredenciales(dto.getEmail(), passwordGenerada));
+        }
+        return resultado;
+    }
+
+    // Si falla el envío (sin conexión, credenciales de Gmail mal configuradas) el alta se guarda igual
+    private boolean enviarCredenciales(String email, String password) {
+        try {
+            emailService.enviarCredenciales(email, email, password);
+            return true;
+        } catch (MailException e) {
+            return false;
+        }
     }
 
     @Override
@@ -127,11 +167,6 @@ public class PersonaService implements IPersonaService {
         persona.setFechaNacimiento(dto.getFechaNacimiento());
         persona.setFechaIngreso(dto.getFechaIngreso());
         persona.setEmail(dto.getEmail());
-
-
-        if (dto.getUserId() > 0) {
-            persona.setCredencial(userRepository.findById(dto.getUserId()).orElse(null));
-        }
 
         if (persona instanceof Cajero c) {
             c.setTurnoTrabajo(dto.getTurnoTrabajo());

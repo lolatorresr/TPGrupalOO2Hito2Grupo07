@@ -1,12 +1,11 @@
 package com.unla.TPGrupal002Hito2Grupo07.controllers;
 
 import com.unla.TPGrupal002Hito2Grupo07.dtos.PersonaDTO;
+import com.unla.TPGrupal002Hito2Grupo07.dtos.RolUsuario;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.TipoPersona;
-import com.unla.TPGrupal002Hito2Grupo07.repositories.IUserRepository;
 import com.unla.TPGrupal002Hito2Grupo07.services.IPersonaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,10 +21,6 @@ public class PersonaController {
     @Autowired
     private IPersonaService personaService;
 
-    @Autowired
-    @Qualifier("userRepository")
-    private IUserRepository userRepository;
-
     // 1. LISTAR PERSONAS ACTIVAS
     @GetMapping("")
     public String index(Model model) {
@@ -39,7 +34,7 @@ public class PersonaController {
     public String nuevo(Model model) {
         model.addAttribute("personaDTO", new PersonaDTO());
         model.addAttribute("tiposPersona", TipoPersona.values());
-        model.addAttribute("usuarios", userRepository.findAll());
+        model.addAttribute("roles", RolUsuario.values());
         return "persona/form";
     }
 
@@ -52,7 +47,7 @@ public class PersonaController {
         }
         model.addAttribute("personaDTO", dto);
         model.addAttribute("tiposPersona", TipoPersona.values());
-        model.addAttribute("usuarios", userRepository.findAll());
+        model.addAttribute("roles", RolUsuario.values());
         return "persona/form";
     }
 
@@ -66,19 +61,23 @@ public class PersonaController {
         // Atrapa los errores de formato del DTO
         if (bindingResult.hasErrors()) {
             model.addAttribute("tiposPersona", TipoPersona.values());
-            model.addAttribute("usuarios", userRepository.findAll());
+            model.addAttribute("roles", RolUsuario.values());
             return "persona/form";
         }
 
         try {
             // Intenta guardar aplicando las validaciones de carga exigidas[cite: 14]
-            personaService.insertOrUpdate(dto);
+            PersonaDTO guardada = personaService.insertOrUpdate(dto);
             redirectAttributes.addFlashAttribute("mensajeExito", "Persona guardada correctamente.");
+            if (!guardada.isMailEnviado()) {
+                redirectAttributes.addFlashAttribute("mensajeAviso",
+                        "El empleado se dio de alta, pero no se pudo enviar el mail con sus credenciales.");
+            }
         } catch (IllegalArgumentException e) {
             // Atrapa la excepción si falla la validación de DNI o Edad y recarga la vista
             model.addAttribute("errorNegocio", e.getMessage());
             model.addAttribute("tiposPersona", TipoPersona.values());
-            model.addAttribute("usuarios", userRepository.findAll());
+            model.addAttribute("roles", RolUsuario.values());
             return "persona/form";
         }
 
