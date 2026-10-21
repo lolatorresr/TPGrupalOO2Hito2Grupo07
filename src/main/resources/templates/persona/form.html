@@ -63,13 +63,8 @@
                     <input type="email" th:field="*{email}" class="form-control" required maxlength="100" placeholder="nombre@epicentro.com">
                     <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></p>
                 </div>
-                <!-- Rol: solo en el alta, la credencial (usuario = email, contraseña aleatoria) se genera y se envía por mail -->
-                <div class="col-md-6" th:if="${personaDTO.idPersona == 0}">
-                    <label class="form-label">Rol:</label>
-                    <select th:field="*{rol}" class="form-select" required>
-                        <option value="">-- Seleccionar --</option>
-                        <option th:each="r : ${roles}" th:value="${r}" th:text="${r.descripcion}"></option>
-                    </select>
+                <!-- En el alta la credencial se genera sola (usuario = email, contraseña aleatoria, rol Empleado) -->
+                <div class="col-md-6 d-flex align-items-end" th:if="${personaDTO.idPersona == 0}">
                     <small class="text-muted">El usuario será el email y la contraseña se enviará por mail.</small>
                 </div>
 

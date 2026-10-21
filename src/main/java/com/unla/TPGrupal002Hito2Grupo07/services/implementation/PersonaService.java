@@ -25,6 +25,9 @@ import java.util.UUID;
 @Service("personaService")
 public class PersonaService implements IPersonaService {
 
+    // El alta de empleados siempre genera una credencial con este rol; no se elige desde el formulario
+    private static final String ROL_EMPLEADO = "ROLE_EMPLEADO";
+
     @Autowired
     @Qualifier("personaRepository")
     private IPersonaRepository personaRepository;
@@ -79,9 +82,6 @@ public class PersonaService implements IPersonaService {
         if (dto.getIdPersona() > 0) {
             persona = personaRepository.findById(dto.getIdPersona()).orElseThrow();
         } else {
-            if (dto.getRol() == null) {
-                throw new IllegalArgumentException("Debe seleccionar el rol del empleado.");
-            }
             persona = crearSegunTipo(dto.getTipo());
             // En el alta se genera la credencial: el usuario es el email y la contraseña es aleatoria.
             // Se guarda encriptada porque el login la compara con BCrypt.
@@ -95,7 +95,7 @@ public class PersonaService implements IPersonaService {
         if (passwordGenerada != null) {
             UserRole userRole = new UserRole();
             userRole.setUser(personaGuardada.getCredencial());
-            userRole.setRole(dto.getRol().getRole());
+            userRole.setRole(ROL_EMPLEADO);
             userRoleRepository.save(userRole);
 
             resultado.setMailEnviado(enviarCredenciales(dto.getEmail(), passwordGenerada));

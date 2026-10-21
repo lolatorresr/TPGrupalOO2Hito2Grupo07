@@ -1,7 +1,6 @@
 package com.unla.TPGrupal002Hito2Grupo07.controllers;
 
 import com.unla.TPGrupal002Hito2Grupo07.dtos.PersonaDTO;
-import com.unla.TPGrupal002Hito2Grupo07.dtos.RolUsuario;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.TipoPersona;
 import com.unla.TPGrupal002Hito2Grupo07.services.IPersonaService;
 import jakarta.validation.Valid;
@@ -34,7 +33,6 @@ public class PersonaController {
     public String nuevo(Model model) {
         model.addAttribute("personaDTO", new PersonaDTO());
         model.addAttribute("tiposPersona", TipoPersona.values());
-        model.addAttribute("roles", RolUsuario.values());
         return "persona/form";
     }
 
@@ -47,7 +45,6 @@ public class PersonaController {
         }
         model.addAttribute("personaDTO", dto);
         model.addAttribute("tiposPersona", TipoPersona.values());
-        model.addAttribute("roles", RolUsuario.values());
         return "persona/form";
     }
 
@@ -61,7 +58,6 @@ public class PersonaController {
         // Atrapa los errores de formato del DTO
         if (bindingResult.hasErrors()) {
             model.addAttribute("tiposPersona", TipoPersona.values());
-            model.addAttribute("roles", RolUsuario.values());
             return "persona/form";
         }
 
@@ -77,7 +73,6 @@ public class PersonaController {
             // Atrapa la excepción si falla la validación de DNI o Edad y recarga la vista
             model.addAttribute("errorNegocio", e.getMessage());
             model.addAttribute("tiposPersona", TipoPersona.values());
-            model.addAttribute("roles", RolUsuario.values());
             return "persona/form";
         }
 
