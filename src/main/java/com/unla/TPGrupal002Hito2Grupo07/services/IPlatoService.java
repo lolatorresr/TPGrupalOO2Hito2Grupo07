@@ -13,4 +13,6 @@ public interface IPlatoService {
     public PlatoDTO findById(int id);
 
     public boolean remove(int id);
+
+    public PlatoDTO obtenerPlatoEstrella(int idFestival, int idUnidad);
 }
