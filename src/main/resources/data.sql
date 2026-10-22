@@ -24,15 +24,9 @@ VALUES (2, 'ROLE_RESPONSABLE', NOW(), NOW(), 2)
 
 -- ---------- Platos ----------
 INSERT INTO plato (id_plato, nombre, precio, costo) VALUES
-    (1, 'Hamburguesa Completa', 8500.00, 3200.00),
-    (2, 'Papas Rústicas', 4500.00, 1500.00),
-    (3, 'Cerveza Artesanal', 3500.00, 1200.00)
-    ON DUPLICATE KEY UPDATE nombre=nombre;
-
--- ---------- Festivales ----------
-INSERT INTO festival (id_festival, nombre, temporada, fecha_inicio, fecha_fin) VALUES
-    (1, 'Festival de Primavera', 'Primavera 2026', '2026-10-01', '2026-10-12'),
-    (2, 'Gran Feria Gourmet',   'Verano 2027',    '2027-01-10', '2027-02-20')
+                                                        (1, 'Hamburguesa Completa', 8500.00, 3200.00),
+                                                        (2, 'Papas Rústicas', 4500.00, 1500.00),
+                                                        (3, 'Cerveza Artesanal', 3500.00, 1200.00)
     ON DUPLICATE KEY UPDATE nombre=nombre;
 
 -- ---------- Personal (Persona es abstracta: cada fila necesita su subtipo) ----------
@@ -51,6 +45,12 @@ VALUES (2, 'Lucía', 'Pérez', 35222333, '1990-08-25', '2023-06-15', 'lucia.pere
 INSERT INTO cocinero (id_persona, especialidad, categoria)
 VALUES (2, 'Parrilla', 'COCINERO')
     ON DUPLICATE KEY UPDATE especialidad=especialidad;
+
+-- ---------- Festivales ----------
+INSERT INTO festival (id_festival, nombre, temporada, fecha_inicio, fecha_fin) VALUES
+     (1, 'Lollapalooza 2026', 'Verano', '2026-03-15', '2026-03-18'),
+    (2, 'Primavera Sound 2026', 'Primavera', '2026-10-20', '2026-10-23')
+    ON DUPLICATE KEY UPDATE nombre=nombre;
 
 -- ---------- Unidades de venta ----------
 -- Food Truck con conexión eléctrica: canon = 12 * 500 + 2000 = 8000
@@ -77,6 +77,28 @@ INSERT INTO puesto_desarmable (id_unidad_de_venta, cantidad_carpas, tiempo_monta
 VALUES (3, 2, 90)
     ON DUPLICATE KEY UPDATE cantidad_carpas=cantidad_carpas;
 
--- Platos ofrecidos y staff de cada unidad
+
+-- ---------- Tablas intermedias ----------
 INSERT IGNORE INTO unidad_plato (unidad_id, plato_id) VALUES (1, 1), (1, 2), (2, 3), (3, 1), (3, 3);
 INSERT IGNORE INTO unidad_staff (unidad_id, persona_id) VALUES (1, 1), (1, 2), (3, 1);
+
+
+-- Pedidos de prueba para el CU Plato Estrella
+
+-- 1. Pedidos
+INSERT INTO pedido (id_pedido, fecha_transaccion, festival_id, unidad_venta_id)
+VALUES (1, NOW(), 1, 1)
+    ON DUPLICATE KEY UPDATE id_pedido=id_pedido;
+
+INSERT INTO pedido (id_pedido, fecha_transaccion, festival_id, unidad_venta_id)
+VALUES (2, NOW(), 1, 1)
+    ON DUPLICATE KEY UPDATE id_pedido=id_pedido;
+
+-- 2. Ítems del pedido (SIN la columna 'precio_unitario')
+INSERT INTO item_plato (id_item_plato, cantidad, plato_id, pedido_id)
+VALUES (1, 5, 1, 1)
+    ON DUPLICATE KEY UPDATE cantidad=cantidad;
+
+INSERT INTO item_plato (id_item_plato, cantidad, plato_id, pedido_id)
+VALUES (2, 2, 2, 2)
+    ON DUPLICATE KEY UPDATE cantidad=cantidad;

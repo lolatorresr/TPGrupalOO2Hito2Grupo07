@@ -33,6 +33,7 @@ public class UnidadDeVentaService implements IUnidadDeVentaService {
     @Qualifier("personaRepository")
     private IPersonaRepository personaRepository;
 
+
     @Override
     @Transactional(readOnly = true)
     public List<UnidadDeVentaDTO> getAllActivas() {

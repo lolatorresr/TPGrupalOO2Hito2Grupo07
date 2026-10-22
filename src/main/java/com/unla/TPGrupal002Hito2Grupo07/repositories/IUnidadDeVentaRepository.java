@@ -11,12 +11,8 @@ import java.util.Optional;
 @Repository("unidadDeVentaRepository")
 public interface IUnidadDeVentaRepository extends JpaRepository<UnidadDeVenta, Serializable> {
 
+    //agrego lola
+    public List<UnidadDeVenta> findByActivoTrue();
+
     public abstract Optional<UnidadDeVenta> findByCodigo(String codigo);
-
-    public abstract boolean existsByCodigo(String codigo);
-
-    /** Unidades no eliminadas lógicamente. */
-    public abstract List<UnidadDeVenta> findByActivoTrue();
-
-    public abstract List<UnidadDeVenta> findByFestival_IdFestivalAndActivoTrue(int idFestival);
 }

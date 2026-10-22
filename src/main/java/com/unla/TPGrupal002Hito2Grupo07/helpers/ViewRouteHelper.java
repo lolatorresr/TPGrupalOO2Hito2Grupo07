@@ -24,6 +24,9 @@ public class ViewRouteHelper {
 	//PLATO
 	public final static String PLATO_INDEX = "plato/index";
 
+	//PLATO ESTRELLA
+	public static final String PLATO_ESTRELLA_INDEX = "plato/estrella";
+
 	//UNIDAD DE VENTA
 	public final static String UNIDAD_INDEX = "unidad/index";
 	public final static String UNIDAD_FORM = "unidad/form";

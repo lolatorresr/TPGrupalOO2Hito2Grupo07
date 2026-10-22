@@ -8,4 +8,5 @@ import java.io.Serializable;
 
 @Repository("festivalRepository")
 public interface IFestivalRepository extends JpaRepository<Festival, Serializable> {
+
 }

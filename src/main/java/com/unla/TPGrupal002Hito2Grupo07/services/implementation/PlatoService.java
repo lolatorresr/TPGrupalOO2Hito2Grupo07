@@ -2,11 +2,13 @@ package com.unla.TPGrupal002Hito2Grupo07.services.implementation;
 
 import com.unla.TPGrupal002Hito2Grupo07.dtos.PlatoDTO;
 import com.unla.TPGrupal002Hito2Grupo07.entities.Plato;
+import com.unla.TPGrupal002Hito2Grupo07.repositories.IPedidoRepository;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IPlatoRepository;
 import com.unla.TPGrupal002Hito2Grupo07.services.IPlatoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,10 @@ public class PlatoService implements IPlatoService {
     @Autowired
     @Qualifier("platoRepository")
     private IPlatoRepository platoRepository;
+
+    @Autowired
+    @Qualifier("pedidoRepository")
+    private IPedidoRepository pedidoRepository;
 
     private ModelMapper modelMapper = new ModelMapper();
 
@@ -47,4 +53,12 @@ public class PlatoService implements IPlatoService {
         }
     }
 
+    @Override
+    public PlatoDTO obtenerPlatoEstrella(int idFestival, int idUnidad) {
+        List<Plato> resultados = pedidoRepository.findPlatoEstrella(idFestival, idUnidad, PageRequest.of(0,1));
+        if(resultados != null && !resultados.isEmpty()){
+            return modelMapper.map(resultados.get(0), PlatoDTO.class);
+        }
+        return null;
+    }
 }
