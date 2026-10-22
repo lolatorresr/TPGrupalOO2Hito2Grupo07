@@ -25,6 +25,10 @@
                     Cesion finalizada correctamente.
                 </div>
 
+                <div th:if="${registrado != null}" class="alert alert-success">
+                    Registro exitoso. Ingrese con el usuario y contraseña que eligió.
+                </div>
+
                 <form th:action="@{/loginprocess}" method="post">
                     <div class="mb-3">
                         <label for="username" class="form-label">Usuario</label>
@@ -36,6 +40,9 @@
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Ingresar</button>
                 </form>
+                <p class="text-center text-muted mt-3 mb-0">
+                    ¿Tiene una unidad de venta? <a th:href="@{/registro}">Registrarse como responsable</a>
+                </p>
             </div>
         </div>
     </div>

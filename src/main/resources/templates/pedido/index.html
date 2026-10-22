@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pedidos - Epicentro Gourmet</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/modern-business.css}"/>
+</head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+    <main class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Pedidos</h2>
+        <a th:href="@{/pedidos/form}" class="btn btn-success">+ Nuevo Pedido</a>
+    </div>
+
+    <!-- Mensaje que llega por flash attribute después de guardar -->
+    <div th:if="${mensajeExito}" class="alert alert-success" th:text="${mensajeExito}"></div>
+
+    <div class="card">
+        <div class="card-header fw-bold">Pedidos registrados</div>
+        <div class="card-body p-0">
+            <table class="table table-striped table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Fecha</th>
+                        <th>Festival</th>
+                        <th>Unidad de venta</th>
+                        <th>Platos</th>
+                        <th class="text-end">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${pedidos}">
+                        <td th:text="${p.idPedido}"></td>
+                        <td th:text="${#temporals.format(p.fechaTransaccion, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${p.festivalNombre} ?: '-'"></td>
+                        <td th:text="${p.unidadNombre + ' (' + p.unidadCodigo + ')'}"></td>
+                        <td>
+                            <span th:each="i, it : ${p.items}"
+                                  th:text="${i.cantidad + ' x ' + i.platoNombre + (it.last ? '' : ', ')}"></span>
+                        </td>
+                        <td class="text-end" th:text="'$' + ${#numbers.formatDecimal(p.total, 1, 'POINT', 2, 'COMMA')}"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(pedidos)}">
+                        <td colspan="6" class="text-center text-muted py-3">No hay pedidos registrados todavía.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </main>
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>

@@ -201,6 +201,7 @@ public class PersonaService implements IPersonaService {
         return switch (tipo) {
             case CAJERO -> new Cajero();
             case COCINERO -> new Cocinero();
+            case RESPONSABLE -> new Responsable();
         };
     }
 
@@ -243,6 +244,8 @@ public class PersonaService implements IPersonaService {
             dto.setTipo(TipoPersona.COCINERO);
             dto.setEspecialidad(co.getEspecialidad());
             dto.setCategoria(co.getCategoria());
+        } else if (persona instanceof Responsable) {
+            dto.setTipo(TipoPersona.RESPONSABLE);
         }
         if (dto.getTipo() != null) {
             dto.setTipoDescripcion(dto.getTipo().getDescripcion());
