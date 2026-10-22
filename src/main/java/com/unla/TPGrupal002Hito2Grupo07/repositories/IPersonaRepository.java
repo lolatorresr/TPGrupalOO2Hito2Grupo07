@@ -6,9 +6,14 @@ import org.springframework.stereotype.Repository;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 @Repository("personaRepository")
 public interface IPersonaRepository extends JpaRepository<Persona, Serializable> {
 
-    public abstract List<Persona> findByActivoTrue();
+    public abstract List<Persona> findByCredencialEnabledTrue();
+
+    public abstract Optional<Persona> findByDni(long dni);
+
+    public abstract Optional<Persona> findByEmail(String email);
 }
