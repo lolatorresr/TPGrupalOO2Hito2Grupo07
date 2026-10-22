@@ -16,4 +16,7 @@ public interface IPersonaRepository extends JpaRepository<Persona, Serializable>
     public abstract Optional<Persona> findByDni(long dni);
 
     public abstract Optional<Persona> findByEmail(String email);
+
+    /** Persona de la credencial con ese username (el empleado logueado). */
+    public abstract Optional<Persona> findByCredencial_Username(String username);
 }
