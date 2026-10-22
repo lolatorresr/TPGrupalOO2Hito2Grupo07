@@ -3,7 +3,7 @@ package com.unla.TPGrupal002Hito2Grupo07.services.implementation;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.AsignacionDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.PersonaDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.TipoPersona;
-import com.unla.TPGrupal002Hito2Grupo07.entities.*;
+import com.unla.TPGrupal002Hito2Grupo07.entities.*; CUAltaPedidoLuciaRuiz
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IPersonaRepository;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IUnidadDeVentaRepository;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IUserRoleRepository;
@@ -201,6 +201,7 @@ public class PersonaService implements IPersonaService {
         return switch (tipo) {
             case CAJERO -> new Cajero();
             case COCINERO -> new Cocinero();
+            case RESPONSABLE -> new Responsable();
         };
     }
 
@@ -243,6 +244,8 @@ public class PersonaService implements IPersonaService {
             dto.setTipo(TipoPersona.COCINERO);
             dto.setEspecialidad(co.getEspecialidad());
             dto.setCategoria(co.getCategoria());
+        } else if (persona instanceof Responsable) {
+            dto.setTipo(TipoPersona.RESPONSABLE);
         }
         if (dto.getTipo() != null) {
             dto.setTipoDescripcion(dto.getTipo().getDescripcion());

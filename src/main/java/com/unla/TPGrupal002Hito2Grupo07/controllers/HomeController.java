@@ -1,8 +1,9 @@
 package com.unla.TPGrupal002Hito2Grupo07.controllers;
 
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.Authentication;
+import java.time.LocalDate;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,30 +13,26 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.unla.TPGrupal002Hito2Grupo07.helpers.ViewRouteHelper;
-import com.unla.TPGrupal002Hito2Grupo07.services.IPersonService;
+import com.unla.TPGrupal002Hito2Grupo07.repositories.IFestivalRepository;
 
+/**
+ * Página de inicio. Es pública: muestra los festivales y permite registrarse
+ * como responsable o iniciar sesión. Con sesión iniciada muestra los accesos
+ * a cada sección según el rol del usuario (datos de sesión: ver SesionAdvice).
+ */
 @Controller
 @RequestMapping("/")
 public class HomeController {
 
-	private final IPersonService personService;
-	
-	public HomeController(IPersonService personService) {
-		this.personService = personService;
-	}
+	@Autowired
+	@Qualifier("festivalRepository")
+	private IFestivalRepository festivalRepository;
 
-	//GET Example: SERVER/index
 	@GetMapping("/index")
 	public ModelAndView index() {
 		ModelAndView modelAndView = new ModelAndView(ViewRouteHelper.INDEX);
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Object principal = authentication != null ? authentication.getPrincipal() : null;
-		if (principal instanceof User user) {
-			modelAndView.addObject("username", user.getUsername());
-		} else {
-			modelAndView.addObject("username", "anonymous");
-		}
-		modelAndView.addObject("persons", personService.getAll());
+		modelAndView.addObject("festivales", festivalRepository.findAll());
+		modelAndView.addObject("hoy", LocalDate.now());
 		return modelAndView;
 	}
 

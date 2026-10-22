@@ -3,7 +3,8 @@ package com.unla.TPGrupal002Hito2Grupo07.dtos;
 /** Tipos de empleado que se pueden dar de alta desde el formulario. */
 public enum TipoPersona {
     CAJERO("Cajero"),
-    COCINERO("Cocinero");
+    COCINERO("Cocinero"),
+    RESPONSABLE("Responsable");
 
     private final String descripcion;
 
