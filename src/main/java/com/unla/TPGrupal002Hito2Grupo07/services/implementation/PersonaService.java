@@ -3,7 +3,7 @@ package com.unla.TPGrupal002Hito2Grupo07.services.implementation;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.AsignacionDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.PersonaDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.TipoPersona;
-import com.unla.TPGrupal002Hito2Grupo07.entities.*; CUAltaPedidoLuciaRuiz
+import com.unla.TPGrupal002Hito2Grupo07.entities.*;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IPersonaRepository;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IUnidadDeVentaRepository;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IUserRoleRepository;
