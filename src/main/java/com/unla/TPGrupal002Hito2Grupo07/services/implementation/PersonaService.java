@@ -10,6 +10,8 @@ import com.unla.TPGrupal002Hito2Grupo07.entities.UserRole;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IPersonaRepository;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IUserRoleRepository;
 import com.unla.TPGrupal002Hito2Grupo07.services.IPersonaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.MailException;
@@ -27,6 +29,8 @@ public class PersonaService implements IPersonaService {
 
     // El alta de empleados siempre genera una credencial con este rol; no se elige desde el formulario
     private static final String ROL_EMPLEADO = "ROLE_EMPLEADO";
+
+    private static final Logger logger = LoggerFactory.getLogger(PersonaService.class);
 
     @Autowired
     @Qualifier("personaRepository")
@@ -76,6 +80,16 @@ public class PersonaService implements IPersonaService {
             throw new IllegalArgumentException("El correo electrónico ya está registrado.");
         }
 
+        // Validacion de carga: un cocinero debe tener categoría y especialidad
+        if (dto.getTipo() == TipoPersona.COCINERO) {
+            if (dto.getCategoria() == null) {
+                throw new IllegalArgumentException("Debe seleccionar la categoría del cocinero.");
+            }
+            if (dto.getEspecialidad() == null || dto.getEspecialidad().isBlank()) {
+                throw new IllegalArgumentException("La especialidad del cocinero es obligatoria.");
+            }
+        }
+
 
         Persona persona;
         String passwordGenerada = null;
@@ -109,6 +123,7 @@ public class PersonaService implements IPersonaService {
             emailService.enviarCredenciales(email, email, password);
             return true;
         } catch (MailException e) {
+            logger.error("No se pudo enviar el mail de credenciales a {}", email, e);
             return false;
         }
     }
@@ -170,7 +185,6 @@ public class PersonaService implements IPersonaService {
 
         if (persona instanceof Cajero c) {
             c.setTurnoTrabajo(dto.getTurnoTrabajo());
-            c.setRecaudacionTotal(dto.getRecaudacionTotal());
         } else if (persona instanceof Cocinero co) {
             co.setEspecialidad(dto.getEspecialidad());
             co.setCategoria(dto.getCategoria());
@@ -195,7 +209,6 @@ public class PersonaService implements IPersonaService {
         if (persona instanceof Cajero c) {
             dto.setTipo(TipoPersona.CAJERO);
             dto.setTurnoTrabajo(c.getTurnoTrabajo());
-            dto.setRecaudacionTotal(c.getRecaudacionTotal());
         } else if (persona instanceof Cocinero co) {
             dto.setTipo(TipoPersona.COCINERO);
             dto.setEspecialidad(co.getEspecialidad());
