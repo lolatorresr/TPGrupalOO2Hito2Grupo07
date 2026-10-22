@@ -41,7 +41,7 @@
                         <!-- Dato propio de cada subtipo -->
                         <td th:switch="${p.tipo?.name()}">
                             <span th:case="'CAJERO'" th:text="'Turno ' + ${p.turnoTrabajo}"></span>
-                            <span th:case="'COCINERO'" th:text="${p.especialidad + ' (' + p.categoria + ')'}"></span>
+                            <span th:case="'COCINERO'" th:text="${p.especialidad + ' (' + (p.categoria?.descripcion ?: '-') + ')'}"></span>
                             <span th:case="*">-</span>
                         </td>
                         <td th:text="${p.fechaIngreso != null} ? ${#temporals.format(p.fechaIngreso, 'dd/MM/yyyy')} : '-'"></td>

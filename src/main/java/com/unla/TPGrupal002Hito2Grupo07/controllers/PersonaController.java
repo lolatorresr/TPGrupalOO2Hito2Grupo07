@@ -2,6 +2,7 @@ package com.unla.TPGrupal002Hito2Grupo07.controllers;
 
 import com.unla.TPGrupal002Hito2Grupo07.dtos.PersonaDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.TipoPersona;
+import com.unla.TPGrupal002Hito2Grupo07.entities.CategoriaCocina;
 import com.unla.TPGrupal002Hito2Grupo07.services.IPersonaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,12 @@ public class PersonaController {
 
     @Autowired
     private IPersonaService personaService;
+
+    // Opciones del select de categoría; disponibles en todas las vistas de este controller
+    @ModelAttribute("categoriasCocina")
+    public CategoriaCocina[] categoriasCocina() {
+        return CategoriaCocina.values();
+    }
 
     // 1. LISTAR PERSONAS ACTIVAS
     @GetMapping("")
