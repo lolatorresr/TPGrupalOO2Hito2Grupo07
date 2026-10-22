@@ -96,7 +96,7 @@ public class UnidadDeVentaController {
         mAV.addObject(UNIDAD_ATTR, dto);
         mAV.addObject("tipos", TipoUnidad.values());
         mAV.addObject("festivales", festivalRepository.findAll());
-        mAV.addObject("responsables", personaRepository.findByActivoTrue());
+        mAV.addObject("responsables", personaRepository.findByCredencialEnabledTrue());
         return mAV;
     }
 }

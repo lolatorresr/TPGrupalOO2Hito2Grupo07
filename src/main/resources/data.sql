@@ -37,16 +37,16 @@ INSERT INTO festival (id_festival, nombre, temporada, fecha_inicio, fecha_fin) V
 
 -- ---------- Personal (Persona es abstracta: cada fila necesita su subtipo) ----------
 -- Responsable de unidad (vinculado al usuario responsable1)
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, activo, user_id)
-VALUES (1, 'Martín', 'García', 30111222, '1985-04-12', '2022-03-01', 'responsable1@epicentro.com', 1, 2)
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
+VALUES (1, 'Martín', 'García', 30111222, '1985-04-12', '2022-03-01', 'responsable1@epicentro.com', 2)
     ON DUPLICATE KEY UPDATE nombre=nombre;
 INSERT INTO cajero (id_persona, turno_trabajo, recaudacion_total)
 VALUES (1, 'MAÑANA', 0)
     ON DUPLICATE KEY UPDATE turno_trabajo=turno_trabajo;
 
 -- Cocinero del staff
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, activo, user_id)
-VALUES (2, 'Lucía', 'Pérez', 35222333, '1990-08-25', '2023-06-15', 'lucia.perez@epicentro.com', 1, NULL)
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
+VALUES (2, 'Lucía', 'Pérez', 35222333, '1990-08-25', '2023-06-15', 'lucia.perez@epicentro.com', NULL)
     ON DUPLICATE KEY UPDATE nombre=nombre;
 INSERT INTO cocinero (id_persona, especialidad, categoria)
 VALUES (2, 'Parrilla', 'COCINERO')
@@ -80,3 +80,8 @@ VALUES (3, 2, 90)
 -- Platos ofrecidos y staff de cada unidad
 INSERT IGNORE INTO unidad_plato (unidad_id, plato_id) VALUES (1, 1), (1, 2), (2, 3), (3, 1), (3, 3);
 INSERT IGNORE INTO unidad_staff (unidad_id, persona_id) VALUES (1, 1), (1, 2), (3, 1);
+
+
+-- Parametros de negocio
+
+
