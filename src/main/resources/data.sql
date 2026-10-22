@@ -91,6 +91,29 @@ VALUES (3, 2, 90)
 INSERT IGNORE INTO unidad_plato (unidad_id, plato_id) VALUES (1, 1), (1, 2), (2, 3), (3, 1), (3, 3);
 INSERT IGNORE INTO unidad_staff (unidad_id, persona_id) VALUES (1, 1), (1, 2), (1, 3), (3, 1);
 
+-- ---------- Pedidos con sus ítems ----------
+-- Sub_total = precio del plato * cantidad (Hamburguesa 8500, Papas 4500, Cerveza 3500).
+-- Festival 1 (01/10 al 12/10/2026): unidades 1 y 2. Festival 2 (10/01 al 20/02/2027): unidad 3.
+INSERT INTO pedido (id_pedido, fecha_transaccion, festival_id, unidad_venta_id) VALUES
+    (1, '2026-10-02', 1, 1),
+    (2, '2026-10-02', 1, 2),
+    (3, '2026-10-05', 1, 1),
+    (4, '2026-10-08', 1, 1),
+    (5, '2026-10-10', 1, 2),
+    (6, '2026-10-11', 1, 1)
+    ON DUPLICATE KEY UPDATE fecha_transaccion=VALUES(fecha_transaccion), festival_id=VALUES(festival_id), unidad_venta_id=VALUES(unidad_venta_id);
+
+INSERT INTO item_plato (id_item_plato, plato_id, cantidad, sub_total, pedido_id) VALUES
+    (1, 1, 2, 17000.00, 1),   -- 2 hamburguesas
+    (2, 2, 1,  4500.00, 1),   -- 1 papas
+    (3, 3, 3, 10500.00, 2),   -- 3 cervezas
+    (4, 1, 1,  8500.00, 3),
+    (5, 2, 2,  9000.00, 3),
+    (6, 1, 4, 34000.00, 4),
+    (7, 3, 2,  7000.00, 5),
+    (8, 1, 3, 25500.00, 6),
+    (9, 2, 3, 13500.00, 6)
+    ON DUPLICATE KEY UPDATE plato_id=VALUES(plato_id), cantidad=VALUES(cantidad), sub_total=VALUES(sub_total), pedido_id=VALUES(pedido_id);
 
 -- Parametros de negocio
 
