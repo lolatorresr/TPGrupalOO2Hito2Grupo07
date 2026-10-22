@@ -40,8 +40,18 @@ INSERT INTO festival (id_festival, nombre, temporada, fecha_inicio, fecha_fin) V
 INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
 VALUES (1, 'Martín', 'García', 30111222, '1985-04-12', '2022-03-01', 'responsable1@epicentro.com', 2)
     ON DUPLICATE KEY UPDATE nombre=nombre;
+-- (en versiones anteriores del script esta persona era cajero; se limpia para que no quede en dos subtipos)
+DELETE FROM cajero WHERE id_persona = 1;
+INSERT INTO responsable (id_persona)
+VALUES (1)
+    ON DUPLICATE KEY UPDATE id_persona=id_persona;
+
+-- Cajero del staff
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
+VALUES (3, 'Carlos', 'López', 28333444, '1982-11-03', '2021-09-10', 'carlos.lopez@epicentro.com', NULL)
+    ON DUPLICATE KEY UPDATE nombre=nombre;
 INSERT INTO cajero (id_persona, turno_trabajo, recaudacion_total)
-VALUES (1, 'MAÑANA', 0)
+VALUES (3, 'MAÑANA', 0)
     ON DUPLICATE KEY UPDATE turno_trabajo=turno_trabajo;
 
 -- Cocinero del staff
@@ -79,7 +89,7 @@ VALUES (3, 2, 90)
 
 -- Platos ofrecidos y staff de cada unidad
 INSERT IGNORE INTO unidad_plato (unidad_id, plato_id) VALUES (1, 1), (1, 2), (2, 3), (3, 1), (3, 3);
-INSERT IGNORE INTO unidad_staff (unidad_id, persona_id) VALUES (1, 1), (1, 2), (3, 1);
+INSERT IGNORE INTO unidad_staff (unidad_id, persona_id) VALUES (1, 1), (1, 2), (1, 3), (3, 1);
 
 
 -- Parametros de negocio

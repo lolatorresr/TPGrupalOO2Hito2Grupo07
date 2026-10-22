@@ -78,6 +78,19 @@ public class UnidadDeVentaService implements IUnidadDeVentaService {
                 .orElse(false);
     }
 
+    @Override
+    @Transactional
+    public boolean agregarAlStaff(int idUnidad, int idPersona) {
+        UnidadDeVenta unidad = unidadRepository.findById(idUnidad).orElse(null);
+        Persona persona = personaRepository.findById(idPersona).orElse(null);
+        if (unidad == null || persona == null) {
+            return false;
+        }
+        unidad.getStaff().add(persona);
+        unidadRepository.save(unidad);
+        return true;
+    }
+
     private boolean cambiarActivo(int id, boolean activo) {
         return unidadRepository.findById(id).map(u -> {
             u.setActivo(activo);

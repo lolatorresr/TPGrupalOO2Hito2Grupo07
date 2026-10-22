@@ -22,4 +22,7 @@ public interface IUnidadDeVentaService {
 
     /** true si ya existe otra unidad (distinta de idActual) con ese código. */
     public boolean existeCodigo(String codigo, int idActual);
+
+    /** Suma una persona al staff de la unidad. true si ambos existen. */
+    public boolean agregarAlStaff(int idUnidad, int idPersona);
 }
