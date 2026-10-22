@@ -13,9 +13,8 @@ import java.util.Optional;
 @Repository("unidadDeVentaRepository")
 public interface IUnidadDeVentaRepository extends JpaRepository<UnidadDeVenta, Serializable> {
 
-    public abstract Optional<UnidadDeVenta> findByCodigo(String codigo);
-
-    public abstract boolean existsByCodigo(String codigo);
+    //agrego lola
+    public List<UnidadDeVenta> findByActivoTrue();
 
     /** Unidades no eliminadas lógicamente. */
     public abstract List<UnidadDeVenta> findByActivoTrue();
@@ -26,4 +25,5 @@ public interface IUnidadDeVentaRepository extends JpaRepository<UnidadDeVenta, S
     @Query("SELECT DISTINCT u FROM UnidadDeVenta u JOIN u.staff s LEFT JOIN FETCH u.festival "
             + "WHERE s.idPersona = :idPersona AND u.activo = true")
     public abstract List<UnidadDeVenta> findActivasByStaff(@Param("idPersona") int idPersona);
+    public abstract Optional<UnidadDeVenta> findByCodigo(String codigo);
 }
