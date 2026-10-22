@@ -31,7 +31,7 @@ INSERT INTO plato (id_plato, nombre, precio, costo) VALUES
 
 -- ---------- Festivales ----------
 INSERT INTO festival (id_festival, nombre, temporada, fecha_inicio, fecha_fin) VALUES
-    (1, 'Festival de Primavera', 'Primavera 2026', '2026-10-01', '2026-10-12'),
+    (1, 'Festival de Primavera', 'Primavera 2026', '2026-10-01', '2026-11-30'),
     (2, 'Gran Feria Gourmet',   'Verano 2027',    '2027-01-10', '2027-02-20')
     ON DUPLICATE KEY UPDATE nombre=nombre;
 
@@ -51,6 +51,22 @@ VALUES (2, 'Lucía', 'Pérez', 35222333, '1990-08-25', '2023-06-15', 'lucia.pere
 INSERT INTO cocinero (id_persona, especialidad, categoria)
 VALUES (2, 'Parrilla', 'COCINERO')
     ON DUPLICATE KEY UPDATE especialidad=especialidad;
+
+-- Empleado de prueba: empleado1 / admin123 (lavaplatos)
+INSERT INTO user (id, username, password, enabled, created_at, updated_at)
+VALUES (100, 'empleado1', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW())
+    ON DUPLICATE KEY UPDATE username=username;
+INSERT INTO user_role (id, role, created_at, updated_at, user_id)
+VALUES (100, 'ROLE_EMPLEADO', NOW(), NOW(), 100)
+    ON DUPLICATE KEY UPDATE role=role;
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
+VALUES (100, 'Diego', 'Fernández', 38444555, '1995-02-10', '2024-01-20', 'diego.fernandez@epicentro.com', 100)
+    ON DUPLICATE KEY UPDATE nombre=nombre;
+INSERT INTO cocinero (id_persona, especialidad, categoria)
+VALUES (100, 'Lavado', 'LAVAPLATOS')
+    ON DUPLICATE KEY UPDATE especialidad=especialidad;
+
+
 
 -- ---------- Unidades de venta ----------
 -- Food Truck con conexión eléctrica: canon = 12 * 500 + 2000 = 8000
@@ -79,9 +95,9 @@ VALUES (3, 2, 90)
 
 -- Platos ofrecidos y staff de cada unidad
 INSERT IGNORE INTO unidad_plato (unidad_id, plato_id) VALUES (1, 1), (1, 2), (2, 3), (3, 1), (3, 3);
-INSERT IGNORE INTO unidad_staff (unidad_id, persona_id) VALUES (1, 1), (1, 2), (3, 1);
-
+INSERT IGNORE INTO unidad_staff (unidad_id, persona_id) VALUES (1, 1), (1, 2), (3, 1), (1, 100), (3, 100);
 
 -- Parametros de negocio
+
 
 

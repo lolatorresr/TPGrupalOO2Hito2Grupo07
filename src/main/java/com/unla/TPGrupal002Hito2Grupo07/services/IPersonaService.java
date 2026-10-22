@@ -1,5 +1,6 @@
 package com.unla.TPGrupal002Hito2Grupo07.services;
 
+import com.unla.TPGrupal002Hito2Grupo07.dtos.AsignacionDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.PersonaDTO;
 
 import java.util.List;
@@ -25,4 +26,10 @@ public interface IPersonaService {
 
     /** true si ya existe otra persona (distinta de idActual) con ese email. */
     public boolean existeEmail(String email, int idActual);
+
+    /** Persona a la que pertenece el usuario logueado (o null si el usuario no es una persona). */
+    public PersonaDTO findByUsername(String username);
+
+    /** Unidades de venta (y festivales) en las que trabaja la persona. */
+    public List<AsignacionDTO> getAsignaciones(int idPersona);
 }

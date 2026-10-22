@@ -28,6 +28,9 @@ public class ViewRouteHelper {
 	public final static String UNIDAD_INDEX = "unidad/index";
 	public final static String UNIDAD_FORM = "unidad/form";
 
+	//EMPLEADO
+	public final static String EMPLEADO_INICIO = "empleado/inicio";
+
 
 	/**** Redirects ****/
 	public final static String ROUTE = "/index";
@@ -35,4 +38,5 @@ public class ViewRouteHelper {
 	public final static String PERSON_ROOT = "/person";
 	public final static String PLATO_ROOT = "/platos/";
 	public final static String UNIDAD_ROOT = "/unidades/";
+	public final static String EMPLEADO_ROOT = "/empleado";
 }

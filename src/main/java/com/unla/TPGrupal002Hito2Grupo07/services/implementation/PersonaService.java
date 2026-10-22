@@ -1,13 +1,11 @@
 package com.unla.TPGrupal002Hito2Grupo07.services.implementation;
 
+import com.unla.TPGrupal002Hito2Grupo07.dtos.AsignacionDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.PersonaDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.TipoPersona;
-import com.unla.TPGrupal002Hito2Grupo07.entities.Cajero;
-import com.unla.TPGrupal002Hito2Grupo07.entities.Cocinero;
-import com.unla.TPGrupal002Hito2Grupo07.entities.Persona;
-import com.unla.TPGrupal002Hito2Grupo07.entities.User;
-import com.unla.TPGrupal002Hito2Grupo07.entities.UserRole;
+import com.unla.TPGrupal002Hito2Grupo07.entities.*;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IPersonaRepository;
+import com.unla.TPGrupal002Hito2Grupo07.repositories.IUnidadDeVentaRepository;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IUserRoleRepository;
 import com.unla.TPGrupal002Hito2Grupo07.services.IPersonaService;
 import org.slf4j.Logger;
@@ -21,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,6 +45,10 @@ public class PersonaService implements IPersonaService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    @Qualifier("unidadDeVentaRepository")
+    private IUnidadDeVentaRepository unidadRepository;
+
     @Override
     @Transactional(readOnly = true)
     public List<PersonaDTO> getAllActivas() {
@@ -56,6 +59,33 @@ public class PersonaService implements IPersonaService {
     @Transactional(readOnly = true)
     public PersonaDTO findById(int id) {
         return personaRepository.findById(id).map(this::toDTO).orElse(null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PersonaDTO findByUsername(String username) {
+        return personaRepository.findByCredencial_Username(username).map(this::toDTO).orElse(null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AsignacionDTO> getAsignaciones(int idPersona) {
+        LocalDate hoy = LocalDate.now();
+        return unidadRepository.findActivasByStaff(idPersona).stream()
+                .map(u -> {
+                    Festival f = u.getFestival();
+                    boolean enCurso = f != null
+                            && !hoy.isBefore(f.getFechaInicio()) && !hoy.isAfter(f.getFechaFin());
+                    return new AsignacionDTO(u.getNombreComercial(), u.getCodigo(), u.getTipo(),
+                            f != null ? f.getNombre() : "Sin festival",
+                            f != null ? f.getFechaInicio() : null,
+                            f != null ? f.getFechaFin() : null,
+                            enCurso);
+                })
+                // Los festivales más recientes primero
+                .sorted(Comparator.comparing(AsignacionDTO::getFechaInicio,
+                        Comparator.nullsLast(Comparator.<LocalDate>reverseOrder())))
+                .toList();
     }
 
     @Override
