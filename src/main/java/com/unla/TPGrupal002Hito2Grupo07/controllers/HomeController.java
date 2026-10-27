@@ -1,6 +1,5 @@
 package com.unla.TPGrupal002Hito2Grupo07.controllers;
 
-import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.unla.TPGrupal002Hito2Grupo07.helpers.ViewRouteHelper;
-import com.unla.TPGrupal002Hito2Grupo07.repositories.IFestivalRepository;
+import com.unla.TPGrupal002Hito2Grupo07.services.IFestivalService;
 
 /**
  * Página de inicio. Es pública: muestra los festivales y permite registrarse
@@ -25,14 +24,13 @@ import com.unla.TPGrupal002Hito2Grupo07.repositories.IFestivalRepository;
 public class HomeController {
 
 	@Autowired
-	@Qualifier("festivalRepository")
-	private IFestivalRepository festivalRepository;
+	@Qualifier("festivalService")
+	private IFestivalService festivalService;
 
 	@GetMapping("/index")
 	public ModelAndView index() {
 		ModelAndView modelAndView = new ModelAndView(ViewRouteHelper.INDEX);
-		modelAndView.addObject("festivales", festivalRepository.findAll());
-		modelAndView.addObject("hoy", LocalDate.now());
+		modelAndView.addObject("festivales", festivalService.getAll());
 		return modelAndView;
 	}
 

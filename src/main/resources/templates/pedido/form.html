@@ -19,12 +19,13 @@
                 <div class="col-md-6">
                     <label class="form-label">Unidad de venta:</label>
                     <select name="unidadId" class="form-select" onchange="this.form.submit()">
-                        <option value="0">-- Seleccionar --</option>
+                        <option value="0" th:if="${#lists.size(unidades) != 1}">-- Seleccionar --</option>
                         <option th:each="u : ${unidades}" th:value="${u.idUnidadDeVenta}"
                                 th:selected="${u.idUnidadDeVenta == pedido.unidadId}"
                                 th:text="${u.nombreComercial + ' (' + u.codigo + ') - ' + (u.festivalNombre ?: 'sin festival')}"></option>
                     </select>
-                    <small class="text-muted">Al elegir la unidad se cargan los platos que ofrece.</small>
+                    <small class="text-muted" th:unless="${#lists.isEmpty(unidades)}">Al elegir la unidad se cargan los platos que ofrece.</small>
+                    <small class="text-danger" th:if="${#lists.isEmpty(unidades)}">No trabaja en ninguna unidad de venta de un festival en curso, por lo que no puede cargar pedidos.</small>
                 </div>
             </form>
         </div>
@@ -86,7 +87,7 @@
         </div>
     </div>
 
-    <div class="text-muted" th:if="${pedido.unidadId == 0}">Seleccione una unidad de venta para ver sus platos.</div>
+    <div class="text-muted" th:if="${pedido.unidadId == 0 and !#lists.isEmpty(unidades)}">Seleccione una unidad de venta para ver sus platos.</div>
     </main>
     <footer th:replace="~{layout :: footer}"></footer>
     <div th:replace="~{layout :: scripts}"></div>

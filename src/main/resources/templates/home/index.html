@@ -9,14 +9,14 @@
         <div class="hero-section text-center">
             <div class="container">
                 <h1>Epicentro Gourmet</h1>
-                <p class="mb-4">Sistema de gestión de festivales gastronómicos</p>
+                <p class="mb-4">Sistema de gestión de festivales gastronómicos. Elegí un festival para ver sus unidades de venta o registrar la tuya.</p>
 
                 <!-- Sin sesión: las dos acciones que pide el enunciado -->
                 <div th:unless="${logueado == true}">
                     <a th:href="@{/registro}" class="btn btn-light btn-lg me-2">Registrar mi Unidad de Venta</a>
                     <a th:href="@{/login}" class="btn btn-outline-light btn-lg">Iniciar sesión</a>
                 </div>
-                <p class="mb-0" th:if="${logueado == true}" th:text="'Hola, ' + ${username} + '. ¿Qué querés hacer hoy?'"></p>
+                <p class="mb-0" th:if="${logueado == true}" th:text="'Hola, ' + ${nombreUsuario} + '. ¿Qué querés hacer hoy?'"></p>
             </div>
         </div>
 
@@ -78,23 +78,30 @@
                                 <th>Temporada</th>
                                 <th>Inicio</th>
                                 <th>Fin</th>
+                                <th class="text-center">Unidades</th>
                                 <th>Estado</th>
+                                <th class="text-end">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:each="f : ${festivales}">
-                                <td th:text="${f.nombre}"></td>
+                                <td><a th:href="@{/festivales/{id}(id=${f.idFestival})}" th:text="${f.nombre}" class="fw-semibold text-decoration-none"></a></td>
                                 <td th:text="${f.temporada}"></td>
                                 <td th:text="${#temporals.format(f.fechaInicio, 'dd/MM/yyyy')}"></td>
                                 <td th:text="${#temporals.format(f.fechaFin, 'dd/MM/yyyy')}"></td>
-                                <td>
-                                    <span th:if="${hoy.isBefore(f.fechaInicio)}" class="badge bg-info text-dark">Próximo</span>
-                                    <span th:if="${!hoy.isBefore(f.fechaInicio) and !hoy.isAfter(f.fechaFin)}" class="badge bg-success">En curso</span>
-                                    <span th:if="${hoy.isAfter(f.fechaFin)}" class="badge bg-secondary">Finalizado</span>
+                                <td class="text-center" th:text="${f.cantidadUnidades}"></td>
+                                <td th:switch="${f.estado}">
+                                    <span th:case="'En curso'" class="badge bg-success">En curso</span>
+                                    <span th:case="'Próximo'" class="badge bg-info text-dark">Próximo</span>
+                                    <span th:case="*" class="badge bg-secondary">Finalizado</span>
+                                </td>
+                                <td class="text-end text-nowrap">
+                                    <a th:href="@{/festivales/{id}(id=${f.idFestival})}" class="btn btn-outline-primary btn-sm">Ver unidades</a>
+                                    <a th:unless="${f.finalizado}" th:href="@{/registro(festivalId=${f.idFestival})}" class="btn btn-success btn-sm">Registrar unidad</a>
                                 </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(festivales)}">
-                                <td colspan="5" class="text-center text-muted py-3">No hay festivales cargados.</td>
+                                <td colspan="7" class="text-center text-muted py-3">No hay festivales cargados.</td>
                             </tr>
                         </tbody>
                     </table>

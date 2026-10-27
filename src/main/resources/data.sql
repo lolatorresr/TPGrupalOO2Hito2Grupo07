@@ -132,6 +132,60 @@ INSERT INTO item_plato (id_item_plato, plato_id, cantidad, sub_total, pedido_id)
                                                                                      (9, 2, 3, 13500.00, 6)
     ON DUPLICATE KEY UPDATE plato_id=VALUES(plato_id), cantidad=VALUES(cantidad), sub_total=VALUES(sub_total), pedido_id=VALUES(pedido_id);
 
+-- ---------- Más datos para el festival en curso (Primavera Sound 2026) ----------
+-- Segundo responsable: responsable2 / admin123
+INSERT INTO user (id, username, password, enabled, created_at, updated_at)
+VALUES (101, 'responsable2', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW())
+    ON DUPLICATE KEY UPDATE username=username;
+INSERT INTO user_role (id, role, created_at, updated_at, user_id)
+VALUES (101, 'ROLE_RESPONSABLE', NOW(), NOW(), 101)
+    ON DUPLICATE KEY UPDATE role=role;
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
+VALUES (101, 'Ana', 'Martínez', 32555666, '1988-07-19', '2020-05-04', 'responsable2@epicentro.com', 101)
+    ON DUPLICATE KEY UPDATE nombre=nombre;
+INSERT INTO responsable (id_persona) VALUES (101)
+    ON DUPLICATE KEY UPDATE id_persona=id_persona;
+
+-- Platos de las unidades nuevas
+INSERT INTO plato (id_plato, nombre, precio, costo) VALUES
+    (101, 'Pizza Muzzarella', 7000.00, 2500.00),
+    (102, 'Gaseosa', 2000.00, 700.00),
+    (103, 'Empanada de Carne', 1500.00, 500.00)
+    ON DUPLICATE KEY UPDATE nombre=nombre;
+
+-- Food Truck con conexión eléctrica: canon = 15 * 500 + 2000 = 9500
+INSERT INTO unidad_de_venta (id_unidad_de_venta, nombre_comercial, codigo, superficie, activo, festival_id, responsable_id)
+VALUES (101, 'Pizza Nostra', 'FT-PIZ0101', 15, 1, 2, 101)
+    ON DUPLICATE KEY UPDATE nombre_comercial=nombre_comercial;
+INSERT INTO food_truck (id_unidad_de_venta, patente, requiere_conexion_electrica)
+VALUES (101, 'AD789GH', 1)
+    ON DUPLICATE KEY UPDATE patente=patente;
+
+-- Puesto Desarmable: canon = 10 * 500 - 45 * 10 = 4550
+INSERT INTO unidad_de_venta (id_unidad_de_venta, nombre_comercial, codigo, superficie, activo, festival_id, responsable_id)
+VALUES (102, 'Empanadas del Norte', 'PD-EMP0102', 10, 1, 2, 101)
+    ON DUPLICATE KEY UPDATE nombre_comercial=nombre_comercial;
+INSERT INTO puesto_desarmable (id_unidad_de_venta, cantidad_carpas, tiempo_montaje_minutos)
+VALUES (102, 1, 45)
+    ON DUPLICATE KEY UPDATE cantidad_carpas=cantidad_carpas;
+
+INSERT IGNORE INTO unidad_plato (unidad_id, plato_id) VALUES (101, 101), (101, 102), (102, 103), (102, 102);
+INSERT IGNORE INTO unidad_staff (unidad_id, persona_id) VALUES (101, 101), (102, 101), (101, 3), (102, 2);
+
+-- Pedidos del festival en curso (ya ocurridos)
+INSERT INTO pedido (id_pedido, fecha_transaccion, festival_id, unidad_venta_id) VALUES
+    (101, '2026-10-21', 2, 3),
+    (102, '2026-10-22', 2, 101),
+    (103, '2026-10-23', 2, 102)
+    ON DUPLICATE KEY UPDATE fecha_transaccion=VALUES(fecha_transaccion), festival_id=VALUES(festival_id), unidad_venta_id=VALUES(unidad_venta_id);
+INSERT INTO item_plato (id_item_plato, plato_id, cantidad, sub_total, pedido_id) VALUES
+    (101, 1,   2, 17000.00, 101),  -- 2 hamburguesas (Choripanes del Sur)
+    (102, 3,   4, 14000.00, 101),  -- 4 cervezas
+    (103, 101, 3, 21000.00, 102),  -- 3 pizzas (Pizza Nostra)
+    (104, 102, 3,  6000.00, 102),  -- 3 gaseosas
+    (105, 103, 12, 18000.00, 103)  -- 12 empanadas (Empanadas del Norte)
+    ON DUPLICATE KEY UPDATE plato_id=VALUES(plato_id), cantidad=VALUES(cantidad), sub_total=VALUES(sub_total), pedido_id=VALUES(pedido_id);
+
 -- Parametros de negocio
 
 

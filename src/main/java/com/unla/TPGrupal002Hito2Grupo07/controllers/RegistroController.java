@@ -3,7 +3,8 @@ package com.unla.TPGrupal002Hito2Grupo07.controllers;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.RegistroResponsableDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.TipoUnidad;
 import com.unla.TPGrupal002Hito2Grupo07.helpers.ViewRouteHelper;
-import com.unla.TPGrupal002Hito2Grupo07.repositories.IFestivalRepository;
+import com.unla.TPGrupal002Hito2Grupo07.dtos.FestivalDTO;
+import com.unla.TPGrupal002Hito2Grupo07.services.IFestivalService;
 import com.unla.TPGrupal002Hito2Grupo07.services.IPersonaService;
 import com.unla.TPGrupal002Hito2Grupo07.services.IRegistroService;
 import com.unla.TPGrupal002Hito2Grupo07.services.IUnidadDeVentaService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -47,12 +49,15 @@ public class RegistroController {
     private IPersonaService personaService;
 
     @Autowired
-    @Qualifier("festivalRepository")
-    private IFestivalRepository festivalRepository;
+    @Qualifier("festivalService")
+    private IFestivalService festivalService;
 
+    /** Se puede llegar desde un festival del inicio: viene preseleccionado en el formulario. */
     @GetMapping("")
-    public ModelAndView form() {
-        return formView(new RegistroResponsableDTO());
+    public ModelAndView form(@RequestParam(required = false, defaultValue = "0") int festivalId) {
+        RegistroResponsableDTO dto = new RegistroResponsableDTO();
+        dto.setFestivalId(festivalId);
+        return formView(dto);
     }
 
     // Si alguien entra por URL a /registro/save (GET), lo mandamos al formulario en vez de dar error.
@@ -79,6 +84,13 @@ public class RegistroController {
         }
         if (dto.getTipo() == TipoUnidad.PUESTO_DESARMABLE && dto.getCantidadCarpas() < 1) {
             bindingResult.rejectValue("cantidadCarpas", "error.registro", "Un Puesto Desarmable debe tener al menos una carpa.");
+        }
+        // Solo se puede registrar una unidad en un festival que no haya terminado
+        FestivalDTO festival = festivalService.findById(dto.getFestivalId());
+        if (festival == null) {
+            bindingResult.rejectValue("festivalId", "error.registro", "Debe elegir un festival.");
+        } else if (festival.isFinalizado()) {
+            bindingResult.rejectValue("festivalId", "error.registro", "El festival " + festival.getNombre() + " ya finalizó.");
         }
 
         // --- Responsable: mayor de edad, DNI y email no repetidos ---
@@ -115,7 +127,8 @@ public class RegistroController {
         ModelAndView mAV = new ModelAndView(ViewRouteHelper.REGISTRO_FORM);
         mAV.addObject(REGISTRO_ATTR, dto);
         mAV.addObject("tipos", TipoUnidad.values());
-        mAV.addObject("festivales", festivalRepository.findAll());
+        mAV.addObject("festivales", festivalService.getNoFinalizados());
+        mAV.addObject("festivalElegido", festivalService.findById(dto.getFestivalId()));
         return mAV;
     }
 }

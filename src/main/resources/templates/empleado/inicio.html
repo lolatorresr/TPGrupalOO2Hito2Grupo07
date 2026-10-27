@@ -4,32 +4,32 @@
     <meta charset="UTF-8">
     <title>Mi página - Epicentro Gourmet</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/modern-business.css}"/>
 </head>
 <body class="bg-light">
 
-<nav class="navbar navbar-dark bg-dark mb-4">
-    <div class="container">
-        <span class="navbar-brand">Epicentro Gourmet</span>
-        <form th:action="@{/logout}" method="post" class="d-flex align-items-center gap-3">
-            <span class="text-white-50" th:text="${empleado.email}"></span>
-            <button type="submit" class="btn btn-outline-light btn-sm">Cerrar sesión</button>
-        </form>
-    </div>
-</nav>
+<nav th:replace="~{layout :: navbar}"></nav>
 
-<main class="container">
+<main class="container py-4">
 
     <h2 class="mb-4" th:text="'Hola, ' + ${empleado.nombre}"></h2>
 
     <!-- Hoy: festival activo en el que trabaja -->
     <div th:if="${!#lists.isEmpty(actuales)}" class="alert alert-success">
-        <h5 class="alert-heading mb-2">Hoy trabajás en</h5>
-        <p class="mb-1" th:each="a : ${actuales}">
-            <strong th:text="${a.nombreUnidad}"></strong>
-            (<span th:text="${a.tipoUnidad}"></span>) &mdash;
-            <span th:text="${a.festivalNombre}"></span>,
-            hasta el <span th:text="${#temporals.format(a.fechaFin, 'dd/MM/yyyy')}"></span>
-        </p>
+        <div class="mb-2" th:each="a : ${actuales}">
+            <h5 class="alert-heading mb-1">
+                Hoy trabajás en <span th:text="${a.nombreUnidad}"></span>
+                <small class="fw-normal">(<span th:text="${a.tipoUnidad}"></span>)</small>
+            </h5>
+            <p class="mb-0">
+                <span th:text="${a.festivalNombre}"></span>,
+                hasta el <span th:text="${#temporals.format(a.fechaFin, 'dd/MM/yyyy')}"></span>
+            </p>
+        </div>
+        <hr>
+        <!-- Pedidos: el empleado carga los pedidos de la unidad en la que trabaja hoy -->
+        <a th:href="@{/pedidos/form}" class="btn btn-success btn-sm">+ Nuevo pedido</a>
+        <a th:href="@{/pedidos/}" class="btn btn-outline-success btn-sm">Ver pedidos de mi unidad</a>
     </div>
     <div th:if="${#lists.isEmpty(actuales)}" class="alert alert-secondary">
         Hoy no tenés que trabajar en ningún festival activo.
@@ -95,5 +95,7 @@
         </div>
     </div>
 </main>
+<footer th:replace="~{layout :: footer}"></footer>
+<div th:replace="~{layout :: scripts}"></div>
 </body>
 </html>

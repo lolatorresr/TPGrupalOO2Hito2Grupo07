@@ -3,51 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - UNLA TFI</title>
-    <link rel="stylesheet" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}"/>
+    <title>Iniciar sesión - Epicentro Gourmet</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" th:href="@{/css/modern-business.css}"/>
 </head>
 <body class="bg-light">
+    <nav th:replace="~{layout :: navbar}"></nav>
 
-    <div class="login-container">
-        <div class="card login-card">
-            <div class="card-body">
-                <div class="login-header">
-                    <h3>UNLA TFI</h3>
-                    <p class="text-muted">Inicie sesion para continuar</p>
-                </div>
-
-                <div th:if="${error != null}" class="alert alert-danger">
-                    Usuario o contrasena invalidos.
-                </div>
-
-                <div th:if="${logout != null}" class="alert alert-success">
-                    Cesion finalizada correctamente.
-                </div>
-
-                <div th:if="${registrado != null}" class="alert alert-success">
-                    Registro exitoso. Ingrese con el usuario y contraseña que eligió.
-                </div>
-
-                <form th:action="@{/loginprocess}" method="post">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Usuario</label>
-                        <input type="text" class="form-control" id="username" name="username" required autofocus placeholder="Ingrese su usuario"/>
+    <main class="container py-4">
+        <div class="login-container">
+            <div class="card login-card">
+                <div class="card-body">
+                    <div class="login-header">
+                        <h3>Epicentro Gourmet</h3>
+                        <p class="text-muted">Inicie sesión para continuar</p>
                     </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Contrasena</label>
-                        <input type="password" class="form-control" id="password" name="password" required placeholder="Ingrese su contrasena"/>
+
+                    <div th:if="${error != null}" class="alert alert-danger">
+                        Usuario o contraseña inválidos.
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Ingresar</button>
-                </form>
-                <p class="text-center text-muted mt-3 mb-0">
-                    ¿Tiene una unidad de venta? <a th:href="@{/registro}">Registrarse como responsable</a>
-                </p>
+
+                    <div th:if="${logout != null}" class="alert alert-success">
+                        Sesión finalizada correctamente.
+                    </div>
+
+                    <div th:if="${registrado != null}" class="alert alert-success">
+                        Registro exitoso. Ingrese con el usuario y contraseña que eligió.
+                    </div>
+
+                    <form th:action="@{/loginprocess}" method="post">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Usuario</label>
+                            <input type="text" class="form-control" id="username" name="username" required autofocus placeholder="Ingrese su usuario"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="password" name="password" required placeholder="Ingrese su contraseña"/>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+                    </form>
+                    <p class="text-center text-muted mt-3 mb-0">
+                        ¿Tiene una unidad de venta? <a th:href="@{/registro}">Registrarse como responsable</a>
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
-    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
 </body>
 </html>
