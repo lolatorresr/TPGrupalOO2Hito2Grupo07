@@ -3,11 +3,15 @@ package com.unla.TPGrupal002Hito2Grupo07.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
+
+import com.unla.TPGrupal002Hito2Grupo07.repositories.IPersonaRepository;
 
 /**
  * Agrega a todas las vistas los datos de la sesión actual, para que la barra
@@ -16,6 +20,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
  */
 @ControllerAdvice
 public class SesionAdvice {
+
+	@Autowired
+	@Qualifier("personaRepository")
+	private IPersonaRepository personaRepository;
 
 	private Authentication autenticacion() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -32,6 +40,16 @@ public class SesionAdvice {
 	public String username() {
 		Authentication auth = autenticacion();
 		return auth != null ? auth.getName() : null;
+	}
+
+	/** Nombre y apellido de la persona logueada para la barra; si la credencial no tiene persona (admin), el username. */
+	@ModelAttribute("nombreUsuario")
+	public String nombreUsuario() {
+		String username = username();
+		if (username == null) return null;
+		return personaRepository.findByCredencial_Username(username)
+				.map(p -> p.getNombre() + " " + p.getApellido())
+				.orElse(username);
 	}
 
 	@ModelAttribute("roles")

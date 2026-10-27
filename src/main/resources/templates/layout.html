@@ -50,10 +50,13 @@
                 <ul class="navbar-nav" th:if="${logueado == true}">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            &#128100; <span th:text="${username}">Usuario</span>
+                            &#128100; <span th:text="${nombreUsuario}">Usuario</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end">
-                            <span class="dropdown-item-text text-muted small" th:text="${rolNombre}"></span>
+                            <span class="dropdown-item-text small">
+                                <span th:text="${username}">usuario</span><br>
+                                <span class="text-muted" th:text="${rolNombre}">Rol</span>
+                            </span>
                             <div class="dropdown-divider"></div>
                             <form th:action="@{/logout}" method="post">
                                 <button type="submit" class="dropdown-item">Cerrar sesión</button>
