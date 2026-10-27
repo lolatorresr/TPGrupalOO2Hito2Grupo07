@@ -17,8 +17,8 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 | Registro de Responsable con Unidad de Venta (genera el usuario del responsable) | Lucia Daniela Ruiz - [PR #8](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/8) |
 | Página de inicio: festivales, registro e inicio de sesión, accesos por rol | Lucia Daniela Ruiz - [PR #9](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/9) |
 | Alta de Pedido con sus ítems (validación de fecha del día) y pedidos precargados | Lucia Daniela Ruiz - [PR #10](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/10) |
-| Inicio por festival: página del festival con sus unidades, registro de unidad desde un festival activo (validación: festival no finalizado) y filtro de unidades por festival | Lucia Daniela Ruiz - PR: _pendiente_ |
-| Pedidos de empleados: el empleado carga pedidos desde su página, solo para las unidades donde trabaja (validación: unidad propia y festival en curso) | Lucia Daniela Ruiz - PR: _pendiente_ |
+| Inicio por festival: página del festival con sus unidades, registro de unidad desde un festival activo (validación: festival no finalizado) y filtro de unidades por festival | Lucia Daniela Ruiz - PR: #14 |
+| Pedidos de empleados: el empleado carga pedidos desde su página, solo para las unidades donde trabaja (validación: unidad propia y festival en curso) | Lucia Daniela Ruiz - PR: #14 |
 
 ## Pasos para correr la aplicación
 1. Requisitos: Java 17, Maven 3.9+ y MySQL 8.
