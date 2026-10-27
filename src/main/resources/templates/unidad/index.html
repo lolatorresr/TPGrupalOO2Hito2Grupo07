@@ -15,6 +15,17 @@
         <a th:href="@{/unidades/form}" class="btn btn-success">+ Nueva Unidad</a>
     </div>
 
+    <form method="get" th:action="@{/unidades/}" class="row g-2 align-items-end mb-3">
+        <div class="col-md-5">
+            <label class="form-label mb-1">Festival:</label>
+            <select name="festivalId" class="form-select" onchange="this.form.submit()">
+                <option value="0">Todos los festivales</option>
+                <option th:each="f : ${festivales}" th:value="${f.idFestival}" th:text="${f.nombre + ' (' + f.temporada + ')'}"
+                        th:selected="${f.idFestival == festivalId}"></option>
+            </select>
+        </div>
+    </form>
+
     <div class="card">
         <div class="card-header fw-bold">Unidades activas</div>
         <div class="card-body p-0">
@@ -48,7 +59,7 @@
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(unidades)}">
-                        <td colspan="8" class="text-center text-muted py-3">No hay unidades de venta registradas todavía.</td>
+                        <td colspan="8" class="text-center text-muted py-3">No hay unidades de venta para mostrar.</td>
                     </tr>
                 </tbody>
             </table>

@@ -33,10 +33,15 @@ public class UnidadDeVentaController {
     @Qualifier("personaRepository")
     private IPersonaRepository personaRepository;
 
+    /** Listado de unidades activas, opcionalmente de un solo festival (?festivalId=). */
     @GetMapping("/")
-    public ModelAndView index() {
+    public ModelAndView index(@RequestParam(required = false, defaultValue = "0") int festivalId) {
         ModelAndView mAV = new ModelAndView(ViewRouteHelper.UNIDAD_INDEX);
-        mAV.addObject("unidades", unidadService.getAllActivas());
+        mAV.addObject("unidades", festivalId > 0
+                ? unidadService.getActivasPorFestival(festivalId)
+                : unidadService.getAllActivas());
+        mAV.addObject("festivales", festivalRepository.findAll());
+        mAV.addObject("festivalId", festivalId);
         return mAV;
     }
 

@@ -41,6 +41,11 @@ public class UnidadDeVentaService implements IUnidadDeVentaService {
     }
 
     @Override
+    public List<UnidadDeVentaDTO> getActivasPorFestival(int idFestival) {
+        return unidadRepository.findByFestival_IdFestivalAndActivoTrue(idFestival).stream().map(this::toDTO).toList();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public UnidadDeVentaDTO findById(int id) {
         return unidadRepository.findById(id).map(this::toDTO).orElse(null);

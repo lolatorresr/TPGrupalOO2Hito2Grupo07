@@ -9,6 +9,9 @@ public interface IUnidadDeVentaService {
     /** Unidades activas (no eliminadas lógicamente). */
     public List<UnidadDeVentaDTO> getAllActivas();
 
+    /** Unidades activas de un festival (vista del festival y filtro del listado). */
+    public List<UnidadDeVentaDTO> getActivasPorFestival(int idFestival);
+
     public UnidadDeVentaDTO findById(int id);
 
     /** Alta o modificación. Si el id es 0 crea, si no actualiza la unidad existente. */
