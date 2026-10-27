@@ -46,6 +46,11 @@ public class UnidadDeVentaService implements IUnidadDeVentaService {
     }
 
     @Override
+    public List<UnidadDeVentaDTO> getActivasDeStaff(int idPersona) {
+        return unidadRepository.findActivasByStaff(idPersona).stream().map(this::toDTO).toList();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public UnidadDeVentaDTO findById(int id) {
         return unidadRepository.findById(id).map(this::toDTO).orElse(null);

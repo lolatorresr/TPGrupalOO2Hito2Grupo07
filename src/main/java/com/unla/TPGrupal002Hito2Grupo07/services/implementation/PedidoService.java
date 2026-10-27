@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -39,6 +40,12 @@ public class PedidoService implements IPedidoService {
     public List<PedidoDTO> getAll() {
         return pedidoRepository.findAllByOrderByFechaTransaccionDescIdPedidoDesc()
                 .stream().map(this::toDTO).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PedidoDTO> getDeUnidades(Collection<Integer> idsUnidades) {
+        return getAll().stream().filter(p -> idsUnidades.contains(p.getUnidadId())).toList();
     }
 
     @Override

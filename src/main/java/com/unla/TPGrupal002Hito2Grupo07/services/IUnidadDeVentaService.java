@@ -12,6 +12,9 @@ public interface IUnidadDeVentaService {
     /** Unidades activas de un festival (vista del festival y filtro del listado). */
     public List<UnidadDeVentaDTO> getActivasPorFestival(int idFestival);
 
+    /** Unidades activas en cuyo staff figura la persona (donde trabaja un empleado o responsable). */
+    public List<UnidadDeVentaDTO> getActivasDeStaff(int idPersona);
+
     public UnidadDeVentaDTO findById(int id);
 
     /** Alta o modificación. Si el id es 0 crea, si no actualiza la unidad existente. */

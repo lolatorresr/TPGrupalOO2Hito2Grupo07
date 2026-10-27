@@ -15,6 +15,11 @@
         <a th:href="@{/pedidos/form}" class="btn btn-success">+ Nuevo Pedido</a>
     </div>
 
+    <!-- Empleados y responsables ven solo los pedidos de las unidades donde trabajan -->
+    <div th:if="${soloMisUnidades}" class="alert alert-info">
+        Se muestran los pedidos de las unidades de venta en las que trabaja.
+    </div>
+
     <!-- Mensaje que llega por flash attribute después de guardar -->
     <div th:if="${mensajeExito}" class="alert alert-success" th:text="${mensajeExito}"></div>
 

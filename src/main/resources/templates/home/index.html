@@ -16,7 +16,7 @@
                     <a th:href="@{/registro}" class="btn btn-light btn-lg me-2">Registrar mi Unidad de Venta</a>
                     <a th:href="@{/login}" class="btn btn-outline-light btn-lg">Iniciar sesión</a>
                 </div>
-                <p class="mb-0" th:if="${logueado == true}" th:text="'Hola, ' + ${username} + '. ¿Qué querés hacer hoy?'"></p>
+                <p class="mb-0" th:if="${logueado == true}" th:text="'Hola, ' + ${nombreUsuario} + '. ¿Qué querés hacer hoy?'"></p>
             </div>
         </div>
 
