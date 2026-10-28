@@ -16,6 +16,7 @@ import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.unla.TPGrupal002Hito2Grupo07.repositories.IUserRepository;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -49,10 +50,21 @@ public class PersonaService implements IPersonaService {
     @Qualifier("unidadDeVentaRepository")
     private IUnidadDeVentaRepository unidadRepository;
 
+    @Autowired
+    @Qualifier("userRepository")
+    private IUserRepository userRepository;
+
     @Override
     @Transactional(readOnly = true)
     public List<PersonaDTO> getAllActivas() {
-        return personaRepository.findByCredencialEnabledTrue().stream().map(this::toDTO).toList();
+        return personaRepository.findEmpleadosActivos().stream().map(this::toDTO).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PersonaDTO> getAllInactivas() {
+        return personaRepository.findEmpleadosInactivos()
+                .stream().map(this::toDTO).toList();
     }
 
     @Override
@@ -100,10 +112,17 @@ public class PersonaService implements IPersonaService {
             }
         }
 
-        // validacion de carga: DNI no duplicado
-        if (existeDni(dto.getDni(), dto.getIdPersona())) {
-            throw new IllegalArgumentException("El DNI ingresado ya pertenece a otro empleado.");
-        }
+        // Validación de carga: DNI no duplicado.
+        // Si el DNI es de un empleado dado de baja, no se crea otro: se lo debe reactivar.
+        personaRepository.findByDni(dto.getDni())
+                .filter(p -> p.getIdPersona() != dto.getIdPersona())
+                .ifPresent(p -> {
+                    boolean dadoDeBaja = p.getCredencial() != null && !p.getCredencial().isEnabled();
+                    throw new IllegalArgumentException(dadoDeBaja
+                            ? "Ese DNI pertenece a " + p.getApellido() + ", " + p.getNombre()
+                            + ", que está dado de baja. Reactivalo desde la lista de empleados dados de baja."
+                            : "El DNI ingresado ya pertenece a otro empleado.");
+                });
 
         // Validacion de carga extra: Email no duplicado
         if (existeEmail(dto.getEmail(), dto.getIdPersona())) {
@@ -125,7 +144,21 @@ public class PersonaService implements IPersonaService {
         String passwordGenerada = null;
         if (dto.getIdPersona() > 0) {
             persona = personaRepository.findById(dto.getIdPersona()).orElseThrow();
+            // Si cambia el email, cambia también el usuario con el que inicia sesión
+            User credencial = persona.getCredencial();
+            if (credencial != null && !credencial.getUsername().equals(dto.getEmail())) {
+                userRepository.findByUsername(dto.getEmail())
+                        .filter(otro -> otro.getId() != credencial.getId())
+                        .ifPresent(otro -> {
+                            throw new IllegalArgumentException("Ya existe un usuario con ese email.");
+                        });
+                credencial.setUsername(dto.getEmail());
+            }
         } else {
+            // Validación de carga: el email será el usuario, no puede estar tomado por otra cuenta
+            if (userRepository.findByUsername(dto.getEmail()).isPresent()) {
+                throw new IllegalArgumentException("Ya existe un usuario con ese email.");
+            }
             persona = crearSegunTipo(dto.getTipo());
             // En el alta se genera la credencial: el usuario es el email y la contraseña es aleatoria.
             // Se guarda encriptada porque el login la compara con BCrypt.

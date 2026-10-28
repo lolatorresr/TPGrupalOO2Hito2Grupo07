@@ -40,8 +40,8 @@ INSERT INTO festival (id_festival, nombre, temporada, fecha_inicio, fecha_fin) V
 
 -- ---------- Personal (Persona es abstracta: cada fila necesita su subtipo) ----------
 -- Responsable de unidad (vinculado al usuario responsable1)
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id, activo)
-VALUES (1, 'Martín', 'García', 30111222, '1985-04-12', '2022-03-01', 'responsable1@epicentro.com', 2, true)
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
+VALUES (1, 'Martín', 'García', 30111222, '1985-04-12', '2022-03-01', 'responsable1@epicentro.com', 2)
     ON DUPLICATE KEY UPDATE nombre=nombre;
 
 -- Limpieza preventiva para asegurar que el responsable no figure como cajero
@@ -52,8 +52,8 @@ VALUES (1)
     ON DUPLICATE KEY UPDATE id_persona=id_persona;
 
 -- Cajero del staff
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id, activo)
-VALUES (3, 'Carlos', 'López', 28333444, '1982-11-03', '2021-09-10', 'carlos.lopez@epicentro.com', NULL, true)
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
+VALUES (3, 'Carlos', 'López', 28333444, '1982-11-03', '2021-09-10', 'carlos.lopez@epicentro.com', NULL)
     ON DUPLICATE KEY UPDATE nombre=nombre;
 
 INSERT INTO cajero (id_persona, turno_trabajo, recaudacion_total)
@@ -61,8 +61,8 @@ VALUES (3, 'MAÑANA', 0)
     ON DUPLICATE KEY UPDATE turno_trabajo=turno_trabajo;
 
 -- Cocinero del staff
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id, activo)
-VALUES (2, 'Lucía', 'Pérez', 35222333, '1990-08-25', '2023-06-15', 'lucia.perez@epicentro.com', NULL, true)
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
+VALUES (2, 'Lucía', 'Pérez', 35222333, '1990-08-25', '2023-06-15', 'lucia.perez@epicentro.com', NULL)
     ON DUPLICATE KEY UPDATE nombre=nombre;
 
 INSERT INTO cocinero (id_persona, especialidad, categoria)
@@ -78,8 +78,8 @@ INSERT INTO user_role (id, role, created_at, updated_at, user_id)
 VALUES (100, 'ROLE_EMPLEADO', NOW(), NOW(), 100)
     ON DUPLICATE KEY UPDATE role=role;
 
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id, activo)
-VALUES (100, 'Diego', 'Fernández', 38444555, '1995-02-10', '2024-01-20', 'diego.fernandez@epicentro.com', 100, true)
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
+VALUES (100, 'Diego', 'Fernández', 38444555, '1995-02-10', '2024-01-20', 'diego.fernandez@epicentro.com', 100)
     ON DUPLICATE KEY UPDATE nombre=nombre;
 
 INSERT INTO cocinero (id_persona, especialidad, categoria)
@@ -150,9 +150,8 @@ INSERT INTO user_role (id, role, created_at, updated_at, user_id)
 VALUES (101, 'ROLE_RESPONSABLE', NOW(), NOW(), 101)
     ON DUPLICATE KEY UPDATE role=role;
 
--- 🟢 Agregados 'activo' y 'true' acá
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id, activo)
-VALUES (101, 'Ana', 'Martínez', 32555666, '1988-07-19', '2020-05-04', 'responsable2@epicentro.com', 101, true)
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
+VALUES (101, 'Ana', 'Martínez', 32555666, '1988-07-19', '2020-05-04', 'responsable2@epicentro.com', 101)
     ON DUPLICATE KEY UPDATE nombre=nombre;
 
 INSERT INTO responsable (id_persona)
@@ -161,9 +160,9 @@ VALUES (101)
 
 -- Platos de las unidades nuevas
 INSERT INTO plato (id_plato, nombre, precio, costo) VALUES
-    (101, 'Pizza Muzzarella', 7000.00, 2500.00),
-    (102, 'Gaseosa', 2000.00, 700.00),
-    (103, 'Empanada de Carne', 1500.00, 500.00)
+                                                        (101, 'Pizza Muzzarella', 7000.00, 2500.00),
+                                                        (102, 'Gaseosa', 2000.00, 700.00),
+                                                        (103, 'Empanada de Carne', 1500.00, 500.00)
     ON DUPLICATE KEY UPDATE nombre=nombre;
 
 -- Food Truck con conexión eléctrica: canon = 15 * 500 + 2000 = 9500
@@ -187,16 +186,16 @@ INSERT IGNORE INTO unidad_staff (unidad_id, persona_id) VALUES (101, 101), (102,
 
 -- Pedidos del festival en curso (ya ocurridos)
 INSERT INTO pedido (id_pedido, fecha_transaccion, festival_id, unidad_venta_id) VALUES
-    (101, '2026-10-21', 2, 3),
-    (102, '2026-10-22', 2, 101),
-    (103, '2026-10-23', 2, 102)
+                                                                                    (101, '2026-10-21', 2, 3),
+                                                                                    (102, '2026-10-22', 2, 101),
+                                                                                    (103, '2026-10-23', 2, 102)
     ON DUPLICATE KEY UPDATE fecha_transaccion=VALUES(fecha_transaccion), festival_id=VALUES(festival_id), unidad_venta_id=VALUES(unidad_venta_id);
 INSERT INTO item_plato (id_item_plato, plato_id, cantidad, sub_total, pedido_id) VALUES
-    (101, 1,   2, 17000.00, 101),  -- 2 hamburguesas (Choripanes del Sur)
-    (102, 3,   4, 14000.00, 101),  -- 4 cervezas
-    (103, 101, 3, 21000.00, 102),  -- 3 pizzas (Pizza Nostra)
-    (104, 102, 3,  6000.00, 102),  -- 3 gaseosas
-    (105, 103, 12, 18000.00, 103)  -- 12 empanadas (Empanadas del Norte)
+                                                                                     (101, 1,   2, 17000.00, 101),  -- 2 hamburguesas (Choripanes del Sur)
+                                                                                     (102, 3,   4, 14000.00, 101),  -- 4 cervezas
+                                                                                     (103, 101, 3, 21000.00, 102),  -- 3 pizzas (Pizza Nostra)
+                                                                                     (104, 102, 3,  6000.00, 102),  -- 3 gaseosas
+                                                                                     (105, 103, 12, 18000.00, 103)  -- 12 empanadas (Empanadas del Norte)
     ON DUPLICATE KEY UPDATE plato_id=VALUES(plato_id), cantidad=VALUES(cantidad), sub_total=VALUES(sub_total), pedido_id=VALUES(pedido_id);
 
 -- Parametros de negocio
