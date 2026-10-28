@@ -45,4 +45,25 @@ public class ReporteController {
         }
         return mAV;
     }
+
+    /** Las "cantidad" unidades que más gastaron en canon en el festival (parámetro x del enunciado, por defecto 3). */
+    @GetMapping("/canon")
+    public ModelAndView mayoresCanon(@RequestParam(required = false, defaultValue = "0") int festivalId,
+                                     @RequestParam(required = false, defaultValue = "3") int cantidad) {
+        ModelAndView mAV = new ModelAndView(ViewRouteHelper.REPORTE_CANON);
+        mAV.addObject("festivales", festivalService.getAll());
+        mAV.addObject("festivalId", festivalId);
+        // Validación de carga: la cantidad de unidades a mostrar tiene que ser al menos 1
+        if (cantidad < 1) {
+            mAV.addObject("errorCantidad", "La cantidad de unidades debe ser al menos 1.");
+            cantidad = 1;
+        }
+        mAV.addObject("cantidad", cantidad);
+        FestivalDTO festival = festivalService.findById(festivalId);
+        if (festival != null) {
+            mAV.addObject("festival", festival);
+            mAV.addObject("unidades", reporteService.mayoresCanon(festivalId, cantidad));
+        }
+        return mAV;
+    }
 }

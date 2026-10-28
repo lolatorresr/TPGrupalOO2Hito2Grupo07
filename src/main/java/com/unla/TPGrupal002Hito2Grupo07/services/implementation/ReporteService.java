@@ -1,5 +1,6 @@
 package com.unla.TPGrupal002Hito2Grupo07.services.implementation;
 
+import com.unla.TPGrupal002Hito2Grupo07.dtos.ReporteMayoresCanonDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.ReporteRankingUnidadDTO;
 import com.unla.TPGrupal002Hito2Grupo07.entities.UnidadDeVenta;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IPedidoRepository;
@@ -51,6 +52,22 @@ public class ReporteService implements IReporteService {
                     u.getCodigo(), u.getTipo(), responsable, pedidos, recaudacionDe(totales, u)));
         }
         return ranking;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReporteMayoresCanonDTO> mayoresCanon(int idFestival, int cantidad) {
+        List<UnidadDeVenta> unidades = new ArrayList<>(unidadRepository.findByFestival_IdFestivalAndActivoTrue(idFestival));
+        // El canon lo calcula cada unidad según su tipo (calcularCanon)
+        unidades.sort(Comparator.comparingDouble(UnidadDeVenta::calcularCanon).reversed()
+                .thenComparing(UnidadDeVenta::getNombreComercial));
+        List<ReporteMayoresCanonDTO> reporte = new ArrayList<>();
+        int posicion = 1;
+        for (UnidadDeVenta u : unidades.subList(0, Math.min(cantidad, unidades.size()))) {
+            reporte.add(new ReporteMayoresCanonDTO(posicion++, u.getNombreComercial(), u.getCodigo(),
+                    u.getTipo(), u.calcularCanon()));
+        }
+        return reporte;
     }
 
     private double recaudacionDe(Map<Integer, Object[]> totales, UnidadDeVenta u) {

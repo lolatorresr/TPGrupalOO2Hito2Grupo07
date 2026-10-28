@@ -1,5 +1,6 @@
 package com.unla.TPGrupal002Hito2Grupo07.services;
 
+import com.unla.TPGrupal002Hito2Grupo07.dtos.ReporteMayoresCanonDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.ReporteRankingUnidadDTO;
 
 import java.util.List;
@@ -13,4 +14,10 @@ public interface IReporteService {
      * aparecen al final con recaudación 0.
      */
     public List<ReporteRankingUnidadDTO> rankingPorRecaudacion(int idFestival);
+
+    /**
+     * Las "cantidad" unidades activas del festival que más gastaron en canon,
+     * de mayor a menor, con nombre comercial, código, tipo y canon.
+     */
+    public List<ReporteMayoresCanonDTO> mayoresCanon(int idFestival, int cantidad);
 }
