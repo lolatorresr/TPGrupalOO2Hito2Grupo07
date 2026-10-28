@@ -45,6 +45,7 @@ public class ViewRouteHelper {
 	public final static String REPORTE_INDEX = "reporte/index";
 	public final static String REPORTE_RANKING = "reporte/ranking";
 	public final static String REPORTE_CANON = "reporte/canon";
+	public final static String REPORTE_RECAUDACION = "reporte/recaudacion";
 
 	//PEDIDO
 	public final static String PEDIDO_INDEX = "pedido/index";

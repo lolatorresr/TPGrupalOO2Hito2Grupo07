@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Recaudación de un festival - Epicentro Gourmet</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/modern-business.css}"/>
+</head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+    <main class="container py-4">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/reportes/}">Reportes</a></li>
+            <li class="breadcrumb-item active">Recaudación de un festival</li>
+        </ol>
+    </nav>
+
+    <h2 class="mb-1">Recaudación de un festival</h2>
+    <p class="text-muted mb-4" th:if="${roles.contains('ROLE_ADMIN')}">Total de los pedidos del festival y detalle por unidad de venta.</p>
+    <p class="text-muted mb-4" th:unless="${roles.contains('ROLE_ADMIN')}">Total de los pedidos de tus unidades de venta en el festival.</p>
+
+    <!-- Al cambiar el festival se recarga la página con el reporte -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form th:action="@{/reportes/recaudacion}" method="get" class="row g-3 align-items-end">
+                <div class="col-md-8">
+                    <label class="form-label">Festival:</label>
+                    <select name="festivalId" class="form-select" onchange="this.form.submit()">
+                        <option value="0">-- Seleccionar --</option>
+                        <option th:each="f : ${festivales}" th:value="${f.idFestival}"
+                                th:selected="${f.idFestival == festivalId}"
+                                th:text="${f.nombre + ' (' + f.temporada + ') - ' + f.estado}"></option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${reporte != null}">
+        <!-- Resumen -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-success">
+                    <div class="card-body text-center">
+                        <div class="text-muted small">Recaudación total</div>
+                        <div class="fs-2 fw-bold text-success"
+                             th:text="'$' + ${#numbers.formatDecimal(reporte.recaudacionTotal, 1, 'POINT', 2, 'COMMA')}"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="text-muted small">Pedidos</div>
+                        <div class="fs-2 fw-bold" th:text="${reporte.cantidadPedidos}"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="text-muted small" th:text="${roles.contains('ROLE_ADMIN')} ? 'Unidades activas' : 'Mis unidades'"></div>
+                        <div class="fs-2 fw-bold" th:text="${reporte.cantidadUnidades}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalle por unidad -->
+        <div class="card">
+            <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+                <span th:text="'Recaudación por unidad - ' + ${reporte.festivalNombre}"></span>
+                <small class="text-muted fw-normal"
+                       th:text="${#temporals.format(reporte.fechaInicio, 'dd/MM/yyyy')} + ' al ' + ${#temporals.format(reporte.fechaFin, 'dd/MM/yyyy')}"></small>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nombre comercial</th>
+                            <th>Código</th>
+                            <th>Tipo de unidad</th>
+                            <th th:if="${roles.contains('ROLE_ADMIN')}">Responsable</th>
+                            <th class="text-end">Pedidos</th>
+                            <th class="text-end">Recaudación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="u : ${reporte.detalle}">
+                            <td th:text="${u.nombreComercial}"></td>
+                            <td th:text="${u.codigo}"></td>
+                            <td th:text="${u.tipoUnidad}"></td>
+                            <td th:if="${roles.contains('ROLE_ADMIN')}" th:text="${u.responsable}"></td>
+                            <td class="text-end" th:text="${u.cantidadPedidos}"></td>
+                            <td class="text-end" th:text="'$' + ${#numbers.formatDecimal(u.recaudacion, 1, 'POINT', 2, 'COMMA')}"></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(reporte.detalle)}">
+                            <td colspan="6" class="text-center text-muted py-3"
+                                th:text="${roles.contains('ROLE_ADMIN')} ? 'Este festival no tiene unidades de venta activas.' : 'No tenés unidades de venta en este festival.'"></td>
+                        </tr>
+                    </tbody>
+                    <tfoot th:unless="${#lists.isEmpty(reporte.detalle)}">
+                        <tr class="table-success fw-bold">
+                            <td th:attr="colspan=${roles.contains('ROLE_ADMIN')} ? 4 : 3">Total</td>
+                            <td class="text-end" th:text="${reporte.cantidadPedidos}"></td>
+                            <td class="text-end" th:text="'$' + ${#numbers.formatDecimal(reporte.recaudacionTotal, 1, 'POINT', 2, 'COMMA')}"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="text-muted" th:if="${reporte == null}">Seleccione un festival para ver el reporte.</div>
+    </main>
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>

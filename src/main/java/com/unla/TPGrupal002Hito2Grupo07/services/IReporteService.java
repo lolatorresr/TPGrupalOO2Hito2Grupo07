@@ -2,10 +2,11 @@ package com.unla.TPGrupal002Hito2Grupo07.services;
 
 import com.unla.TPGrupal002Hito2Grupo07.dtos.ReporteMayoresCanonDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.ReporteRankingUnidadDTO;
+import com.unla.TPGrupal002Hito2Grupo07.dtos.ReporteVentaDTO;
 
 import java.util.List;
 
-/** Reportes del administrador sobre las unidades de venta de un festival. */
+/** Reportes del administrador y del responsable sobre las unidades de venta de un festival. */
 public interface IReporteService {
 
     /**
@@ -20,4 +21,11 @@ public interface IReporteService {
      * de mayor a menor, con nombre comercial, código, tipo y canon.
      */
     public List<ReporteMayoresCanonDTO> mayoresCanon(int idFestival, int cantidad);
+
+    /**
+     * Recaudación de un festival (ReporteVentaDTO): total de los pedidos y detalle por unidad.
+     * Con idResponsable se limita a las unidades activas a cargo de ese responsable;
+     * con null (administrador) abarca todas las unidades activas del festival.
+     */
+    public ReporteVentaDTO recaudacionFestival(int idFestival, Integer idResponsable);
 }

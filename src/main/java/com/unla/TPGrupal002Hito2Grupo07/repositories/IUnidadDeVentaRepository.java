@@ -18,6 +18,9 @@ public interface IUnidadDeVentaRepository extends JpaRepository<UnidadDeVenta, S
 
     public abstract List<UnidadDeVenta> findByFestival_IdFestivalAndActivoTrue(int idFestival);
 
+    /** Unidades activas de un festival a cargo de un responsable (reportes del responsable). */
+    public abstract List<UnidadDeVenta> findByFestival_IdFestivalAndResponsable_IdPersonaAndActivoTrue(int idFestival, int idResponsable);
+
     /** Unidades activas en cuyo staff figura la persona, con su festival ya cargado. */
     @Query("SELECT DISTINCT u FROM UnidadDeVenta u JOIN u.staff s LEFT JOIN FETCH u.festival "
             + "WHERE s.idPersona = :idPersona AND u.activo = true")
