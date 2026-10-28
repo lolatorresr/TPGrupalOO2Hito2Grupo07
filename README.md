@@ -28,7 +28,7 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 | Pedidos de empleados: el empleado carga pedidos desde su página, solo para las unidades donde trabaja (validación: unidad propia y festival en curso) | Lucia Daniela Ruiz - [PR #14](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/14) |
 | Reportes del administrador: ranking de unidades por recaudación de un festival y unidades con mayor canon (ReporteMayoresCanonDTO) | Lucia Daniela Ruiz - PR: [PR #15](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/15) |
 | Liquidación de haberes del empleado y recibo de sueldo en PDF | Lola Torres Rodriguez - [PR #16](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/16) |
-| Ajustes de la liquidación: acceso con sesión (cada empleado ve solo su recibo), sueldos por festival en la página del empleado y estilo del sitio | Lucia Daniela Ruiz - PR: _pendiente_ |
+| Ajustes de la liquidación: acceso con sesión (cada empleado ve solo su recibo), sueldos por festival en la página del empleado y estilo del sitio | Lucia Daniela Ruiz - PR: [PR #17](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/17) |
 
 ## Pasos para correr la aplicación
 1. Requisitos: Java 17, Maven 3.9+ y MySQL 8.
