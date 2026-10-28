@@ -86,11 +86,37 @@
             </div>
         </div>
 
-        <!-- Lugar reservado para la liquidación (lo completa Lola) -->
+        <!-- Sueldo por festival y recibo en PDF -->
         <div class="col-12">
             <div class="card">
                 <div class="card-header fw-bold">Recibos de sueldo</div>
-                <div class="card-body text-muted">Próximamente: sueldo por festival y descarga del recibo en PDF.</div>
+                <div class="card-body p-0">
+                    <table class="table table-striped mb-0 align-middle">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Festival</th>
+                            <th>Fechas</th>
+                            <th class="text-end">Sueldo</th>
+                            <th class="text-end">Recibo</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Una fila por festival (si trabajó en varias unidades del mismo festival, el sueldo es uno solo) -->
+                        <tr th:each="s : ${sueldos}" th:with="a=${asignaciones.^[idFestival == #root.s.key]}">
+                            <td th:text="${a.festivalNombre}"></td>
+                            <td th:text="${#temporals.format(a.fechaInicio, 'dd/MM/yyyy') + ' al ' + #temporals.format(a.fechaFin, 'dd/MM/yyyy')}"></td>
+                            <td class="text-end" th:text="'$' + ${#numbers.formatDecimal(s.value, 1, 'POINT', 2, 'COMMA')}"></td>
+                            <td class="text-end">
+                                <a th:href="@{/liquidacion(idFestival=${s.key})}" class="btn btn-outline-primary btn-sm">Ver recibo</a>
+                                <a th:href="@{/liquidacion/pdf(idFestival=${s.key})}" class="btn btn-primary btn-sm">Descargar PDF</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#maps.isEmpty(sueldos)}">
+                            <td colspan="4" class="text-center text-muted py-3">Todavía no trabajaste en ningún festival.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

@@ -76,7 +76,8 @@ public class PersonaService implements IPersonaService {
                     Festival f = u.getFestival();
                     boolean enCurso = f != null
                             && !hoy.isBefore(f.getFechaInicio()) && !hoy.isAfter(f.getFechaFin());
-                    return new AsignacionDTO(u.getNombreComercial(), u.getCodigo(), u.getTipo(),
+                    return new AsignacionDTO(f != null ? f.getIdFestival() : 0,
+                            u.getNombreComercial(), u.getCodigo(), u.getTipo(),
                             f != null ? f.getNombre() : "Sin festival",
                             f != null ? f.getFechaInicio() : null,
                             f != null ? f.getFechaFin() : null,

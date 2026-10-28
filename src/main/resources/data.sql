@@ -40,8 +40,8 @@ INSERT INTO festival (id_festival, nombre, temporada, fecha_inicio, fecha_fin) V
 
 -- ---------- Personal (Persona es abstracta: cada fila necesita su subtipo) ----------
 -- Responsable de unidad (vinculado al usuario responsable1)
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id, activo)
-VALUES (1, 'Martín', 'García', 30111222, '1985-04-12', '2022-03-01', 'responsable1@epicentro.com', 2, true)
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
+VALUES (1, 'Martín', 'García', 30111222, '1985-04-12', '2022-03-01', 'responsable1@epicentro.com', 2)
     ON DUPLICATE KEY UPDATE nombre=nombre;
 
 -- Limpieza preventiva para asegurar que el responsable no figure como cajero
@@ -52,8 +52,8 @@ VALUES (1)
     ON DUPLICATE KEY UPDATE id_persona=id_persona;
 
 -- Cajero del staff
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id, activo)
-VALUES (3, 'Carlos', 'López', 28333444, '1982-11-03', '2021-09-10', 'carlos.lopez@epicentro.com', NULL, true)
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
+VALUES (3, 'Carlos', 'López', 28333444, '1982-11-03', '2021-09-10', 'carlos.lopez@epicentro.com', NULL)
     ON DUPLICATE KEY UPDATE nombre=nombre;
 
 INSERT INTO cajero (id_persona, turno_trabajo, recaudacion_total)
@@ -61,8 +61,8 @@ VALUES (3, 'MAÑANA', 0)
     ON DUPLICATE KEY UPDATE turno_trabajo=turno_trabajo;
 
 -- Cocinero del staff
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id, activo)
-VALUES (2, 'Lucía', 'Pérez', 35222333, '1990-08-25', '2023-06-15', 'lucia.perez@epicentro.com', NULL, true)
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
+VALUES (2, 'Lucía', 'Pérez', 35222333, '1990-08-25', '2023-06-15', 'lucia.perez@epicentro.com', NULL)
     ON DUPLICATE KEY UPDATE nombre=nombre;
 
 INSERT INTO cocinero (id_persona, especialidad, categoria)
@@ -78,8 +78,8 @@ INSERT INTO user_role (id, role, created_at, updated_at, user_id)
 VALUES (100, 'ROLE_EMPLEADO', NOW(), NOW(), 100)
     ON DUPLICATE KEY UPDATE role=role;
 
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id, activo)
-VALUES (100, 'Diego', 'Fernández', 38444555, '1995-02-10', '2024-01-20', 'diego.fernandez@epicentro.com', 100, true)
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
+VALUES (100, 'Diego', 'Fernández', 38444555, '1995-02-10', '2024-01-20', 'diego.fernandez@epicentro.com', 100)
     ON DUPLICATE KEY UPDATE nombre=nombre;
 
 INSERT INTO cocinero (id_persona, especialidad, categoria)
@@ -150,9 +150,8 @@ INSERT INTO user_role (id, role, created_at, updated_at, user_id)
 VALUES (101, 'ROLE_RESPONSABLE', NOW(), NOW(), 101)
     ON DUPLICATE KEY UPDATE role=role;
 
--- 🟢 Agregados 'activo' y 'true' acá
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id, activo)
-VALUES (101, 'Ana', 'Martínez', 32555666, '1988-07-19', '2020-05-04', 'responsable2@epicentro.com', 101, true)
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
+VALUES (101, 'Ana', 'Martínez', 32555666, '1988-07-19', '2020-05-04', 'responsable2@epicentro.com', 101)
     ON DUPLICATE KEY UPDATE nombre=nombre;
 
 INSERT INTO responsable (id_persona)
