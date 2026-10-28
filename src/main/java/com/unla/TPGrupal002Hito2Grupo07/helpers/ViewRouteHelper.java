@@ -40,6 +40,10 @@ public class ViewRouteHelper {
 	//REGISTRO DE RESPONSABLE CON UNIDAD DE VENTA
 	public final static String REGISTRO_FORM = "registro/form";
 
+	//REPORTE
+	public final static String REPORTE_INDEX = "reporte/index";
+	public final static String REPORTE_RANKING = "reporte/ranking";
+
 	//PEDIDO
 	public final static String PEDIDO_INDEX = "pedido/index";
 	public final static String PEDIDO_FORM = "pedido/form";
@@ -56,4 +60,5 @@ public class ViewRouteHelper {
 
 	public final static String REGISTRO_ROOT = "/registro";
 	public final static String PEDIDO_ROOT = "/pedidos/";
+	public final static String REPORTE_ROOT = "/reportes/";
 }
