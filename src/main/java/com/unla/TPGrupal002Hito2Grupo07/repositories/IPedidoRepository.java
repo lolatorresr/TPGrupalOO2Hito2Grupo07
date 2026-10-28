@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository("pedidoRepository")
@@ -26,6 +27,15 @@ public interface IPedidoRepository extends JpaRepository<Pedido, Integer> {
             + "GROUP BY p.unidadVenta.idUnidadDeVenta "
             + "ORDER BY SUM(ip.subTotal) DESC")
     List<Object[]> recaudacionPorUnidad(@Param("idFestival") int idFestival);
+
+    // ---------- Rentabilidad neta (Lucía) ----------
+    /** Ventas, costo de los platos vendidos y cantidad de pedidos de una unidad en un festival entre dos fechas. */
+    @Query("SELECT COALESCE(SUM(ip.subTotal), 0), COALESCE(SUM(ip.cantidad * ip.plato.costo), 0), COUNT(DISTINCT p.idPedido) "
+            + "FROM Pedido p JOIN p.ItemPlatos ip "
+            + "WHERE p.festival.idFestival = :idFestival AND p.unidadVenta.idUnidadDeVenta = :idUnidad "
+            + "AND p.fechaTransaccion BETWEEN :desde AND :hasta")
+    List<Object[]> ventasYCostos(@Param("idFestival") int idFestival, @Param("idUnidad") int idUnidad,
+                                 @Param("desde") LocalDate desde, @Param("hasta") LocalDate hasta);
 
     // ---------- Plato estrella (Lola) ----------
     @Query("SELECT ip.plato FROM Pedido p JOIN p.ItemPlatos ip " +

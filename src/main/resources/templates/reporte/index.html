@@ -26,6 +26,16 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-4 mb-3">
+            <div class="card access-card h-100">
+                <div class="card-body">
+                    <div class="icon">&#128200;</div>
+                    <h5 class="card-title">Rentabilidad neta</h5>
+                    <p class="card-text text-muted">Ganancia de una unidad en un festival: ventas menos costo de platos, sueldos y canon.</p>
+                    <a th:href="@{/reportes/rentabilidad}" class="btn btn-primary">Consultar</a>
+                </div>
+            </div>
+        </div>
         <div class="col-md-4 mb-3" th:if="${roles.contains('ROLE_ADMIN')}">
             <div class="card access-card h-100">
                 <div class="card-body">

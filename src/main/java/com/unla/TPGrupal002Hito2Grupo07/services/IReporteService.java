@@ -2,8 +2,10 @@ package com.unla.TPGrupal002Hito2Grupo07.services;
 
 import com.unla.TPGrupal002Hito2Grupo07.dtos.ReporteMayoresCanonDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.ReporteRankingUnidadDTO;
+import com.unla.TPGrupal002Hito2Grupo07.dtos.ReporteRentabilidadDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.ReporteVentaDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /** Reportes del administrador y del responsable sobre las unidades de venta de un festival. */
@@ -28,4 +30,16 @@ public interface IReporteService {
      * con null (administrador) abarca todas las unidades activas del festival.
      */
     public ReporteVentaDTO recaudacionFestival(int idFestival, Integer idResponsable);
+
+    /**
+     * Rentabilidad neta de una unidad en un festival: ventas - costo de platos - sueldos del staff - canon.
+     * Devuelve null si la unidad no pertenece al festival.
+     */
+    public ReporteRentabilidadDTO rentabilidadNeta(int idFestival, int idUnidad);
+
+    /**
+     * Rentabilidad neta de una unidad en un festival entre dos fechas (acotadas al festival).
+     * Los sueldos y el canon se prorratean por los días del período sobre los del festival.
+     */
+    public ReporteRentabilidadDTO rentabilidadNetaEntreFechas(int idFestival, int idUnidad, LocalDate desde, LocalDate hasta);
 }

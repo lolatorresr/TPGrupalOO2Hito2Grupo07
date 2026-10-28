@@ -2,11 +2,14 @@ package com.unla.TPGrupal002Hito2Grupo07.controllers;
 
 import com.unla.TPGrupal002Hito2Grupo07.dtos.FestivalDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.PersonaDTO;
+import com.unla.TPGrupal002Hito2Grupo07.dtos.ReporteRentabilidadDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.ReporteVentaDTO;
+import com.unla.TPGrupal002Hito2Grupo07.dtos.UnidadDeVentaDTO;
 import com.unla.TPGrupal002Hito2Grupo07.helpers.ViewRouteHelper;
 import com.unla.TPGrupal002Hito2Grupo07.services.IFestivalService;
 import com.unla.TPGrupal002Hito2Grupo07.services.IPersonaService;
 import com.unla.TPGrupal002Hito2Grupo07.services.IReporteService;
+import com.unla.TPGrupal002Hito2Grupo07.services.IUnidadDeVentaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
 
 /**
  * Reportes sobre las unidades de venta de un festival. El administrador consulta sobre todas las
@@ -37,6 +42,10 @@ public class ReporteController {
     @Autowired
     @Qualifier("personaService")
     private IPersonaService personaService;
+
+    @Autowired
+    @Qualifier("unidadDeVentaService")
+    private IUnidadDeVentaService unidadService;
 
     @GetMapping({"", "/"})
     public ModelAndView index() {
@@ -92,6 +101,38 @@ public class ReporteController {
             mAV.addObject("reporte", reporte);
         }
         return mAV;
+    }
+
+    /** Rentabilidad neta de una unidad en un festival: ventas - costo de platos - sueldos - canon. */
+    @GetMapping("/rentabilidad")
+    public ModelAndView rentabilidad(@RequestParam(required = false, defaultValue = "0") int festivalId,
+                                     @RequestParam(required = false, defaultValue = "0") int unidadId,
+                                     Authentication authentication) {
+        ModelAndView mAV = new ModelAndView(ViewRouteHelper.REPORTE_RENTABILIDAD);
+        mAV.addObject("festivales", festivalService.getAll());
+        mAV.addObject("festivalId", festivalId);
+        mAV.addObject("unidadId", unidadId);
+        if (festivalService.findById(festivalId) == null) {
+            return mAV;
+        }
+        // Unidades que se pueden consultar: las del responsable en ese festival, o todas para el administrador
+        List<UnidadDeVentaDTO> unidades = unidadesConsultables(festivalId, authentication);
+        mAV.addObject("unidades", unidades);
+        boolean unidadPermitida = unidades.stream().anyMatch(u -> u.getIdUnidadDeVenta() == unidadId);
+        if (unidadId != 0 && !unidadPermitida) {
+            mAV.addObject("error", "No puede consultar esa unidad de venta.");
+        } else if (unidadPermitida) {
+            ReporteRentabilidadDTO reporte = reporteService.rentabilidadNeta(festivalId, unidadId);
+            mAV.addObject("reporte", reporte);
+        }
+        return mAV;
+    }
+
+    private List<UnidadDeVentaDTO> unidadesConsultables(int festivalId, Authentication authentication) {
+        Integer idResponsable = idResponsable(authentication);
+        return unidadService.getActivasPorFestival(festivalId).stream()
+                .filter(u -> idResponsable == null || u.getResponsableId() == idResponsable)
+                .toList();
     }
 
     /** Id de la persona logueada si es responsable; null para el administrador (ve todo). */
