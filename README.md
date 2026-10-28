@@ -13,12 +13,20 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 
 | Método | Responsable |
 | :--- | :--- |
+| Entidades base: Festival, Plato, Pedido e ItemPlato | Lola Torres Rodriguez - [PR #1](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/1) |
+| Entidad Persona y su ABM base | Juan Pablo Lombisano Bentos - [PR #2](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/2) |
+| Alta de Platos (ABM de plato con precio de venta y costo de producción) | Lola Torres Rodriguez - [PR #3](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/3) |
 | ABM Unidad de Venta (Food Truck / Puesto Desarmable), cálculo de canon y validación de código único | Lucia Daniela Ruiz - [PR #4](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/4) |
+| Alta de Empleados (cajero / cocinero con categoría) con envío de mail de credenciales y baja lógica | Juan Pablo Lombisano Bentos - [PR #5](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/5) y [PR #6](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/6) |
+| Login de empleado: redirección por rol y página del empleado (festivales y unidades donde trabaja, si trabaja hoy) | Juan Pablo Lombisano Bentos - [PR #7](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/7) |
 | Registro de Responsable con Unidad de Venta (genera el usuario del responsable) | Lucia Daniela Ruiz - [PR #8](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/8) |
 | Página de inicio: festivales, registro e inicio de sesión, accesos por rol | Lucia Daniela Ruiz - [PR #9](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/9) |
 | Alta de Pedido con sus ítems (validación de fecha del día) y pedidos precargados | Lucia Daniela Ruiz - [PR #10](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/10) |
-| Inicio por festival: página del festival con sus unidades, registro de unidad desde un festival activo (validación: festival no finalizado) y filtro de unidades por festival | Lucia Daniela Ruiz - PR: #14 |
-| Pedidos de empleados: el empleado carga pedidos desde su página, solo para las unidades donde trabaja (validación: unidad propia y festival en curso) | Lucia Daniela Ruiz - PR: #14 |
+| Plato Estrella: plato con más pedidos de una unidad en un festival | Lola Torres Rodriguez - [PR #11](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/11) |
+| Integración de ramas y arreglos | Juan Pablo Lombisano Bentos - [PR #12](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/12) y [PR #13](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/13) |
+| Inicio por festival: página del festival con sus unidades, registro de unidad desde un festival activo (validación: festival no finalizado) y filtro de unidades por festival | Lucia Daniela Ruiz - [PR #14](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/14) |
+| Pedidos de empleados: el empleado carga pedidos desde su página, solo para las unidades donde trabaja (validación: unidad propia y festival en curso) | Lucia Daniela Ruiz - [PR #14](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/14) |
+| Reportes del administrador: ranking de unidades por recaudación de un festival y unidades con mayor canon (ReporteMayoresCanonDTO) | Lucia Daniela Ruiz - PR: [PR #15](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/15) |
 
 ## Pasos para correr la aplicación
 1. Requisitos: Java 17, Maven 3.9+ y MySQL 8.
@@ -26,7 +34,19 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
    ```sql
    CREATE DATABASE TPGrupalOO2Hito2Grupo07;
    ```
-3. Credenciales de MySQL en `src/main/resources/application.yml` (por defecto `root` / `root`).
+3. Configurar la conexión y el mail con variables de entorno (opcional: si no se definen se usan los valores por defecto de `src/main/resources/application.yml`):
+
+   | Variable | Para qué | Por defecto |
+   | :--- | :--- | :--- |
+   | `DB_HOST` | Host de MySQL | `localhost` |
+   | `DB_PORT` | Puerto de MySQL | `3306` |
+   | `DB_NAME` | Nombre de la base | `TPGrupalOO2Hito2Grupo07` |
+   | `DB_USER` | Usuario de MySQL | `root` |
+   | `DB_PASSWORD` | Contraseña de MySQL | `root` |
+   | `EMAIL_USER` | Cuenta de Gmail desde la que se envían los mails a los empleados | vacío (no se envía) |
+   | `EMAIL_PASSWORD` | Contraseña de aplicación de esa cuenta | vacío |
+
+   Ejemplo en Linux / macOS: `export DB_USER=miusuario DB_PASSWORD=miclave` antes de ejecutar. En Windows (PowerShell): `$env:DB_USER="miusuario"`.
 4. Ejecutar `mvn spring-boot:run` y abrir http://localhost:8080
 5. Los datos de prueba se cargan automáticamente desde `src/main/resources/data.sql` en cada arranque.
 
@@ -35,3 +55,5 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 | :--- | :--- | :--- |
 | admin | admin123 | ROLE_ADMIN |
 | responsable1 | admin123 | ROLE_RESPONSABLE |
+| responsable2 | admin123 | ROLE_RESPONSABLE (Ana Martínez, unidades Pizza Nostra y Empanadas del Norte) |
+| empleado1 | admin123 | ROLE_EMPLEADO (Diego Fernández, trabaja en Choripanes del Sur) |

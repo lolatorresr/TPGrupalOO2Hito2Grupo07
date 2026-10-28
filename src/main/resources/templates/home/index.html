@@ -62,6 +62,16 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-3 mb-3" th:if="${roles != null and roles.contains('ROLE_ADMIN')}">
+                <div class="card access-card h-100">
+                    <div class="card-body">
+                        <div class="icon">&#128202;</div>
+                        <h5 class="card-title">Reportes</h5>
+                        <p class="card-text text-muted">Ranking por recaudación y unidades con mayor canon de un festival.</p>
+                        <a th:href="@{/reportes/}" class="btn btn-primary">Acceder</a>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Festivales (datos precargados) -->

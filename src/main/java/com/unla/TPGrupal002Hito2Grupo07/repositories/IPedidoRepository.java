@@ -18,6 +18,15 @@ public interface IPedidoRepository extends JpaRepository<Pedido, Integer> {
 
     public abstract List<Pedido> findByUnidadVenta_IdUnidadDeVentaOrderByFechaTransaccionDesc(int idUnidad);
 
+    // ---------- Ranking por recaudación (Lucía) ----------
+    /** Por unidad del festival: id de la unidad, recaudación (suma de subtotales) y cantidad de pedidos. */
+    @Query("SELECT p.unidadVenta.idUnidadDeVenta, SUM(ip.subTotal), COUNT(DISTINCT p.idPedido) "
+            + "FROM Pedido p JOIN p.ItemPlatos ip "
+            + "WHERE p.festival.idFestival = :idFestival "
+            + "GROUP BY p.unidadVenta.idUnidadDeVenta "
+            + "ORDER BY SUM(ip.subTotal) DESC")
+    List<Object[]> recaudacionPorUnidad(@Param("idFestival") int idFestival);
+
     // ---------- Plato estrella (Lola) ----------
     @Query("SELECT ip.plato FROM Pedido p JOIN p.ItemPlatos ip " +
             "WHERE p.festival.idFestival = :idFestival " +
