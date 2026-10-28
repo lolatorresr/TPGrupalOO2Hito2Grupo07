@@ -26,7 +26,7 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 | Integración de ramas y arreglos | Juan Pablo Lombisano Bentos - [PR #12](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/12) y [PR #13](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/13) |
 | Inicio por festival: página del festival con sus unidades, registro de unidad desde un festival activo (validación: festival no finalizado) y filtro de unidades por festival | Lucia Daniela Ruiz - [PR #14](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/14) |
 | Pedidos de empleados: el empleado carga pedidos desde su página, solo para las unidades donde trabaja (validación: unidad propia y festival en curso) | Lucia Daniela Ruiz - [PR #14](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/14) |
-| Reportes del administrador: ranking de unidades por recaudación de un festival y unidades con mayor canon (ReporteMayoresCanonDTO) | Lucia Daniela Ruiz - PR: _pendiente_ |
+| Reportes del administrador: ranking de unidades por recaudación de un festival y unidades con mayor canon (ReporteMayoresCanonDTO) | Lucia Daniela Ruiz - PR: [PR #15](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/15) |
 
 ## Pasos para correr la aplicación
 1. Requisitos: Java 17, Maven 3.9+ y MySQL 8.
