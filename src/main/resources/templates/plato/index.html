@@ -10,14 +10,17 @@
     <nav th:replace="~{layout :: navbar}"></nav>
     <main class="container py-4">
 
-    <h2 class="mb-4">Gestión de Platos del Menú</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Gestión de Platos del Menú</h2>
+        <a th:href="@{/plato-estrella}" class="btn btn-outline-primary">Plato estrella</a>
+    </div>
 
     <!-- Formulario para Alta de Plato -->
     <div class="card mb-4">
-        <div class="card header fw-bold">Agregar Nuevo Plato</div>
+        <div class="card-header fw-bold">Agregar Nuevo Plato</div>
         <div class="card-body">
             <form th:action="@{/platos/create}" th:object="${plato}" method="post" class="row g-3">
-                <div class="cold-md-4">
+                <div class="col-md-4">
                     <label class="form-label">Nombre del Plato:</label>
                     <input type="text" th:field="*{nombre}" class="form-control" required placeholder="Hamburguesa completa">
                     <p th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="text-danger"></p>
