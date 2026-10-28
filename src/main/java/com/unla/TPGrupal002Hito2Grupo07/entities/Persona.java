@@ -38,6 +38,7 @@ public abstract class Persona {
     @Column(name = "email", nullable = false, unique = true, length = 100)
     protected String email;
 
+
     // Relación 1 a 1 con el Usuario (Credenciales que maneja el estado de activación)
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
