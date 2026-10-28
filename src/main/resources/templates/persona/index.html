@@ -7,8 +7,8 @@
     <link rel="stylesheet" th:href="@{/css/modern-business.css}"/>
 </head>
 <body>
-    <nav th:replace="~{layout :: navbar}"></nav>
-    <main class="container py-4">
+<nav th:replace="~{layout :: navbar}"></nav>
+<main class="container py-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Empleados</h2>
@@ -25,45 +25,84 @@
         <div class="card-body p-0">
             <table class="table table-striped table-hover mb-0">
                 <thead class="table-dark">
-                    <tr>
-                        <th>Apellido y nombre</th>
-                        <th>DNI</th>
-                        <th>Email</th>
-                        <th>Tipo</th>
-                        <th>Detalle</th>
-                        <th>Fecha de ingreso</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
+                <tr>
+                    <th>Apellido y nombre</th>
+                    <th>DNI</th>
+                    <th>Email</th>
+                    <th>Tipo</th>
+                    <th>Detalle</th>
+                    <th>Fecha de ingreso</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="p : ${personas}">
-                        <td th:text="${p.apellido + ', ' + p.nombre}"></td>
-                        <td th:text="${p.dni}"></td>
-                        <td th:text="${p.email}"></td>
-                        <td th:text="${p.tipoDescripcion} ?: '-'"></td>
-                        <!-- Dato propio de cada subtipo -->
-                        <td th:switch="${p.tipo?.name()}">
-                            <span th:case="'CAJERO'" th:text="'Turno ' + ${p.turnoTrabajo}"></span>
-                            <span th:case="'COCINERO'" th:text="${p.especialidad + ' (' + (p.categoria?.descripcion ?: '-') + ')'}"></span>
-                            <span th:case="*">-</span>
-                        </td>
-                        <td th:text="${p.fechaIngreso != null} ? ${#temporals.format(p.fechaIngreso, 'dd/MM/yyyy')} : '-'"></td>
-                        <td class="text-center">
-                            <a th:href="@{/personas/editar/{id}(id=${p.idPersona})}" class="btn btn-primary btn-sm">Editar</a>
-                            <form th:action="@{/personas/eliminar/{id}(id=${p.idPersona})}" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que desea dar de baja este empleado?');">Dar de baja</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(personas)}">
-                        <td colspan="7" class="text-center text-muted py-3">No hay empleados activos registrados todavía.</td>
-                    </tr>
+                <tr th:each="p : ${personas}">
+                    <td th:text="${p.apellido + ', ' + p.nombre}"></td>
+                    <td th:text="${p.dni}"></td>
+                    <td th:text="${p.email}"></td>
+                    <td th:text="${p.tipoDescripcion} ?: '-'"></td>
+                    <!-- Dato propio de cada subtipo -->
+                    <td th:switch="${p.tipo?.name()}">
+                        <span th:case="'CAJERO'" th:text="'Turno ' + ${p.turnoTrabajo}"></span>
+                        <span th:case="'COCINERO'"
+                              th:text="${p.especialidad + ' (' + (p.categoria?.descripcion ?: '-') + ')'}"></span>
+                        <span th:case="*">-</span>
+                    </td>
+                    <td th:text="${p.fechaIngreso != null} ? ${#temporals.format(p.fechaIngreso, 'dd/MM/yyyy')} : '-'"></td>
+                    <td class="text-center">
+                        <a th:href="@{/personas/editar/{id}(id=${p.idPersona})}"
+                           class="btn btn-primary btn-sm">Editar</a>
+                        <form th:action="@{/personas/eliminar/{id}(id=${p.idPersona})}" method="post"
+                              style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('¿Seguro que desea dar de baja este empleado?');">Dar de
+                                baja
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(personas)}">
+                    <td colspan="7" class="text-center text-muted py-3">No hay empleados activos registrados todavía.
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
     </div>
-    </main>
-    <footer th:replace="~{layout :: footer}"></footer>
-    <div th:replace="~{layout :: scripts}"></div>
+
+    <!-- Empleados dados de baja: se pueden reactivar -->
+    <div class="card mt-4" th:if="${!#lists.isEmpty(inactivas)}">
+        <div class="card-header fw-bold">Empleados dados de baja</div>
+        <div class="card-body p-0">
+            <table class="table table-striped mb-0">
+                <thead class="table-secondary">
+                <tr>
+                    <th>Apellido y nombre</th>
+                    <th>DNI</th>
+                    <th>Email</th>
+                    <th>Tipo</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${inactivas}">
+                    <td th:text="${p.apellido + ', ' + p.nombre}"></td>
+                    <td th:text="${p.dni}"></td>
+                    <td th:text="${p.email}"></td>
+                    <td th:text="${p.tipoDescripcion} ?: '-'"></td>
+                    <td class="text-center">
+                        <form th:action="@{/personas/reactivar/{id}(id=${p.idPersona})}" method="post"
+                              style="display:inline;">
+                            <button type="submit" class="btn btn-outline-success btn-sm">Reactivar</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{layout :: footer}"></footer>
+<div th:replace="~{layout :: scripts}"></div>
 </body>
 </html>
