@@ -1,28 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Epicentro Gourmet - Liquidación</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>Recibo de sueldo - Epicentro Gourmet</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/modern-business.css}"/>
 </head>
-<body class="container mt-5">
-<h2>Recibo de Haberes</h2>
-<hr>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+    <main class="container py-4">
 
-<div th:if="${persona != null}">
-  <p><strong>Empleado:</strong> <span th:text="${persona.nombre + ' ' + persona.apellido}"></span></p>
-  <p><strong>DNI:</strong> <span th:text="${persona.dni}"></span></p>
-</div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/empleado}">Mi página</a></li>
+            <li class="breadcrumb-item active">Recibo de sueldo</li>
+        </ol>
+    </nav>
 
-<div th:if="${festival != null}">
-  <p><strong>Festival:</strong> <span th:text="${festival.nombre}"></span></p>
-</div>
+    <h2 class="mb-1">Recibo de sueldo</h2>
+    <p class="text-muted mb-4">Liquidación de haberes por la participación en el festival.</p>
 
-<p><strong>Total Neto a Cobrar:</strong> $<span th:text="${sueldoTotal}"></span></p>
-
-<a th:href="@{/liquidacion/pdf(idPersona=${persona != null ? persona.idPersona : 1}, idFestival=${festival != null ? festival.idFestival : 1})}"
-   class="btn btn-danger mt-3">
-  Descargar Recibo en PDF
-</a>
+    <div class="card">
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+            <span th:text="${festival.nombre + ' (' + festival.temporada + ')'}"></span>
+            <small class="text-muted fw-normal"
+                   th:text="${#temporals.format(festival.fechaInicio, 'dd/MM/yyyy')} + ' al ' + ${#temporals.format(festival.fechaFin, 'dd/MM/yyyy')}"></small>
+        </div>
+        <div class="card-body">
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <div class="text-muted small">Empleado</div>
+                    <div class="fw-bold" th:text="${persona.apellido + ', ' + persona.nombre}"></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-muted small">DNI</div>
+                    <div class="fw-bold" th:text="${persona.dni}"></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-muted small">Fecha de ingreso</div>
+                    <div class="fw-bold" th:text="${#temporals.format(persona.fechaIngreso, 'dd/MM/yyyy')}"></div>
+                </div>
+            </div>
+            <table class="table mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Concepto</th>
+                        <th class="text-end">Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Liquidación por participación en el festival</td>
+                        <td class="text-end" th:text="'$' + ${#numbers.formatDecimal(sueldoTotal, 1, 'POINT', 2, 'COMMA')}"></td>
+                    </tr>
+                    <tr class="table-success fw-bold">
+                        <td>Total neto a cobrar</td>
+                        <td class="text-end" th:text="'$' + ${#numbers.formatDecimal(sueldoTotal, 1, 'POINT', 2, 'COMMA')}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer d-flex gap-2">
+            <a th:href="@{/liquidacion/pdf(idPersona=${persona.idPersona}, idFestival=${festival.idFestival})}"
+               class="btn btn-primary">Descargar recibo en PDF</a>
+            <a th:href="@{/empleado}" class="btn btn-outline-secondary">Volver</a>
+        </div>
+    </div>
+    </main>
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
 </body>
 </html>

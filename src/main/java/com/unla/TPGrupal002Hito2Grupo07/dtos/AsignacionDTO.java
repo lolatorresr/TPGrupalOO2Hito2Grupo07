@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 public class AsignacionDTO {
+    private int idFestival;
     private String nombreUnidad;
     private String codigoUnidad;
     private String tipoUnidad;

@@ -13,14 +13,18 @@
          Para agregar una sección nueva alcanza con sumar un <li> con su th:if. -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" th:fragment="navbar">
         <div class="container-fluid px-4">
-            <a class="navbar-brand" th:href="@{/index}">Epicentro Gourmet</a>
+            <!-- El inicio del empleado es su propia página; el resto va al inicio general -->
+            <a class="navbar-brand" th:href="${roles != null and roles.contains('ROLE_EMPLEADO')} ? @{/empleado} : @{/index}">Epicentro Gourmet</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item">
+                    <li class="nav-item" th:unless="${roles != null and roles.contains('ROLE_EMPLEADO')}">
                         <a class="nav-link px-3" th:href="@{/index}">Inicio</a>
+                    </li>
+                    <li class="nav-item" th:if="${roles != null and roles.contains('ROLE_EMPLEADO')}">
+                        <a class="nav-link px-3" th:href="@{/empleado}">Mi página</a>
                     </li>
                     <li class="nav-item" th:if="${roles != null and roles.contains('ROLE_ADMIN')}">
                         <a class="nav-link px-3" th:href="@{/unidades/}">Unidades de Venta</a>
