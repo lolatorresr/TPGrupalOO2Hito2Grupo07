@@ -51,10 +51,17 @@ INSERT INTO responsable (id_persona)
 VALUES (1)
     ON DUPLICATE KEY UPDATE id_persona=id_persona;
 
--- Cajero del staff
+-- Cajero del staff: cajero1 / admin123
+INSERT INTO user (id, username, password, enabled, created_at, updated_at)
+VALUES (102, 'cajero1', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW())
+    ON DUPLICATE KEY UPDATE username=username;
+INSERT INTO user_role (id, role, created_at, updated_at, user_id)
+VALUES (102, 'ROLE_EMPLEADO', NOW(), NOW(), 102)
+    ON DUPLICATE KEY UPDATE role=role;
+
 INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
-VALUES (3, 'Carlos', 'López', 28333444, '1982-11-03', '2021-09-10', 'carlos.lopez@epicentro.com', NULL)
-    ON DUPLICATE KEY UPDATE nombre=nombre;
+VALUES (3, 'Carlos', 'López', 28333444, '1982-11-03', '2021-09-10', 'carlos.lopez@epicentro.com', 102)
+    ON DUPLICATE KEY UPDATE user_id=VALUES(user_id);
 
 INSERT INTO cajero (id_persona, turno_trabajo, recaudacion_total)
 VALUES (3, 'MAÑANA', 0)
