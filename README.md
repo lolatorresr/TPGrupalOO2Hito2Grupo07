@@ -29,6 +29,7 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 | Reportes del administrador: ranking de unidades por recaudación de un festival y unidades con mayor canon (ReporteMayoresCanonDTO) | Lucia Daniela Ruiz - PR: [PR #15](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/15) |
 | Liquidación de haberes del empleado y recibo de sueldo en PDF | Lola Torres Rodriguez - [PR #16](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/16) |
 | Ajustes de la liquidación: acceso con sesión (cada empleado ve solo su recibo), sueldos por festival en la página del empleado y estilo del sitio | Lucia Daniela Ruiz - PR: [PR #17](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/17) |
+| Plato estrella con la barra del sitio y acceso desde la gestión de platos | Lucia Daniela Ruiz - PR: [PR #18](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/18) |
 
 ## Pasos para correr la aplicación
 1. Requisitos: Java 17, Maven 3.9+ y MySQL 8.
