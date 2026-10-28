@@ -47,7 +47,12 @@
 
     <div class="card" th:if="${festival != null}">
         <div class="card-header fw-bold d-flex justify-content-between align-items-center">
-            <span th:text="'Las ' + ${cantidad} + ' unidades con mayor canon de ' + ${festival.nombre}"></span>
+            <span>
+                <span th:text="'Las ' + ${#lists.size(unidades)} + ' unidades con mayor canon de ' + ${festival.nombre}"></span>
+                <!-- Si se pidieron más unidades de las que tiene el festival, se aclara -->
+                <small class="text-muted fw-normal" th:if="${cantidad > #lists.size(unidades)}"
+                       th:text="'(se pidieron ' + ${cantidad} + ', el festival tiene ' + ${#lists.size(unidades)} + ' activas)'"></small>
+            </span>
             <small class="text-muted fw-normal"
                    th:text="${#temporals.format(festival.fechaInicio, 'dd/MM/yyyy')} + ' al ' + ${#temporals.format(festival.fechaFin, 'dd/MM/yyyy')}"></small>
         </div>
