@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Epicentro Gourmet - Liquidación</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+<h2>Recibo de Haberes</h2>
+<hr>
+
+<div th:if="${persona != null}">
+  <p><strong>Empleado:</strong> <span th:text="${persona.nombre + ' ' + persona.apellido}"></span></p>
+  <p><strong>DNI:</strong> <span th:text="${persona.dni}"></span></p>
+</div>
+
+<div th:if="${festival != null}">
+  <p><strong>Festival:</strong> <span th:text="${festival.nombre}"></span></p>
+</div>
+
+<p><strong>Total Neto a Cobrar:</strong> $<span th:text="${sueldoTotal}"></span></p>
+
+<a th:href="@{/liquidacion/pdf(idPersona=${persona != null ? persona.idPersona : 1}, idFestival=${festival != null ? festival.idFestival : 1})}"
+   class="btn btn-danger mt-3">
+  Descargar Recibo en PDF
+</a>
+</body>
+</html>
