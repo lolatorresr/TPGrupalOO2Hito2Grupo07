@@ -52,16 +52,32 @@ public class PedidoController {
     private ICierreCajaService cierreCajaService;
 
     @GetMapping("/")
-    public ModelAndView index(Authentication auth) {
+    public ModelAndView index(@RequestParam(required = false) Integer festivalId, Authentication auth) {
         ModelAndView mAV = new ModelAndView(ViewRouteHelper.PEDIDO_INDEX);
+        List<PedidoDTO> pedidos;
+        List<FestivalDTO> festivales;
         if (esAdmin(auth)) {
-            mAV.addObject("pedidos", pedidoService.getAll());
+            pedidos = pedidoService.getAll();
+            festivales = festivalService.getAll();
         } else {
             // Empleado o responsable: solo los pedidos de las unidades donde trabaja
-            List<Integer> misUnidades = unidadesDeStaff(auth).stream().map(UnidadDeVentaDTO::getIdUnidadDeVenta).toList();
-            mAV.addObject("pedidos", pedidoService.getDeUnidades(misUnidades));
+            List<UnidadDeVentaDTO> misUnidades = unidadesDeStaff(auth);
+            pedidos = pedidoService.getDeUnidades(misUnidades.stream().map(UnidadDeVentaDTO::getIdUnidadDeVenta).toList());
+            List<Integer> misFestivales = misUnidades.stream().map(UnidadDeVentaDTO::getFestivalId).distinct().toList();
+            festivales = festivalService.getAll().stream().filter(f -> misFestivales.contains(f.getIdFestival())).toList();
             mAV.addObject("soloMisUnidades", true);
         }
+        // Filtro por festival: por defecto el festival en curso (los pedidos actuales); 0 = todos, para ver los anteriores
+        if (festivalId == null) {
+            festivalId = festivales.stream().filter(FestivalDTO::isEnCurso).map(FestivalDTO::getIdFestival).findFirst().orElse(0);
+        }
+        if (festivalId != 0) {
+            int id = festivalId;
+            pedidos = pedidos.stream().filter(p -> p.getFestivalId() == id).toList();
+        }
+        mAV.addObject("pedidos", pedidos);
+        mAV.addObject("festivales", festivales);
+        mAV.addObject("festivalId", festivalId);
         // Para mostrar u ocultar el botón "+ Nuevo Pedido"
         mAV.addObject("puedeCargar", puedeCargarPedidos(auth));
         return mAV;

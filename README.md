@@ -30,6 +30,10 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 | Liquidación de haberes del empleado y recibo de sueldo en PDF | Lola Torres Rodriguez - [PR #16](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/16) |
 | Ajustes de la liquidación: acceso con sesión (cada empleado ve solo su recibo), sueldos por festival en la página del empleado y estilo del sitio | Lucia Daniela Ruiz - PR: [PR #17](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/17) |
 | Plato estrella con la barra del sitio y acceso desde la gestión de platos | Lucia Daniela Ruiz - PR: [PR #18](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/18) |
+| Reactivar empleado dado de baja (método de actualización específico), data.sql sin la columna activo y ajustes de email y usuario | Juan Pablo Lombisano Bentos - [PR #19](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/19) |
+| Alta de pedido: entre los empleados, solo los cajeros pueden cargar pedidos | Juan Pablo Lombisano Bentos - [PR #20](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/20) |
+| Cierre de caja del cajero al finalizar el día (CierreCaja, historial de cierres y bloqueo de nuevos pedidos con la caja cerrada) | Juan Pablo Lombisano Bentos - [PR #21](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/21) |
+| Reportes del responsable: recaudación de un festival (ReporteVentaDTO), rentabilidad neta de una unidad en un festival y rentabilidad neta entre dos fechas. Incluye más datos de prueba, calendario común en todos los campos de fecha, listado de pedidos filtrado por festival y corrección del plus del cocinero ayudante | Lucia Daniela Ruiz - PR: [PR #22](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/22) |
 
 ## Pasos para correr la aplicación
 1. Requisitos: Java 17, Maven 3.9+ y MySQL 8.
@@ -57,6 +61,8 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 | Usuario | Contraseña | Rol |
 | :--- | :--- | :--- |
 | admin | admin123 | ROLE_ADMIN |
-| responsable1 | admin123 | ROLE_RESPONSABLE |
+| responsable1 | admin123 | ROLE_RESPONSABLE (Martín García, unidades Burger Truck, Taco Móvil y Choripanes del Sur) |
 | responsable2 | admin123 | ROLE_RESPONSABLE (Ana Martínez, unidades Pizza Nostra y Empanadas del Norte) |
+| responsable3 | admin123 | ROLE_RESPONSABLE (Julián Pereyra, unidades Pizza Truck y Cositas Dulces) |
 | empleado1 | admin123 | ROLE_EMPLEADO (Diego Fernández, trabaja en Choripanes del Sur) |
+| cajero1 | admin123 | ROLE_EMPLEADO (Carlos López, cajero de Burger Truck y Pizza Nostra; puede cerrar caja) |

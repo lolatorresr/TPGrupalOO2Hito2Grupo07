@@ -62,12 +62,13 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3" th:if="${roles != null and roles.contains('ROLE_ADMIN')}">
+            <div class="col-md-3 mb-3" th:if="${roles != null and (roles.contains('ROLE_ADMIN') or roles.contains('ROLE_RESPONSABLE'))}">
                 <div class="card access-card h-100">
                     <div class="card-body">
                         <div class="icon">&#128202;</div>
                         <h5 class="card-title">Reportes</h5>
-                        <p class="card-text text-muted">Ranking por recaudación y unidades con mayor canon de un festival.</p>
+                        <p class="card-text text-muted" th:if="${roles.contains('ROLE_ADMIN')}">Recaudación, ranking por recaudación y unidades con mayor canon de un festival.</p>
+                        <p class="card-text text-muted" th:unless="${roles.contains('ROLE_ADMIN')}">Recaudación de tus unidades en un festival.</p>
                         <a th:href="@{/reportes/}" class="btn btn-primary">Acceder</a>
                     </div>
                 </div>

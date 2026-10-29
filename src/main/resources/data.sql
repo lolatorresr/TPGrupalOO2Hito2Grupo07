@@ -1,217 +1,767 @@
 -- =====================================================================
--- Datos de prueba. Se ejecuta en cada arranque (spring.sql.init.mode=always);
--- todos los inserts son idempotentes gracias a ON DUPLICATE KEY UPDATE.
+-- Datos de prueba de Epicentro Gourmet. Se ejecuta en cada arranque
+-- (spring.sql.init.mode=always); todos los inserts son idempotentes gracias a
+-- ON DUPLICATE KEY UPDATE / INSERT IGNORE: la base se crea vacía y el script
+-- la deja completa.
+--
+-- Usuarios (todos con contraseña admin123):
+--   admin        -> administrador
+--   responsable1 -> Martín García   (Burger Truck, Taco Móvil y Choripanes del Sur)
+--   responsable2 -> Ana Martínez    (Pizza Nostra y Empanadas del Norte)
+--   responsable3 -> Julián Pereyra  (Pizza Truck y Cositas Dulces)
+--   empleado1    -> Diego Fernández (lavaplatos de Choripanes del Sur)
+--   cajero1      -> Carlos López    (cajero de Burger Truck y Pizza Nostra; puede cerrar caja)
 -- =====================================================================
 
 -- ---------- Usuarios ----------
--- admin / admin123
-INSERT INTO user (id, username, password, enabled, created_at, updated_at)
-VALUES (1, 'admin', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW())
+INSERT INTO user (id, username, password, enabled, created_at, updated_at) VALUES
+    (1, 'admin', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (2, 'responsable1', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (3, 'responsable2', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (4, 'responsable3', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (5, 'empleado1', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (6, 'cajero1', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW())
     ON DUPLICATE KEY UPDATE username=username;
-
-INSERT INTO user_role (id, role, created_at, updated_at, user_id)
-VALUES (1, 'ROLE_ADMIN', NOW(), NOW(), 1)
+INSERT INTO user_role (id, role, created_at, updated_at, user_id) VALUES
+    (1, 'ROLE_ADMIN', NOW(), NOW(), 1),
+    (2, 'ROLE_RESPONSABLE', NOW(), NOW(), 2),
+    (3, 'ROLE_RESPONSABLE', NOW(), NOW(), 3),
+    (4, 'ROLE_RESPONSABLE', NOW(), NOW(), 4),
+    (5, 'ROLE_EMPLEADO', NOW(), NOW(), 5),
+    (6, 'ROLE_EMPLEADO', NOW(), NOW(), 6)
     ON DUPLICATE KEY UPDATE role=role;
-
--- responsable1 / admin123 (responsable de unidad de venta)
-INSERT INTO user (id, username, password, enabled, created_at, updated_at)
-VALUES (2, 'responsable1', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW())
-    ON DUPLICATE KEY UPDATE username=username;
-
-INSERT INTO user_role (id, role, created_at, updated_at, user_id)
-VALUES (2, 'ROLE_RESPONSABLE', NOW(), NOW(), 2)
-    ON DUPLICATE KEY UPDATE role=role;
-
--- ---------- Platos ----------
-INSERT INTO plato (id_plato, nombre, precio, costo) VALUES
-                                                        (1, 'Hamburguesa Completa', 8500.00, 3200.00),
-                                                        (2, 'Papas Rústicas', 4500.00, 1500.00),
-                                                        (3, 'Cerveza Artesanal', 3500.00, 1200.00)
-    ON DUPLICATE KEY UPDATE nombre=nombre;
 
 -- ---------- Festivales ----------
--- Festival 1 ya terminó (tiene los pedidos de prueba); el 2 está en curso para probar "Hoy trabajás en...".
--- ON DUPLICATE KEY actualiza nombre y fechas, así las bases que ya tenían otros festivales quedan iguales a este script.
+-- El 1 ya terminó; el 2 está en curso (sirve para "Hoy trabajás en..." y cerrar caja).
+-- ON DUPLICATE KEY actualiza nombre y fechas para que una base vieja quede igual al script.
 INSERT INTO festival (id_festival, nombre, temporada, fecha_inicio, fecha_fin) VALUES
-                                                                                   (1, 'Festival de Primavera', 'Primavera 2026', '2026-10-01', '2026-10-12'),
-                                                                                   (2, 'Primavera Sound 2026',  'Primavera 2026', '2026-10-20', '2026-11-15')
+    (1, 'Festival de Primavera', 'Primavera 2026', '2026-10-01', '2026-10-12'),
+    (2, 'Primavera Sound 2026', 'Primavera 2026', '2026-10-20', '2026-11-15')
     ON DUPLICATE KEY UPDATE nombre=VALUES(nombre), temporada=VALUES(temporada),
     fecha_inicio=VALUES(fecha_inicio), fecha_fin=VALUES(fecha_fin);
 
--- ---------- Personal (Persona es abstracta: cada fila necesita su subtipo) ----------
--- Responsable de unidad (vinculado al usuario responsable1)
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
-VALUES (1, 'Martín', 'García', 30111222, '1985-04-12', '2022-03-01', 'responsable1@epicentro.com', 2)
+-- ---------- Platos (precio de venta y costo de producción) ----------
+INSERT INTO plato (id_plato, nombre, precio, costo) VALUES
+    ( 1, 'Hamburguesa Completa',         8500.00,  3200.00),
+    ( 2, 'Papas Rústicas',               4500.00,  1500.00),
+    ( 3, 'Cerveza Artesanal',            3500.00,  1200.00),
+    ( 4, 'Pizza Muzzarella',             7000.00,  2500.00),
+    ( 5, 'Gaseosa',                      2000.00,   700.00),
+    ( 6, 'Empanada de Carne',            1500.00,   500.00),
+    ( 7, 'Choripán',                     4000.00,  1200.00),
+    ( 8, 'Bondiola al pan',              6500.00,  2500.00),
+    ( 9, 'Papas con cheddar',            5500.00,  1800.00),
+    (10, 'Pizza Napolitana',             8500.00,  3200.00),
+    (11, 'Pizza Fugazzeta',              8000.00,  2800.00),
+    (12, 'Empanada de Pollo',            1500.00,   450.00),
+    (13, 'Empanada de Humita',           1400.00,   400.00),
+    (14, 'Agua Mineral',                 1500.00,   500.00),
+    (15, 'Limonada',                     3000.00,   900.00),
+    (16, 'Tacos al Pastor (x3)',         7500.00,  2800.00),
+    (17, 'Pizza Pepperoni',              8500.00,  3000.00),
+    (18, 'Fainá',                        2000.00,   600.00),
+    (19, 'Churros con dulce de leche',   2500.00,   700.00),
+    (20, 'Brownie',                      3000.00,   900.00),
+    (21, 'Pastafrola de batata',         3000.00,   900.00),
+    (22, 'Pastafrola de membrillo',      3000.00,   900.00),
+    (23, 'Cookies',                      1800.00,   500.00),
+    (24, 'Café',                         2000.00,   500.00)
     ON DUPLICATE KEY UPDATE nombre=nombre;
 
--- Limpieza preventiva para asegurar que el responsable no figure como cajero
-DELETE FROM cajero WHERE id_persona = 1;
-
-INSERT INTO responsable (id_persona)
-VALUES (1)
+-- ---------- Personal (Persona es abstracta: cada fila tiene su subtipo) ----------
+-- Primero los responsables (1 a 3), después el staff: cajeros y cocineros.
+INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id) VALUES
+    ( 1, 'Martín',     'García',    30111222, '1985-04-12', '2022-03-01', 'responsable1@epicentro.com',       2),
+    ( 2, 'Ana',        'Martínez',  32555666, '1988-07-19', '2020-05-04', 'responsable2@epicentro.com',       3),
+    ( 3, 'Julián',     'Pereyra',   33666777, '1989-01-25', '2021-04-19', 'responsable3@epicentro.com',       4),
+    ( 4, 'Carlos',     'López',     28333444, '1982-11-03', '2021-09-10', 'carlos.lopez@epicentro.com',       6),
+    ( 5, 'Lucía',      'Pérez',     35222333, '1990-08-25', '2023-06-15', 'lucia.perez@epicentro.com',        NULL),
+    ( 6, 'Diego',      'Fernández', 38444555, '1995-02-10', '2024-01-20', 'diego.fernandez@epicentro.com',    5),
+    ( 7, 'Sofía',      'Romero',    40111222, '1997-03-14', '2025-03-01', 'sofia.romero@epicentro.com',       NULL),
+    ( 8, 'Matías',     'Giménez',   39222333, '1996-09-02', '2024-08-12', 'matias.gimenez@epicentro.com',     NULL),
+    ( 9, 'Valentina',  'Sosa',      41333444, '1998-12-20', '2023-02-06', 'valentina.sosa@epicentro.com',     NULL),
+    (10, 'Tomás',      'Acosta',    36444555, '1993-05-30', '2019-11-18', 'tomas.acosta@epicentro.com',       NULL),
+    (11, 'Camila',     'Herrera',   42555666, '1999-07-08', '2024-06-03', 'camila.herrera@epicentro.com',     NULL),
+    (12, 'Lautaro',    'Molina',    43777888, '2000-10-05', '2024-02-19', 'lautaro.molina@epicentro.com',     NULL),
+    (13, 'Florencia',  'Castro',    37888999, '1994-06-17', '2020-09-07', 'florencia.castro@epicentro.com',   NULL),
+    (14, 'Bruno',      'Ledesma',   44999000, '2001-03-23', '2025-01-13', 'bruno.ledesma@epicentro.com',      NULL),
+    (15, 'Martina',    'Ríos',      41000111, '1998-11-11', '2022-07-04', 'martina.rios@epicentro.com',       NULL)
+    ON DUPLICATE KEY UPDATE nombre=nombre;
+INSERT INTO responsable (id_persona) VALUES (1), (2), (3)
     ON DUPLICATE KEY UPDATE id_persona=id_persona;
-
--- Cajero del staff: cajero1 / admin123
-INSERT INTO user (id, username, password, enabled, created_at, updated_at)
-VALUES (102, 'cajero1', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW())
-    ON DUPLICATE KEY UPDATE username=username;
-INSERT INTO user_role (id, role, created_at, updated_at, user_id)
-VALUES (102, 'ROLE_EMPLEADO', NOW(), NOW(), 102)
-    ON DUPLICATE KEY UPDATE role=role;
-
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
-VALUES (3, 'Carlos', 'López', 28333444, '1982-11-03', '2021-09-10', 'carlos.lopez@epicentro.com', 102)
-    ON DUPLICATE KEY UPDATE user_id=VALUES(user_id);
-
-INSERT INTO cajero (id_persona, turno_trabajo)
-VALUES (3, 'MAÑANA')
+INSERT INTO cajero (id_persona, turno_trabajo) VALUES
+    ( 4, 'MAÑANA'),
+    ( 7, 'NOCHE'),
+    ( 9, 'MAÑANA'),
+    (11, 'NOCHE'),
+    (12, 'MAÑANA'),
+    (14, 'NOCHE')
     ON DUPLICATE KEY UPDATE turno_trabajo=turno_trabajo;
-
--- Cocinero del staff
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
-VALUES (2, 'Lucía', 'Pérez', 35222333, '1990-08-25', '2023-06-15', 'lucia.perez@epicentro.com', NULL)
-    ON DUPLICATE KEY UPDATE nombre=nombre;
-
-INSERT INTO cocinero (id_persona, especialidad, categoria)
-VALUES (2, 'Parrilla', 'COCINERO')
-    ON DUPLICATE KEY UPDATE especialidad=especialidad;
-
--- Empleado de prueba: empleado1 / admin123 (lavaplatos)
-INSERT INTO user (id, username, password, enabled, created_at, updated_at)
-VALUES (100, 'empleado1', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW())
-    ON DUPLICATE KEY UPDATE username=username;
-
-INSERT INTO user_role (id, role, created_at, updated_at, user_id)
-VALUES (100, 'ROLE_EMPLEADO', NOW(), NOW(), 100)
-    ON DUPLICATE KEY UPDATE role=role;
-
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
-VALUES (100, 'Diego', 'Fernández', 38444555, '1995-02-10', '2024-01-20', 'diego.fernandez@epicentro.com', 100)
-    ON DUPLICATE KEY UPDATE nombre=nombre;
-
-INSERT INTO cocinero (id_persona, especialidad, categoria)
-VALUES (100, 'Lavado', 'LAVAPLATOS')
+INSERT INTO cocinero (id_persona, especialidad, categoria) VALUES
+    ( 5, 'Parrilla',    'COCINERO'),
+    ( 6, 'Lavado',      'LAVAPLATOS'),
+    ( 8, 'Horno',       'COCINERO_AYUDANTE'),
+    (10, 'Plancha',     'COCINERO'),
+    (13, 'Horno',       'COCINERO'),
+    (15, 'Pastelería',  'COCINERO_AYUDANTE')
     ON DUPLICATE KEY UPDATE especialidad=especialidad;
 
 -- ---------- Unidades de venta ----------
--- Food Truck con conexión eléctrica: canon = 12 * 500 + 2000 = 8000
-INSERT INTO unidad_de_venta (id_unidad_de_venta, nombre_comercial, codigo, superficie, activo, festival_id, responsable_id)
-VALUES (1, 'Burger Truck', 'FT-BRG0001', 12, 1, 1, 1)
+-- Canon: Food Truck = superficie * 500 (+ 2000 si requiere electricidad);
+--        Puesto Desarmable = superficie * 500 - minutos de montaje * 10.
+INSERT INTO unidad_de_venta (id_unidad_de_venta, nombre_comercial, codigo, superficie, activo, festival_id, responsable_id) VALUES
+    (1, 'Burger Truck',         'FT-BRG0001', 12, 1, 1, 1),
+    (2, 'Taco Móvil',           'FT-TAC0002',  8, 1, 1, 1),
+    (3, 'Pizza Truck',          'FT-PZT0003', 14, 1, 1, 3),
+    (4, 'Choripanes del Sur',   'PD-CHO0004', 20, 1, 2, 1),
+    (5, 'Pizza Nostra',         'FT-PIZ0005', 15, 1, 2, 2),
+    (6, 'Empanadas del Norte',  'PD-EMP0006', 10, 1, 2, 2),
+    (7, 'Cositas Dulces',       'PD-DUL0007',  6, 1, 2, 3)
     ON DUPLICATE KEY UPDATE nombre_comercial=nombre_comercial;
-INSERT INTO food_truck (id_unidad_de_venta, patente, requiere_conexion_electrica)
-VALUES (1, 'AB123CD', 1)
+INSERT INTO food_truck (id_unidad_de_venta, patente, requiere_conexion_electrica) VALUES
+    (1, 'AB123CD', 1),
+    (2, 'AC456EF', 0),
+    (3, 'AE321JK', 1),
+    (5, 'AD789GH', 1)
     ON DUPLICATE KEY UPDATE patente=patente;
-
--- Food Truck sin conexión eléctrica: canon = 8 * 500 = 4000
-INSERT INTO unidad_de_venta (id_unidad_de_venta, nombre_comercial, codigo, superficie, activo, festival_id, responsable_id)
-VALUES (2, 'Taco Móvil', 'FT-TAC0002', 8, 1, 1, 1)
-    ON DUPLICATE KEY UPDATE nombre_comercial=nombre_comercial;
-INSERT INTO food_truck (id_unidad_de_venta, patente, requiere_conexion_electrica)
-VALUES (2, 'AC456EF', 0)
-    ON DUPLICATE KEY UPDATE patente=patente;
-
--- Puesto Desarmable: canon = 20 * 500 - 90 * 10 = 9100
-INSERT INTO unidad_de_venta (id_unidad_de_venta, nombre_comercial, codigo, superficie, activo, festival_id, responsable_id)
-VALUES (3, 'Choripanes del Sur', 'PD-CHO0003', 20, 1, 2, 1)
-    ON DUPLICATE KEY UPDATE nombre_comercial=nombre_comercial;
-INSERT INTO puesto_desarmable (id_unidad_de_venta, cantidad_carpas, tiempo_montaje_minutos)
-VALUES (3, 2, 90)
+INSERT INTO puesto_desarmable (id_unidad_de_venta, cantidad_carpas, tiempo_montaje_minutos) VALUES
+    (4, 2, 90),
+    (6, 1, 45),
+    (7, 1, 30)
     ON DUPLICATE KEY UPDATE cantidad_carpas=cantidad_carpas;
 
--- Platos ofrecidos y staff de cada unidad
-INSERT IGNORE INTO unidad_plato (unidad_id, plato_id) VALUES (1, 1), (1, 2), (2, 3), (3, 1), (3, 3);
-INSERT IGNORE INTO unidad_staff (unidad_id, persona_id) VALUES (1, 1), (1, 2), (1, 3), (3, 1), (1, 100), (3, 100);
+-- Platos que ofrece cada unidad
+INSERT IGNORE INTO unidad_plato (unidad_id, plato_id) VALUES
+    (1, 1), (1, 2), (1, 9), (1, 15),
+    (2, 3), (2, 14), (2, 16),
+    (3, 14), (3, 17), (3, 18),
+    (4, 1), (4, 3), (4, 7), (4, 8), (4, 9), (4, 14),
+    (5, 4), (5, 5), (5, 10), (5, 11), (5, 14),
+    (6, 5), (6, 6), (6, 12), (6, 13), (6, 15),
+    (7, 15), (7, 19), (7, 20), (7, 21), (7, 22), (7, 23), (7, 24);
+
+-- Staff de cada unidad (el responsable también forma parte)
+INSERT IGNORE INTO unidad_staff (unidad_id, persona_id) VALUES
+    (1, 1), (1, 4), (1, 5), (1, 6), (1, 10),
+    (2, 11),
+    (3, 3), (3, 12), (3, 13),
+    (4, 1), (4, 6), (4, 7),
+    (5, 2), (5, 4), (5, 8),
+    (6, 2), (6, 5), (6, 9),
+    (7, 3), (7, 14), (7, 15);
 
 -- ---------- Pedidos con sus ítems ----------
--- Sub_total = precio del plato * cantidad (Hamburguesa 8500, Papas 4500, Cerveza 3500).
--- Todos del Festival 1 (01/10 al 12/10/2026), unidades 1 y 2. Sirven para recaudación, ranking y plato estrella.
+-- Numerados en orden cronológico. Festival 1 (01 al 12/10/2026) y festival 2 (desde el 20/10/2026).
+-- Sub_total = precio del plato * cantidad; el costo del reporte de rentabilidad sale del costo del plato.
 INSERT INTO pedido (id_pedido, fecha_transaccion, festival_id, unidad_venta_id) VALUES
-                                                                                    (1, '2026-10-02', 1, 1),
-                                                                                    (2, '2026-10-02', 1, 2),
-                                                                                    (3, '2026-10-05', 1, 1),
-                                                                                    (4, '2026-10-08', 1, 1),
-                                                                                    (5, '2026-10-10', 1, 2),
-                                                                                    (6, '2026-10-11', 1, 1)
+    (  1, '2026-10-01', 1, 1),
+    (  2, '2026-10-01', 1, 3),
+    (  3, '2026-10-01', 1, 3),
+    (  4, '2026-10-02', 1, 1),
+    (  5, '2026-10-02', 1, 2),
+    (  6, '2026-10-02', 1, 3),
+    (  7, '2026-10-02', 1, 3),
+    (  8, '2026-10-03', 1, 1),
+    (  9, '2026-10-03', 1, 3),
+    ( 10, '2026-10-03', 1, 3),
+    ( 11, '2026-10-04', 1, 2),
+    ( 12, '2026-10-04', 1, 3),
+    ( 13, '2026-10-04', 1, 3),
+    ( 14, '2026-10-04', 1, 3),
+    ( 15, '2026-10-05', 1, 1),
+    ( 16, '2026-10-05', 1, 3),
+    ( 17, '2026-10-05', 1, 3),
+    ( 18, '2026-10-06', 1, 2),
+    ( 19, '2026-10-06', 1, 3),
+    ( 20, '2026-10-06', 1, 3),
+    ( 21, '2026-10-06', 1, 3),
+    ( 22, '2026-10-07', 1, 1),
+    ( 23, '2026-10-07', 1, 3),
+    ( 24, '2026-10-07', 1, 3),
+    ( 25, '2026-10-08', 1, 1),
+    ( 26, '2026-10-08', 1, 3),
+    ( 27, '2026-10-08', 1, 3),
+    ( 28, '2026-10-08', 1, 3),
+    ( 29, '2026-10-09', 1, 2),
+    ( 30, '2026-10-09', 1, 3),
+    ( 31, '2026-10-09', 1, 3),
+    ( 32, '2026-10-09', 1, 3),
+    ( 33, '2026-10-10', 1, 1),
+    ( 34, '2026-10-10', 1, 2),
+    ( 35, '2026-10-10', 1, 3),
+    ( 36, '2026-10-10', 1, 3),
+    ( 37, '2026-10-11', 1, 1),
+    ( 38, '2026-10-11', 1, 3),
+    ( 39, '2026-10-11', 1, 3),
+    ( 40, '2026-10-11', 1, 3),
+    ( 41, '2026-10-12', 1, 1),
+    ( 42, '2026-10-12', 1, 2),
+    ( 43, '2026-10-12', 1, 3),
+    ( 44, '2026-10-12', 1, 3),
+    ( 45, '2026-10-12', 1, 3),
+    ( 46, '2026-10-20', 2, 4),
+    ( 47, '2026-10-20', 2, 4),
+    ( 48, '2026-10-20', 2, 4),
+    ( 49, '2026-10-20', 2, 4),
+    ( 50, '2026-10-20', 2, 4),
+    ( 51, '2026-10-20', 2, 4),
+    ( 52, '2026-10-20', 2, 4),
+    ( 53, '2026-10-20', 2, 5),
+    ( 54, '2026-10-20', 2, 5),
+    ( 55, '2026-10-20', 2, 5),
+    ( 56, '2026-10-20', 2, 5),
+    ( 57, '2026-10-20', 2, 5),
+    ( 58, '2026-10-20', 2, 5),
+    ( 59, '2026-10-20', 2, 7),
+    ( 60, '2026-10-20', 2, 7),
+    ( 61, '2026-10-20', 2, 7),
+    ( 62, '2026-10-20', 2, 7),
+    ( 63, '2026-10-20', 2, 7),
+    ( 64, '2026-10-20', 2, 7),
+    ( 65, '2026-10-20', 2, 7),
+    ( 66, '2026-10-21', 2, 4),
+    ( 67, '2026-10-21', 2, 4),
+    ( 68, '2026-10-21', 2, 4),
+    ( 69, '2026-10-21', 2, 4),
+    ( 70, '2026-10-21', 2, 4),
+    ( 71, '2026-10-21', 2, 4),
+    ( 72, '2026-10-21', 2, 4),
+    ( 73, '2026-10-21', 2, 4),
+    ( 74, '2026-10-21', 2, 4),
+    ( 75, '2026-10-21', 2, 5),
+    ( 76, '2026-10-21', 2, 5),
+    ( 77, '2026-10-21', 2, 5),
+    ( 78, '2026-10-21', 2, 6),
+    ( 79, '2026-10-21', 2, 7),
+    ( 80, '2026-10-21', 2, 7),
+    ( 81, '2026-10-21', 2, 7),
+    ( 82, '2026-10-22', 2, 4),
+    ( 83, '2026-10-22', 2, 4),
+    ( 84, '2026-10-22', 2, 5),
+    ( 85, '2026-10-22', 2, 5),
+    ( 86, '2026-10-22', 2, 5),
+    ( 87, '2026-10-22', 2, 5),
+    ( 88, '2026-10-22', 2, 5),
+    ( 89, '2026-10-22', 2, 5),
+    ( 90, '2026-10-22', 2, 5),
+    ( 91, '2026-10-22', 2, 5),
+    ( 92, '2026-10-22', 2, 6),
+    ( 93, '2026-10-22', 2, 7),
+    ( 94, '2026-10-22', 2, 7),
+    ( 95, '2026-10-22', 2, 7),
+    ( 96, '2026-10-22', 2, 7),
+    ( 97, '2026-10-22', 2, 7),
+    ( 98, '2026-10-22', 2, 7),
+    ( 99, '2026-10-22', 2, 7),
+    (100, '2026-10-22', 2, 7),
+    (101, '2026-10-22', 2, 7),
+    (102, '2026-10-22', 2, 7),
+    (103, '2026-10-23', 2, 4),
+    (104, '2026-10-23', 2, 4),
+    (105, '2026-10-23', 2, 4),
+    (106, '2026-10-23', 2, 4),
+    (107, '2026-10-23', 2, 4),
+    (108, '2026-10-23', 2, 4),
+    (109, '2026-10-23', 2, 5),
+    (110, '2026-10-23', 2, 5),
+    (111, '2026-10-23', 2, 5),
+    (112, '2026-10-23', 2, 5),
+    (113, '2026-10-23', 2, 5),
+    (114, '2026-10-23', 2, 5),
+    (115, '2026-10-23', 2, 6),
+    (116, '2026-10-23', 2, 6),
+    (117, '2026-10-23', 2, 7),
+    (118, '2026-10-23', 2, 7),
+    (119, '2026-10-23', 2, 7),
+    (120, '2026-10-24', 2, 4),
+    (121, '2026-10-24', 2, 4),
+    (122, '2026-10-24', 2, 4),
+    (123, '2026-10-24', 2, 4),
+    (124, '2026-10-24', 2, 4),
+    (125, '2026-10-24', 2, 5),
+    (126, '2026-10-24', 2, 5),
+    (127, '2026-10-24', 2, 5),
+    (128, '2026-10-24', 2, 7),
+    (129, '2026-10-24', 2, 7),
+    (130, '2026-10-24', 2, 7),
+    (131, '2026-10-24', 2, 7),
+    (132, '2026-10-24', 2, 7),
+    (133, '2026-10-24', 2, 7),
+    (134, '2026-10-24', 2, 7),
+    (135, '2026-10-24', 2, 7),
+    (136, '2026-10-25', 2, 4),
+    (137, '2026-10-25', 2, 4),
+    (138, '2026-10-25', 2, 4),
+    (139, '2026-10-25', 2, 4),
+    (140, '2026-10-25', 2, 5),
+    (141, '2026-10-25', 2, 5),
+    (142, '2026-10-25', 2, 6),
+    (143, '2026-10-25', 2, 7),
+    (144, '2026-10-25', 2, 7),
+    (145, '2026-10-25', 2, 7),
+    (146, '2026-10-25', 2, 7),
+    (147, '2026-10-25', 2, 7),
+    (148, '2026-10-26', 2, 4),
+    (149, '2026-10-26', 2, 4),
+    (150, '2026-10-26', 2, 4),
+    (151, '2026-10-26', 2, 4),
+    (152, '2026-10-26', 2, 4),
+    (153, '2026-10-26', 2, 4),
+    (154, '2026-10-26', 2, 5),
+    (155, '2026-10-26', 2, 5),
+    (156, '2026-10-26', 2, 5),
+    (157, '2026-10-26', 2, 5),
+    (158, '2026-10-26', 2, 5),
+    (159, '2026-10-26', 2, 5),
+    (160, '2026-10-26', 2, 6),
+    (161, '2026-10-26', 2, 7),
+    (162, '2026-10-26', 2, 7),
+    (163, '2026-10-26', 2, 7),
+    (164, '2026-10-26', 2, 7),
+    (165, '2026-10-26', 2, 7),
+    (166, '2026-10-27', 2, 4),
+    (167, '2026-10-27', 2, 4),
+    (168, '2026-10-27', 2, 4),
+    (169, '2026-10-27', 2, 4),
+    (170, '2026-10-27', 2, 4),
+    (171, '2026-10-27', 2, 4),
+    (172, '2026-10-27', 2, 4),
+    (173, '2026-10-27', 2, 4),
+    (174, '2026-10-27', 2, 5),
+    (175, '2026-10-27', 2, 5),
+    (176, '2026-10-27', 2, 5),
+    (177, '2026-10-27', 2, 6),
+    (178, '2026-10-27', 2, 7),
+    (179, '2026-10-27', 2, 7),
+    (180, '2026-10-27', 2, 7),
+    (181, '2026-10-27', 2, 7),
+    (182, '2026-10-27', 2, 7),
+    (183, '2026-10-27', 2, 7),
+    (184, '2026-10-27', 2, 7),
+    (185, '2026-10-27', 2, 7),
+    (186, '2026-10-28', 2, 4),
+    (187, '2026-10-28', 2, 4),
+    (188, '2026-10-28', 2, 4),
+    (189, '2026-10-28', 2, 4),
+    (190, '2026-10-28', 2, 5),
+    (191, '2026-10-28', 2, 5),
+    (192, '2026-10-28', 2, 5),
+    (193, '2026-10-28', 2, 5),
+    (194, '2026-10-28', 2, 6),
+    (195, '2026-10-28', 2, 7),
+    (196, '2026-10-28', 2, 7),
+    (197, '2026-10-28', 2, 7),
+    (198, '2026-10-28', 2, 7),
+    (199, '2026-10-28', 2, 7),
+    (200, '2026-10-28', 2, 7)
     ON DUPLICATE KEY UPDATE fecha_transaccion=VALUES(fecha_transaccion), festival_id=VALUES(festival_id), unidad_venta_id=VALUES(unidad_venta_id);
-
 INSERT INTO item_plato (id_item_plato, plato_id, cantidad, sub_total, pedido_id) VALUES
-                                                                                     (1, 1, 2, 17000.00, 1),   -- 2 hamburguesas
-                                                                                     (2, 2, 1,  4500.00, 1),   -- 1 papas
-                                                                                     (3, 3, 3, 10500.00, 2),   -- 3 cervezas
-                                                                                     (4, 1, 1,  8500.00, 3),
-                                                                                     (5, 2, 2,  9000.00, 3),
-                                                                                     (6, 1, 4, 34000.00, 4),
-                                                                                     (7, 3, 2,  7000.00, 5),
-                                                                                     (8, 1, 3, 25500.00, 6),
-                                                                                     (9, 2, 3, 13500.00, 6)
+    (  1,  1,  5,  42500.00,   1),
+    (  2,  2,  4,  18000.00,   1),
+    (  3, 15,  3,   9000.00,   1),
+    (  4, 17,  1,   8500.00,   2),
+    (  5, 18,  1,   2000.00,   2),
+    (  6, 14,  1,   1500.00,   2),
+    (  7, 17,  1,   8500.00,   3),
+    (  8, 18,  1,   2000.00,   3),
+    (  9, 14,  2,   3000.00,   3),
+    ( 10,  1,  2,  17000.00,   4),
+    ( 11,  2,  1,   4500.00,   4),
+    ( 12,  3,  3,  10500.00,   5),
+    ( 13, 17,  1,   8500.00,   6),
+    ( 14, 18,  2,   4000.00,   6),
+    ( 15, 14,  1,   1500.00,   6),
+    ( 16, 17,  1,   8500.00,   7),
+    ( 17,  1,  6,  51000.00,   8),
+    ( 18,  9,  3,  16500.00,   8),
+    ( 19, 17,  2,  17000.00,   9),
+    ( 20, 18,  1,   2000.00,   9),
+    ( 21, 17,  1,   8500.00,  10),
+    ( 22, 18,  1,   2000.00,  10),
+    ( 23, 14,  1,   1500.00,  10),
+    ( 24, 16,  4,  30000.00,  11),
+    ( 25,  3,  6,  21000.00,  11),
+    ( 26, 17,  1,   8500.00,  12),
+    ( 27, 18,  1,   2000.00,  12),
+    ( 28, 14,  1,   1500.00,  12),
+    ( 29, 17,  1,   8500.00,  13),
+    ( 30, 18,  1,   2000.00,  13),
+    ( 31, 17,  2,  17000.00,  14),
+    ( 32, 18,  2,   4000.00,  14),
+    ( 33,  1,  1,   8500.00,  15),
+    ( 34,  2,  2,   9000.00,  15),
+    ( 35, 17,  2,  17000.00,  16),
+    ( 36, 14,  1,   1500.00,  16),
+    ( 37, 17,  1,   8500.00,  17),
+    ( 38, 14,  2,   3000.00,  17),
+    ( 39, 16,  6,  45000.00,  18),
+    ( 40, 14,  4,   6000.00,  18),
+    ( 41, 17,  1,   8500.00,  19),
+    ( 42, 17,  1,   8500.00,  20),
+    ( 43, 14,  2,   3000.00,  20),
+    ( 44, 17,  1,   8500.00,  21),
+    ( 45, 14,  2,   3000.00,  21),
+    ( 46,  1,  8,  68000.00,  22),
+    ( 47,  2,  5,  22500.00,  22),
+    ( 48,  9,  2,  11000.00,  22),
+    ( 49, 17,  1,   8500.00,  23),
+    ( 50, 14,  2,   3000.00,  23),
+    ( 51, 17,  1,   8500.00,  24),
+    ( 52,  1,  4,  34000.00,  25),
+    ( 53, 17,  1,   8500.00,  26),
+    ( 54, 18,  1,   2000.00,  26),
+    ( 55, 17,  1,   8500.00,  27),
+    ( 56, 14,  2,   3000.00,  27),
+    ( 57, 17,  2,  17000.00,  28),
+    ( 58, 18,  2,   4000.00,  28),
+    ( 59, 14,  2,   3000.00,  28),
+    ( 60, 16,  5,  37500.00,  29),
+    ( 61,  3,  8,  28000.00,  29),
+    ( 62, 14,  3,   4500.00,  29),
+    ( 63, 17,  1,   8500.00,  30),
+    ( 64, 18,  2,   4000.00,  30),
+    ( 65, 14,  1,   1500.00,  30),
+    ( 66, 17,  1,   8500.00,  31),
+    ( 67, 18,  2,   4000.00,  31),
+    ( 68, 14,  1,   1500.00,  31),
+    ( 69, 17,  1,   8500.00,  32),
+    ( 70, 18,  2,   4000.00,  32),
+    ( 71, 14,  2,   3000.00,  32),
+    ( 72,  1,  7,  59500.00,  33),
+    ( 73, 15,  5,  15000.00,  33),
+    ( 74,  3,  2,   7000.00,  34),
+    ( 75, 17,  2,  17000.00,  35),
+    ( 76, 18,  1,   2000.00,  35),
+    ( 77, 17,  2,  17000.00,  36),
+    ( 78, 18,  2,   4000.00,  36),
+    ( 79,  1,  3,  25500.00,  37),
+    ( 80,  2,  3,  13500.00,  37),
+    ( 81, 17,  1,   8500.00,  38),
+    ( 82, 14,  1,   1500.00,  38),
+    ( 83, 17,  1,   8500.00,  39),
+    ( 84, 18,  1,   2000.00,  39),
+    ( 85, 14,  1,   1500.00,  39),
+    ( 86, 17,  1,   8500.00,  40),
+    ( 87, 18,  1,   2000.00,  40),
+    ( 88, 14,  2,   3000.00,  40),
+    ( 89,  1, 10,  85000.00,  41),
+    ( 90,  2,  6,  27000.00,  41),
+    ( 91,  9,  4,  22000.00,  41),
+    ( 92, 16,  8,  60000.00,  42),
+    ( 93,  3, 10,  35000.00,  42),
+    ( 94, 17,  2,  17000.00,  43),
+    ( 95, 18,  1,   2000.00,  43),
+    ( 96, 17,  2,  17000.00,  44),
+    ( 97, 17,  2,  17000.00,  45),
+    ( 98, 18,  2,   4000.00,  45),
+    ( 99, 14,  2,   3000.00,  45),
+    (100,  7,  3,  12000.00,  46),
+    (101,  3,  3,  10500.00,  46),
+    (102,  8,  5,  32500.00,  47),
+    (103,  3,  1,   3500.00,  47),
+    (104,  8,  5,  32500.00,  48),
+    (105,  3,  2,   7000.00,  48),
+    (106,  7,  2,   8000.00,  49),
+    (107, 14,  3,   4500.00,  49),
+    (108,  7,  5,  20000.00,  50),
+    (109,  3,  3,  10500.00,  50),
+    (110,  8,  3,  19500.00,  51),
+    (111,  1,  2,  17000.00,  51),
+    (112,  3,  1,   3500.00,  51),
+    (113,  7,  2,   8000.00,  52),
+    (114, 14,  2,   3000.00,  52),
+    (115,  4,  5,  35000.00,  53),
+    (116, 10,  2,  17000.00,  54),
+    (117,  4,  2,  14000.00,  55),
+    (118,  5,  3,   6000.00,  55),
+    (119,  4,  2,  14000.00,  56),
+    (120, 14,  3,   4500.00,  56),
+    (121, 10,  1,   8500.00,  57),
+    (122,  4,  2,  14000.00,  58),
+    (123, 19,  2,   5000.00,  59),
+    (124, 15,  1,   3000.00,  59),
+    (125, 21,  1,   3000.00,  60),
+    (126, 24,  2,   4000.00,  60),
+    (127, 21,  1,   3000.00,  61),
+    (128, 22,  1,   3000.00,  61),
+    (129, 24,  1,   2000.00,  61),
+    (130, 19,  5,  12500.00,  62),
+    (131, 24,  3,   6000.00,  62),
+    (132, 20,  2,   6000.00,  63),
+    (133, 24,  3,   6000.00,  63),
+    (134, 21,  2,   6000.00,  64),
+    (135, 24,  2,   4000.00,  64),
+    (136, 19,  3,   7500.00,  65),
+    (137, 24,  1,   2000.00,  65),
+    (138,  1,  2,  17000.00,  66),
+    (139,  3,  4,  14000.00,  66),
+    (140,  7,  1,   4000.00,  67),
+    (141,  9,  1,   5500.00,  67),
+    (142,  7,  3,  12000.00,  68),
+    (143,  9,  1,   5500.00,  68),
+    (144,  3,  2,   7000.00,  68),
+    (145,  7,  2,   8000.00,  69),
+    (146,  1,  1,   8500.00,  69),
+    (147,  7,  2,   8000.00,  70),
+    (148,  7,  2,   8000.00,  71),
+    (149,  8,  1,   6500.00,  72),
+    (150,  9,  2,  11000.00,  72),
+    (151,  8,  1,   6500.00,  73),
+    (152, 14,  1,   1500.00,  73),
+    (153,  7,  2,   8000.00,  74),
+    (154,  4,  3,  21000.00,  75),
+    (155,  5,  3,   6000.00,  75),
+    (156, 10,  3,  25500.00,  76),
+    (157,  4,  2,  14000.00,  77),
+    (158,  6, 24,  36000.00,  78),
+    (159, 12, 12,  18000.00,  78),
+    (160, 15,  6,  18000.00,  78),
+    (161, 19,  4,  10000.00,  79),
+    (162, 24,  2,   4000.00,  79),
+    (163, 23,  4,   7200.00,  80),
+    (164, 19,  1,   2500.00,  80),
+    (165, 15,  2,   6000.00,  80),
+    (166, 19,  2,   5000.00,  81),
+    (167, 24,  2,   4000.00,  81),
+    (168,  7,  2,   8000.00,  82),
+    (169,  7,  4,  16000.00,  83),
+    (170,  3,  2,   7000.00,  83),
+    (171,  4,  3,  21000.00,  84),
+    (172,  5,  3,   6000.00,  84),
+    (173, 11,  3,  24000.00,  85),
+    (174,  5,  1,   2000.00,  85),
+    (175, 10,  2,  17000.00,  86),
+    (176,  5,  2,   4000.00,  86),
+    (177, 10,  3,  25500.00,  87),
+    (178, 14,  3,   4500.00,  87),
+    (179,  4,  5,  35000.00,  88),
+    (180,  5,  3,   6000.00,  88),
+    (181,  4,  2,  14000.00,  89),
+    (182, 14,  2,   3000.00,  89),
+    (183,  4,  2,  14000.00,  90),
+    (184, 11,  2,  16000.00,  91),
+    (185,  6, 40,  60000.00,  92),
+    (186, 12, 20,  30000.00,  92),
+    (187,  5, 20,  40000.00,  92),
+    (188, 19,  3,   7500.00,  93),
+    (189, 24,  1,   2000.00,  93),
+    (190, 19,  2,   5000.00,  94),
+    (191, 24,  2,   4000.00,  94),
+    (192, 23,  2,   3600.00,  95),
+    (193, 15,  2,   6000.00,  95),
+    (194, 21,  2,   6000.00,  96),
+    (195, 24,  1,   2000.00,  96),
+    (196, 19,  1,   2500.00,  97),
+    (197, 24,  2,   4000.00,  97),
+    (198, 23,  2,   3600.00,  98),
+    (199, 15,  2,   6000.00,  98),
+    (200, 22,  2,   6000.00,  99),
+    (201, 24,  2,   4000.00,  99),
+    (202, 19,  2,   5000.00, 100),
+    (203, 21,  2,   6000.00, 100),
+    (204, 24,  1,   2000.00, 100),
+    (205, 21,  2,   6000.00, 101),
+    (206, 24,  2,   4000.00, 101),
+    (207, 22,  1,   3000.00, 102),
+    (208, 15,  1,   3000.00, 102),
+    (209,  7,  2,   8000.00, 103),
+    (210,  8,  3,  19500.00, 104),
+    (211,  3,  1,   3500.00, 104),
+    (212,  7,  4,  16000.00, 105),
+    (213,  1,  2,  17000.00, 105),
+    (214,  3,  1,   3500.00, 105),
+    (215,  7,  3,  12000.00, 106),
+    (216,  1,  1,   8500.00, 106),
+    (217, 14,  2,   3000.00, 106),
+    (218,  8,  3,  19500.00, 107),
+    (219, 14,  3,   4500.00, 107),
+    (220,  7,  5,  20000.00, 108),
+    (221,  3,  2,   7000.00, 108),
+    (222, 11,  1,   8000.00, 109),
+    (223, 14,  3,   4500.00, 109),
+    (224,  4,  2,  14000.00, 110),
+    (225,  4,  2,  14000.00, 111),
+    (226, 10,  5,  42500.00, 112),
+    (227,  4,  3,  21000.00, 113),
+    (228,  5,  3,   6000.00, 113),
+    (229,  4,  1,   7000.00, 114),
+    (230,  6, 12,  18000.00, 115),
+    (231,  6, 30,  45000.00, 116),
+    (232, 13, 10,  14000.00, 116),
+    (233,  5, 12,  24000.00, 116),
+    (234, 19,  2,   5000.00, 117),
+    (235, 24,  3,   6000.00, 117),
+    (236, 23,  3,   5400.00, 118),
+    (237, 22,  2,   6000.00, 118),
+    (238, 21,  1,   3000.00, 119),
+    (239, 22,  1,   3000.00, 119),
+    (240, 24,  2,   4000.00, 119),
+    (241,  7,  5,  20000.00, 120),
+    (242,  1,  1,   8500.00, 120),
+    (243,  3,  2,   7000.00, 120),
+    (244,  7,  1,   4000.00, 121),
+    (245,  3,  3,  10500.00, 121),
+    (246,  7,  2,   8000.00, 122),
+    (247, 14,  3,   4500.00, 122),
+    (248,  7,  2,   8000.00, 123),
+    (249,  3,  2,   7000.00, 123),
+    (250,  7,  2,   8000.00, 124),
+    (251, 10,  4,  34000.00, 125),
+    (252, 14,  1,   1500.00, 125),
+    (253,  4,  4,  28000.00, 126),
+    (254, 11,  1,   8000.00, 127),
+    (255, 14,  3,   4500.00, 127),
+    (256, 23,  3,   5400.00, 128),
+    (257, 20,  1,   3000.00, 129),
+    (258, 24,  2,   4000.00, 129),
+    (259, 23,  3,   5400.00, 130),
+    (260, 21,  1,   3000.00, 131),
+    (261, 24,  3,   6000.00, 131),
+    (262, 23,  3,   5400.00, 132),
+    (263, 24,  2,   4000.00, 132),
+    (264, 22,  2,   6000.00, 133),
+    (265, 24,  2,   4000.00, 133),
+    (266, 21,  2,   6000.00, 134),
+    (267, 23,  1,   1800.00, 135),
+    (268, 24,  2,   4000.00, 135),
+    (269,  8,  3,  19500.00, 136),
+    (270, 14,  2,   3000.00, 136),
+    (271,  7,  3,  12000.00, 137),
+    (272,  9,  1,   5500.00, 137),
+    (273,  3,  1,   3500.00, 137),
+    (274,  7,  3,  12000.00, 138),
+    (275,  7,  1,   4000.00, 139),
+    (276, 14,  2,   3000.00, 139),
+    (277,  4,  2,  14000.00, 140),
+    (278,  5,  1,   2000.00, 140),
+    (279, 11,  2,  16000.00, 141),
+    (280,  5,  3,   6000.00, 141),
+    (281,  6, 48,  72000.00, 142),
+    (282, 12, 24,  36000.00, 142),
+    (283, 13, 12,  16800.00, 142),
+    (284, 15, 10,  30000.00, 142),
+    (285, 19,  3,   7500.00, 143),
+    (286, 24,  2,   4000.00, 143),
+    (287, 21,  1,   3000.00, 144),
+    (288, 24,  3,   6000.00, 144),
+    (289, 19,  1,   2500.00, 145),
+    (290, 24,  3,   6000.00, 145),
+    (291, 19,  4,  10000.00, 146),
+    (292, 22,  1,   3000.00, 147),
+    (293,  8,  4,  26000.00, 148),
+    (294,  3,  3,  10500.00, 148),
+    (295,  8,  3,  19500.00, 149),
+    (296,  9,  2,  11000.00, 149),
+    (297, 14,  2,   3000.00, 149),
+    (298,  8,  2,  13000.00, 150),
+    (299,  1,  1,   8500.00, 150),
+    (300, 14,  3,   4500.00, 150),
+    (301,  8,  3,  19500.00, 151),
+    (302,  3,  2,   7000.00, 151),
+    (303,  7,  2,   8000.00, 152),
+    (304,  8,  2,  13000.00, 153),
+    (305,  3,  2,   7000.00, 153),
+    (306,  4,  2,  14000.00, 154),
+    (307,  5,  2,   4000.00, 154),
+    (308,  4,  3,  21000.00, 155),
+    (309,  5,  1,   2000.00, 155),
+    (310, 10,  2,  17000.00, 156),
+    (311,  5,  2,   4000.00, 156),
+    (312, 11,  3,  24000.00, 157),
+    (313,  5,  2,   4000.00, 157),
+    (314, 10,  3,  25500.00, 158),
+    (315, 14,  1,   1500.00, 158),
+    (316,  4,  3,  21000.00, 159),
+    (317, 14,  2,   3000.00, 159),
+    (318,  6, 35,  52500.00, 160),
+    (319, 13, 20,  28000.00, 160),
+    (320, 15, 12,  36000.00, 160),
+    (321, 19,  2,   5000.00, 161),
+    (322, 22,  2,   6000.00, 161),
+    (323, 19,  5,  12500.00, 162),
+    (324, 24,  3,   6000.00, 162),
+    (325, 21,  2,   6000.00, 163),
+    (326, 24,  2,   4000.00, 163),
+    (327, 21,  1,   3000.00, 164),
+    (328, 24,  3,   6000.00, 164),
+    (329, 19,  5,  12500.00, 165),
+    (330, 24,  2,   4000.00, 165),
+    (331,  8,  3,  19500.00, 166),
+    (332,  3,  3,  10500.00, 166),
+    (333,  7,  1,   4000.00, 167),
+    (334,  3,  3,  10500.00, 167),
+    (335,  7,  5,  20000.00, 168),
+    (336, 14,  1,   1500.00, 168),
+    (337,  7,  3,  12000.00, 169),
+    (338,  9,  1,   5500.00, 169),
+    (339,  3,  2,   7000.00, 169),
+    (340,  7,  5,  20000.00, 170),
+    (341,  7,  1,   4000.00, 171),
+    (342,  3,  3,  10500.00, 171),
+    (343,  7,  1,   4000.00, 172),
+    (344,  3,  3,  10500.00, 172),
+    (345,  7,  1,   4000.00, 173),
+    (346,  3,  1,   3500.00, 173),
+    (347, 10,  5,  42500.00, 174),
+    (348,  4,  5,  35000.00, 175),
+    (349, 14,  3,   4500.00, 175),
+    (350,  4,  5,  35000.00, 176),
+    (351, 14,  2,   3000.00, 176),
+    (352,  6, 36,  54000.00, 177),
+    (353, 12, 18,  27000.00, 177),
+    (354,  5, 15,  30000.00, 177),
+    (355, 19,  5,  12500.00, 178),
+    (356, 20,  2,   6000.00, 179),
+    (357, 15,  1,   3000.00, 179),
+    (358, 20,  1,   3000.00, 180),
+    (359, 22,  2,   6000.00, 180),
+    (360, 24,  2,   4000.00, 180),
+    (361, 22,  1,   3000.00, 181),
+    (362, 20,  1,   3000.00, 181),
+    (363, 19,  2,   5000.00, 182),
+    (364, 24,  2,   4000.00, 182),
+    (365, 20,  2,   6000.00, 183),
+    (366, 22,  2,   6000.00, 183),
+    (367, 15,  1,   3000.00, 183),
+    (368, 21,  2,   6000.00, 184),
+    (369, 15,  2,   6000.00, 184),
+    (370, 19,  3,   7500.00, 185),
+    (371, 24,  3,   6000.00, 185),
+    (372,  7,  4,  16000.00, 186),
+    (373, 14,  1,   1500.00, 186),
+    (374,  7,  3,  12000.00, 187),
+    (375,  9,  2,  11000.00, 187),
+    (376,  7,  2,   8000.00, 188),
+    (377,  1,  1,   8500.00, 188),
+    (378,  3,  1,   3500.00, 188),
+    (379,  7,  3,  12000.00, 189),
+    (380,  9,  1,   5500.00, 189),
+    (381, 11,  3,  24000.00, 190),
+    (382,  4,  2,  14000.00, 191),
+    (383,  5,  1,   2000.00, 191),
+    (384, 11,  2,  16000.00, 192),
+    (385,  5,  1,   2000.00, 192),
+    (386, 10,  5,  42500.00, 193),
+    (387,  5,  2,   4000.00, 193),
+    (388,  6, 30,  45000.00, 194),
+    (389, 12, 15,  22500.00, 194),
+    (390,  5, 10,  20000.00, 194),
+    (391, 19,  4,  10000.00, 195),
+    (392, 24,  1,   2000.00, 195),
+    (393, 23,  3,   5400.00, 196),
+    (394, 24,  3,   6000.00, 196),
+    (395, 19,  2,   5000.00, 197),
+    (396, 15,  1,   3000.00, 197),
+    (397, 20,  1,   3000.00, 198),
+    (398, 24,  2,   4000.00, 198),
+    (399, 22,  2,   6000.00, 199),
+    (400, 24,  2,   4000.00, 199),
+    (401, 19,  1,   2500.00, 200)
     ON DUPLICATE KEY UPDATE plato_id=VALUES(plato_id), cantidad=VALUES(cantidad), sub_total=VALUES(sub_total), pedido_id=VALUES(pedido_id);
-
--- ---------- Más datos para el festival en curso (Primavera Sound 2026) ----------
--- Segundo responsable: responsable2 / admin123
--- Usuario responsable2
-INSERT INTO user (id, username, password, enabled, created_at, updated_at)
-VALUES (101, 'responsable2', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW())
-    ON DUPLICATE KEY UPDATE username=username;
-
-INSERT INTO user_role (id, role, created_at, updated_at, user_id)
-VALUES (101, 'ROLE_RESPONSABLE', NOW(), NOW(), 101)
-    ON DUPLICATE KEY UPDATE role=role;
-
-INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id)
-VALUES (101, 'Ana', 'Martínez', 32555666, '1988-07-19', '2020-05-04', 'responsable2@epicentro.com', 101)
-    ON DUPLICATE KEY UPDATE nombre=nombre;
-
-INSERT INTO responsable (id_persona)
-VALUES (101)
-    ON DUPLICATE KEY UPDATE id_persona=id_persona;
-
--- Platos de las unidades nuevas
-INSERT INTO plato (id_plato, nombre, precio, costo) VALUES
-                                                        (101, 'Pizza Muzzarella', 7000.00, 2500.00),
-                                                        (102, 'Gaseosa', 2000.00, 700.00),
-                                                        (103, 'Empanada de Carne', 1500.00, 500.00)
-    ON DUPLICATE KEY UPDATE nombre=nombre;
-
--- Food Truck con conexión eléctrica: canon = 15 * 500 + 2000 = 9500
-INSERT INTO unidad_de_venta (id_unidad_de_venta, nombre_comercial, codigo, superficie, activo, festival_id, responsable_id)
-VALUES (101, 'Pizza Nostra', 'FT-PIZ0101', 15, 1, 2, 101)
-    ON DUPLICATE KEY UPDATE nombre_comercial=nombre_comercial;
-INSERT INTO food_truck (id_unidad_de_venta, patente, requiere_conexion_electrica)
-VALUES (101, 'AD789GH', 1)
-    ON DUPLICATE KEY UPDATE patente=patente;
-
--- Puesto Desarmable: canon = 10 * 500 - 45 * 10 = 4550
-INSERT INTO unidad_de_venta (id_unidad_de_venta, nombre_comercial, codigo, superficie, activo, festival_id, responsable_id)
-VALUES (102, 'Empanadas del Norte', 'PD-EMP0102', 10, 1, 2, 101)
-    ON DUPLICATE KEY UPDATE nombre_comercial=nombre_comercial;
-INSERT INTO puesto_desarmable (id_unidad_de_venta, cantidad_carpas, tiempo_montaje_minutos)
-VALUES (102, 1, 45)
-    ON DUPLICATE KEY UPDATE cantidad_carpas=cantidad_carpas;
-
-INSERT IGNORE INTO unidad_plato (unidad_id, plato_id) VALUES (101, 101), (101, 102), (102, 103), (102, 102);
-INSERT IGNORE INTO unidad_staff (unidad_id, persona_id) VALUES (101, 101), (102, 101), (101, 3), (102, 2);
 
 -- ---------- Cierre de caja de ejemplo ----------
--- Pizza Nostra (unidad 101) cerró el 22/10 con el pedido 102: 3 pizzas + 3 gaseosas = 27.000.
--- Cerró Carlos López (cajero1). Sirve para que el historial de cierres no aparezca vacío.
+-- Pizza Nostra (unidad 5) cerró el 22/10/2026: 8 pedidos por $192.000. Cerró Carlos López (cajero1).
+-- Sirve para que el historial de cierres no aparezca vacío.
 INSERT INTO cierre_caja (id_cierre_caja, fecha, unidad_venta_id, festival_id, cajero_id, cantidad_pedidos, monto_total, created_at)
-VALUES (1, '2026-10-22', 101, 2, 3, 1, 27000.00, NOW())
+VALUES (1, '2026-10-22', 5, 2, 4, 8, 192000.00, NOW())
     ON DUPLICATE KEY UPDATE monto_total=VALUES(monto_total);
-
--- Pedidos del festival en curso (ya ocurridos)
-INSERT INTO pedido (id_pedido, fecha_transaccion, festival_id, unidad_venta_id) VALUES
-                                                                                    (101, '2026-10-21', 2, 3),
-                                                                                    (102, '2026-10-22', 2, 101),
-                                                                                    (103, '2026-10-23', 2, 102)
-    ON DUPLICATE KEY UPDATE fecha_transaccion=VALUES(fecha_transaccion), festival_id=VALUES(festival_id), unidad_venta_id=VALUES(unidad_venta_id);
-INSERT INTO item_plato (id_item_plato, plato_id, cantidad, sub_total, pedido_id) VALUES
-                                                                                     (101, 1,   2, 17000.00, 101),  -- 2 hamburguesas (Choripanes del Sur)
-                                                                                     (102, 3,   4, 14000.00, 101),  -- 4 cervezas
-                                                                                     (103, 101, 3, 21000.00, 102),  -- 3 pizzas (Pizza Nostra)
-                                                                                     (104, 102, 3,  6000.00, 102),  -- 3 gaseosas
-                                                                                     (105, 103, 12, 18000.00, 103)  -- 12 empanadas (Empanadas del Norte)
-    ON DUPLICATE KEY UPDATE plato_id=VALUES(plato_id), cantidad=VALUES(cantidad), sub_total=VALUES(sub_total), pedido_id=VALUES(pedido_id);
-
--- Parametros de negocio
-
-

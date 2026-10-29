@@ -11,10 +11,32 @@
     <main class="container py-4">
 
     <h2 class="mb-1">Reportes</h2>
-    <p class="text-muted mb-4">Consultas del administrador sobre las unidades de venta de un festival.</p>
+    <p class="text-muted mb-4" th:if="${roles.contains('ROLE_ADMIN')}">Consultas del administrador sobre las unidades de venta de un festival.</p>
+    <p class="text-muted mb-4" th:unless="${roles.contains('ROLE_ADMIN')}">Consultas sobre tus unidades de venta en un festival.</p>
 
     <div class="row justify-content-center">
         <div class="col-md-4 mb-3">
+            <div class="card access-card h-100">
+                <div class="card-body">
+                    <div class="icon">&#128181;</div>
+                    <h5 class="card-title">Recaudación de un festival</h5>
+                    <p class="card-text text-muted" th:if="${roles.contains('ROLE_ADMIN')}">Total de los pedidos del festival y detalle por unidad.</p>
+                    <p class="card-text text-muted" th:unless="${roles.contains('ROLE_ADMIN')}">Total de los pedidos de tus unidades en el festival.</p>
+                    <a th:href="@{/reportes/recaudacion}" class="btn btn-primary">Consultar</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card access-card h-100">
+                <div class="card-body">
+                    <div class="icon">&#128200;</div>
+                    <h5 class="card-title">Rentabilidad neta</h5>
+                    <p class="card-text text-muted">Ganancia de una unidad en un festival: ventas menos costo de platos, sueldos y canon.</p>
+                    <a th:href="@{/reportes/rentabilidad}" class="btn btn-primary">Consultar</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3" th:if="${roles.contains('ROLE_ADMIN')}">
             <div class="card access-card h-100">
                 <div class="card-body">
                     <div class="icon">&#127942;</div>
@@ -24,7 +46,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-3">
+        <div class="col-md-4 mb-3" th:if="${roles.contains('ROLE_ADMIN')}">
             <div class="card access-card h-100">
                 <div class="card-body">
                     <div class="icon">&#128176;</div>

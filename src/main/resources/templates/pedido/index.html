@@ -19,6 +19,19 @@
         Se muestran los pedidos de las unidades de venta en las que trabaja.
     </div>
 
+    <!-- Filtro por festival: arranca en el festival en curso; "Todos" muestra también los anteriores -->
+    <form th:action="@{/pedidos/}" method="get" class="row g-2 align-items-center mb-3">
+        <div class="col-auto"><label class="col-form-label" for="festivalId">Festival:</label></div>
+        <div class="col-auto">
+            <select id="festivalId" name="festivalId" class="form-select pe-5" style="min-width: 22rem" onchange="this.form.submit()">
+                <option value="0" th:selected="${festivalId == 0}">Todos los festivales</option>
+                <option th:each="f : ${festivales}" th:value="${f.idFestival}"
+                        th:selected="${f.idFestival == festivalId}"
+                        th:text="${f.nombre + ' - ' + f.estado}"></option>
+            </select>
+        </div>
+    </form>
+
     <!-- Mensajes que llegan por flash attribute (después de guardar o al rechazar la carga) -->
     <div th:if="${mensajeExito}" class="alert alert-success" th:text="${mensajeExito}"></div>
     <div th:if="${mensajeError}" class="alert alert-danger" th:text="${mensajeError}"></div>
@@ -29,7 +42,7 @@
             <table class="table table-striped table-hover mb-0">
                 <thead class="table-dark">
                     <tr>
-                        <th>#</th>
+                        <th>N° pedido</th>
                         <th>Fecha</th>
                         <th>Festival</th>
                         <th>Unidad de venta</th>
@@ -50,7 +63,8 @@
                         <td class="text-end" th:text="'$' + ${#numbers.formatDecimal(p.total, 1, 'POINT', 2, 'COMMA')}"></td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(pedidos)}">
-                        <td colspan="6" class="text-center text-muted py-3">No hay pedidos registrados todavía.</td>
+                        <td colspan="6" class="text-center text-muted py-3"
+                            th:text="${festivalId == 0} ? 'No hay pedidos registrados todavía.' : 'No hay pedidos en este festival. Elegí \'Todos los festivales\' para ver los anteriores.'"></td>
                     </tr>
                 </tbody>
             </table>

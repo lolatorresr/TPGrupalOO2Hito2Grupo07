@@ -100,6 +100,7 @@ public class PedidoService implements IPedidoService {
             dto.setUnidadCodigo(pedido.getUnidadVenta().getCodigo());
         }
         if (pedido.getFestival() != null) {
+            dto.setFestivalId(pedido.getFestival().getIdFestival());
             dto.setFestivalNombre(pedido.getFestival().getNombre());
         }
         double total = 0;

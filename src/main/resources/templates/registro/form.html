@@ -7,30 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/modern-business.css}"/>
     <!-- Selector de fechas con desplegable de mes y año (más cómodo que el calendario nativo para fechas lejanas) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
-    <style>
-        /* Mes y año del calendario como listas propias (misma estética y tamaño las dos, con scroll),
-           porque el <select> nativo de flatpickr ocultaba los meses posteriores a la fecha máxima y
-           se abría hacia arriba; un <select> nativo tampoco permite acotar cuántas opciones muestra. */
-        /* El calendario anclado envuelve al input: el envoltorio debe ocupar toda la fila, como el input */
-        .flatpickr-wrapper { display: block; }
-        /* Las tarjetas del formulario no se elevan al pasar el mouse: el transform del hover crea un
-           contexto de apilamiento y el calendario desplegado quedaba tapado por la tarjeta siguiente */
-        .card:hover { transform: none; box-shadow: var(--shadow); }
-        .flatpickr-calendar .flatpickr-months { position: relative; z-index: 20; overflow: visible; }
-        .flatpickr-calendar .flatpickr-month { overflow: visible; }
-        .flatpickr-calendar .flatpickr-current-month { display: flex; justify-content: center; align-items: center; gap: 10px; }
-        .flatpickr-desplegable { position: relative; display: inline-block; }
-        .flatpickr-desplegable-actual { cursor: pointer; font-weight: 300; padding: 0 4px; white-space: nowrap; }
-        .flatpickr-desplegable-actual::after { content: ''; display: inline-block; width: 9px; height: 9px; margin-left: 5px; vertical-align: -1px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 3.5l3 3 3-3' fill='none' stroke='%23333' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat center / 9px 9px; }
-        .flatpickr-desplegable-lista { display: none; position: absolute; top: 100%; left: 0; z-index: 20; width: 110px;
-            max-height: 190px; overflow-y: auto; background: #fff; border: 1px solid #e6e6e6; border-radius: 4px;
-            box-shadow: 0 3px 13px rgba(0,0,0,.08); text-align: left; }
-        .flatpickr-desplegable-opcion { padding: 2px 10px; font-size: 14px; line-height: 19px; cursor: pointer; white-space: nowrap; }
-        .flatpickr-desplegable-opcion:hover { background: #e6e6e6; }
-        .flatpickr-desplegable-opcion.seleccionado { background: #569ff7; color: #fff; }
-        .flatpickr-desplegable-opcion.deshabilitado { color: #bbb; cursor: default; pointer-events: none; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/calendario.css}"/>
 </head>
 <body>
     <nav th:replace="~{layout :: navbar}"></nav>
@@ -192,106 +169,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/es.js"></script>
+    <script th:src="@{/js/calendario.js}"></script>
     <script>
-        // Fechas: se muestran como dd/mm/aaaa (se puede escribir o elegir del calendario)
-        // y se envían al servidor como aaaa-mm-dd, que es el formato que espera el DTO.
-        // Mes y año se reemplazan por desplegables propios (flatpickr trae el mes como <select> nativo
-        // y el año como campo numérico con flechas). Los dos se arman con la misma función.
-        // opciones: lista de {valor, texto}; alElegir(valor) se llama al hacer click en una opción;
-        // esValida(valor), opcional, indica qué opciones se pueden elegir (las demás se ven en gris).
-        function crearDesplegable(opciones, alElegir, esValida) {
-            var envoltorio = document.createElement('span');
-            envoltorio.className = 'flatpickr-desplegable';
-            var boton = document.createElement('span');
-            boton.className = 'flatpickr-desplegable-actual';
-            var lista = document.createElement('div');
-            lista.className = 'flatpickr-desplegable-lista';
-            opciones.forEach(function (op) {
-                var opcion = document.createElement('div');
-                opcion.className = 'flatpickr-desplegable-opcion';
-                opcion.textContent = op.texto;
-                opcion.dataset.valor = op.valor;
-                opcion.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    lista.style.display = 'none';
-                    alElegir(parseInt(this.dataset.valor, 10));
-                });
-                lista.appendChild(opcion);
-            });
-            var desplegable = { envoltorio: envoltorio, lista: lista, valor: null };
-            desplegable.mostrar = function (valor) {
-                desplegable.valor = valor;
-                var op = lista.querySelector('[data-valor="' + valor + '"]');
-                boton.textContent = op ? op.textContent : valor;
-                if (esValida) {
-                    lista.querySelectorAll('.flatpickr-desplegable-opcion').forEach(function (o) {
-                        o.classList.toggle('deshabilitado', !esValida(parseInt(o.dataset.valor, 10)));
-                    });
-                }
-            };
-            desplegable.cerrar = function () { lista.style.display = 'none'; };
-            boton.addEventListener('click', function (e) {
-                e.stopPropagation();
-                if (lista.style.display === 'block') {
-                    lista.style.display = 'none';
-                    return;
-                }
-                // Se cierra cualquier otra lista abierta del mismo calendario
-                document.querySelectorAll('.flatpickr-desplegable-lista').forEach(function (l) { l.style.display = 'none'; });
-                lista.style.display = 'block';
-                // Se resalta la opción actual y se centra en la lista
-                lista.querySelectorAll('.seleccionado').forEach(function (o) { o.classList.remove('seleccionado'); });
-                var sel = lista.querySelector('[data-valor="' + desplegable.valor + '"]');
-                if (sel) {
-                    sel.classList.add('seleccionado');
-                    lista.scrollTop = sel.offsetTop - lista.clientHeight / 2 + sel.offsetHeight / 2;
-                }
-            });
-            document.addEventListener('click', desplegable.cerrar);
-            envoltorio.appendChild(boton);
-            envoltorio.appendChild(lista);
-            return desplegable;
-        }
-        function mesYAnioComoDesplegables(instancia) {
-            // Si el campo tiene fecha máxima (nacimiento: hoy), no se ofrecen años futuros y los meses
-            // que todavía no llegaron se ven en gris. Sin máximo (ingreso) se ofrecen hasta 5 años adelante.
-            var maximo = instancia.config.maxDate;
-            var actual = new Date().getFullYear();
-            var ultimoAnio = maximo ? maximo.getFullYear() : actual + 5;
-            // Mes: siempre los 12 (el select nativo ocultaba los posteriores a la fecha máxima)
-            var meses = instancia.l10n.months.longhand.map(function (nombre, i) { return { valor: i, texto: nombre }; });
-            var mes = crearDesplegable(meses, function (m) { instancia.changeMonth(m, false); }, function (m) {
-                return !maximo || instancia.currentYear < maximo.getFullYear() || m <= maximo.getMonth();
-            });
-            var anios = [];
-            for (var a = ultimoAnio; a >= actual - 100; a--) anios.push({ valor: a, texto: String(a) });
-            var anio = crearDesplegable(anios, function (a) { instancia.changeYear(a); });
-            instancia.monthElements[0].replaceWith(mes.envoltorio);
-            instancia.currentYearElement.parentNode.replaceWith(anio.envoltorio);
-            instancia.actualizarCabecera = function () {
-                mes.mostrar(instancia.currentMonth);
-                anio.mostrar(instancia.currentYear);
-            };
-            instancia.cerrarListas = function () { mes.cerrar(); anio.cerrar(); };
-            instancia.actualizarCabecera();
-        }
-        document.querySelectorAll('input.fecha').forEach(function (input) {
-            flatpickr(input, {
-                locale: 'es',
-                dateFormat: 'Y-m-d',
-                altInput: true,
-                altFormat: 'd/m/Y',
-                allowInput: true,
-                static: true,
-                maxDate: input.dataset.max === 'hoy' ? 'today' : null,
-                onReady: function (fechas, valor, instancia) { mesYAnioComoDesplegables(instancia); },
-                // Si se cambia de mes o año con las flechas, los desplegables se mantienen sincronizados
-                onMonthChange: function (fechas, valor, instancia) { instancia.actualizarCabecera(); },
-                onYearChange: function (fechas, valor, instancia) { instancia.actualizarCabecera(); },
-                onClose: function (fechas, valor, instancia) { instancia.cerrarListas(); }
-            });
-        });
-
         // Muestra solo los campos del tipo de unidad elegido
         function actualizarCampos() {
             var tipo = document.getElementById('tipo').value;

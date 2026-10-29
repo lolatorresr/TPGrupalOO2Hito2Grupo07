@@ -49,7 +49,7 @@ public class LiquidacionService implements ILiquidacionService {
         if (persona instanceof Cocinero){
             Cocinero cocinero = (Cocinero) persona;
 
-            String cat = (cocinero.getCategoria() != null) ? cocinero.getCategoria().getDescripcion() : "";
+            String cat = (cocinero.getCategoria() != null) ? cocinero.getCategoria().name() : "";
             double plusCategoria = obtenerPlusCocina(cat);
             sueldoParcial = sueldoBase + plusCategoria;
         } else if (persona instanceof Cajero){
