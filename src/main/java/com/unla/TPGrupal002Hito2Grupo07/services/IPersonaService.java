@@ -22,6 +22,17 @@ public interface IPersonaService {
     public List<PersonaDTO> filtrarActivas(String texto, String dni, TipoPersona tipo,
                                            CategoriaCocina categoria, String turno);
 
+
+    /** Empleados activos de las unidades del responsable, filtrados por uno o varios atributos. */
+    public List<PersonaDTO> filtrarActivasDelResponsable(int idResponsable, String texto, String dni,
+                                                         TipoPersona tipo, CategoriaCocina categoria, String turno);
+
+    /** Empleados dados de baja que trabajaban en unidades del responsable (se pueden reactivar). */
+    public List<PersonaDTO> getInactivasDelResponsable(int idResponsable);
+
+    /** true si la persona trabaja en alguna unidad a cargo del responsable. */
+    public boolean esEmpleadoDelResponsable(int idPersona, int idResponsable);
+
     public PersonaDTO findById(int id);
 
     /** Alta o mod. Si el id es 0 crea, si no actualiza la persona existente. */

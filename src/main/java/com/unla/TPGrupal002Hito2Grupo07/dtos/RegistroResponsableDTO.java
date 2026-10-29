@@ -63,6 +63,7 @@ public class RegistroResponsableDTO {
     private LocalDate fechaNacimiento;
 
     @NotNull(message = "La fecha de ingreso es obligatoria.")
+    @PastOrPresent(message = "La fecha de ingreso no puede ser futura.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaIngreso;
 

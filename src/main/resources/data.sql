@@ -13,6 +13,8 @@
 --   cajero1      -> Carlos López    (cajero de Burger Truck y Pizza Nostra; puede cerrar caja)
 --   responsable4 -> Paula Ferreyra  (Gelatto, en Primavera Sound y en Verano 2027)
 --   responsable5 -> Kenji Tanaka    (Koko Bao Bar, en Primavera Sound y en Verano 2027)
+--   El resto de los empleados entra con su email (ej. sofia.romero@epicentro.com),
+--   igual que un empleado dado de alta desde la aplicación.
 -- =====================================================================
 
 -- ---------- Usuarios ----------
@@ -22,7 +24,18 @@ INSERT INTO user (id, username, password, enabled, created_at, updated_at) VALUE
     (3, 'responsable2', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
     (4, 'responsable3', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
     (5, 'empleado1', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
-    (6, 'cajero1', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW())
+    (6, 'cajero1', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    -- Empleados: el usuario es su email (los ids 7 y 8 son de responsable4 y responsable5, más abajo)
+    (9, 'lucia.perez@epicentro.com', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (10, 'sofia.romero@epicentro.com', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (11, 'matias.gimenez@epicentro.com', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (12, 'valentina.sosa@epicentro.com', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (13, 'tomas.acosta@epicentro.com', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (14, 'camila.herrera@epicentro.com', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (15, 'lautaro.molina@epicentro.com', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (16, 'florencia.castro@epicentro.com', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (17, 'bruno.ledesma@epicentro.com', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (18, 'martina.rios@epicentro.com', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW())
     ON DUPLICATE KEY UPDATE username=username;
 INSERT INTO user_role (id, role, created_at, updated_at, user_id) VALUES
     (1, 'ROLE_ADMIN', NOW(), NOW(), 1),
@@ -30,7 +43,17 @@ INSERT INTO user_role (id, role, created_at, updated_at, user_id) VALUES
     (3, 'ROLE_RESPONSABLE', NOW(), NOW(), 3),
     (4, 'ROLE_RESPONSABLE', NOW(), NOW(), 4),
     (5, 'ROLE_EMPLEADO', NOW(), NOW(), 5),
-    (6, 'ROLE_EMPLEADO', NOW(), NOW(), 6)
+    (6, 'ROLE_EMPLEADO', NOW(), NOW(), 6),
+    (9, 'ROLE_EMPLEADO', NOW(), NOW(), 9),
+    (10, 'ROLE_EMPLEADO', NOW(), NOW(), 10),
+    (11, 'ROLE_EMPLEADO', NOW(), NOW(), 11),
+    (12, 'ROLE_EMPLEADO', NOW(), NOW(), 12),
+    (13, 'ROLE_EMPLEADO', NOW(), NOW(), 13),
+    (14, 'ROLE_EMPLEADO', NOW(), NOW(), 14),
+    (15, 'ROLE_EMPLEADO', NOW(), NOW(), 15),
+    (16, 'ROLE_EMPLEADO', NOW(), NOW(), 16),
+    (17, 'ROLE_EMPLEADO', NOW(), NOW(), 17),
+    (18, 'ROLE_EMPLEADO', NOW(), NOW(), 18)
     ON DUPLICATE KEY UPDATE role=role;
 
 -- ---------- Festivales ----------
@@ -87,18 +110,18 @@ INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_
     ( 2, 'Ana',        'Martínez',  32555666, '1988-07-19', '2020-05-04', 'responsable2@epicentro.com',       3),
     ( 3, 'Julián',     'Pereyra',   33666777, '1989-01-25', '2021-04-19', 'responsable3@epicentro.com',       4),
     ( 4, 'Carlos',     'López',     28333444, '1982-11-03', '2021-09-10', 'carlos.lopez@epicentro.com',       6),
-    ( 5, 'Lucía',      'Pérez',     35222333, '1990-08-25', '2023-06-15', 'lucia.perez@epicentro.com',        NULL),
+    ( 5, 'Lucía',      'Pérez',     35222333, '1990-08-25', '2023-06-15', 'lucia.perez@epicentro.com',        9),
     ( 6, 'Diego',      'Fernández', 38444555, '1995-02-10', '2024-01-20', 'diego.fernandez@epicentro.com',    5),
-    ( 7, 'Sofía',      'Romero',    40111222, '1997-03-14', '2025-03-01', 'sofia.romero@epicentro.com',       NULL),
-    ( 8, 'Matías',     'Giménez',   39222333, '1996-09-02', '2024-08-12', 'matias.gimenez@epicentro.com',     NULL),
-    ( 9, 'Valentina',  'Sosa',      41333444, '1998-12-20', '2023-02-06', 'valentina.sosa@epicentro.com',     NULL),
-    (10, 'Tomás',      'Acosta',    36444555, '1993-05-30', '2019-11-18', 'tomas.acosta@epicentro.com',       NULL),
-    (11, 'Camila',     'Herrera',   42555666, '1999-07-08', '2024-06-03', 'camila.herrera@epicentro.com',     NULL),
-    (12, 'Lautaro',    'Molina',    43777888, '2000-10-05', '2024-02-19', 'lautaro.molina@epicentro.com',     NULL),
-    (13, 'Florencia',  'Castro',    37888999, '1994-06-17', '2020-09-07', 'florencia.castro@epicentro.com',   NULL),
-    (14, 'Bruno',      'Ledesma',   44999000, '2001-03-23', '2025-01-13', 'bruno.ledesma@epicentro.com',      NULL),
-    (15, 'Martina',    'Ríos',      41000111, '1998-11-11', '2022-07-04', 'martina.rios@epicentro.com',       NULL)
-    ON DUPLICATE KEY UPDATE nombre=nombre;
+    ( 7, 'Sofía',      'Romero',    40111222, '1997-03-14', '2025-03-01', 'sofia.romero@epicentro.com',       10),
+    ( 8, 'Matías',     'Giménez',   39222333, '1996-09-02', '2024-08-12', 'matias.gimenez@epicentro.com',     11),
+    ( 9, 'Valentina',  'Sosa',      41333444, '1998-12-20', '2023-02-06', 'valentina.sosa@epicentro.com',     12),
+    (10, 'Tomás',      'Acosta',    36444555, '1993-05-30', '2019-11-18', 'tomas.acosta@epicentro.com',       13),
+    (11, 'Camila',     'Herrera',   42555666, '1999-07-08', '2024-06-03', 'camila.herrera@epicentro.com',     14),
+    (12, 'Lautaro',    'Molina',    43777888, '2000-10-05', '2024-02-19', 'lautaro.molina@epicentro.com',     15),
+    (13, 'Florencia',  'Castro',    37888999, '1994-06-17', '2020-09-07', 'florencia.castro@epicentro.com',   16),
+    (14, 'Bruno',      'Ledesma',   44999000, '2001-03-23', '2025-01-13', 'bruno.ledesma@epicentro.com',      17),
+    (15, 'Martina',    'Ríos',      41000111, '1998-11-11', '2022-07-04', 'martina.rios@epicentro.com',       18)
+    ON DUPLICATE KEY UPDATE nombre=nombre, user_id=VALUES(user_id);
 INSERT INTO responsable (id_persona) VALUES (1), (2), (3)
     ON DUPLICATE KEY UPDATE id_persona=id_persona;
 INSERT INTO cajero (id_persona, turno_trabajo) VALUES
@@ -784,20 +807,29 @@ VALUES (1, '2026-10-22', 5, 2, 4, 8, 192000.00, NOW())
 -- responsable4 / admin123 -> Gelatto; responsable5 / admin123 -> Koko Bao Bar.
 INSERT INTO user (id, username, password, enabled, created_at, updated_at) VALUES
     (7, 'responsable4', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
-    (8, 'responsable5', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW())
+    (8, 'responsable5', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    -- Empleados de Gelatto y Koko Bao Bar (usuario = su email)
+    (19, 'agustina.paz@epicentro.com',     '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (20, 'nicolas.vega@epicentro.com',     '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (21, 'mei.lin@epicentro.com',          '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (22, 'santiago.ibarra@epicentro.com',  '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW())
     ON DUPLICATE KEY UPDATE username=username;
 INSERT INTO user_role (id, role, created_at, updated_at, user_id) VALUES
     (7, 'ROLE_RESPONSABLE', NOW(), NOW(), 7),
-    (8, 'ROLE_RESPONSABLE', NOW(), NOW(), 8)
+    (8, 'ROLE_RESPONSABLE', NOW(), NOW(), 8),
+    (19, 'ROLE_EMPLEADO',    NOW(), NOW(), 19),
+    (20, 'ROLE_EMPLEADO',    NOW(), NOW(), 20),
+    (21, 'ROLE_EMPLEADO',    NOW(), NOW(), 21),
+    (22, 'ROLE_EMPLEADO',    NOW(), NOW(), 22)
     ON DUPLICATE KEY UPDATE role=role;
 INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_ingreso, email, user_id) VALUES
     (16, 'Paula',      'Ferreyra',  34555111, '1990-02-14', '2021-11-02', 'responsable4@epicentro.com',       7),
     (17, 'Kenji',      'Tanaka',    31222444, '1986-09-30', '2020-03-16', 'responsable5@epicentro.com',       8),
-    (18, 'Agustina',   'Paz',       42111333, '1999-04-21', '2023-10-09', 'agustina.paz@epicentro.com',       NULL),
-    (19, 'Nicolás',    'Vega',      40333555, '1997-12-02', '2022-01-17', 'nicolas.vega@epicentro.com',       NULL),
-    (20, 'Mei',        'Lin',       41444666, '1998-06-11', '2024-04-01', 'mei.lin@epicentro.com',            NULL),
-    (21, 'Santiago',   'Ibarra',    39555777, '1995-08-27', '2021-06-21', 'santiago.ibarra@epicentro.com',    NULL)
-    ON DUPLICATE KEY UPDATE nombre=nombre;
+    (18, 'Agustina',   'Paz',       42111333, '1999-04-21', '2023-10-09', 'agustina.paz@epicentro.com',       19),
+    (19, 'Nicolás',    'Vega',      40333555, '1997-12-02', '2022-01-17', 'nicolas.vega@epicentro.com',       20),
+    (20, 'Mei',        'Lin',       41444666, '1998-06-11', '2024-04-01', 'mei.lin@epicentro.com',            21),
+    (21, 'Santiago',   'Ibarra',    39555777, '1995-08-27', '2021-06-21', 'santiago.ibarra@epicentro.com',    22)
+    ON DUPLICATE KEY UPDATE nombre=nombre, user_id=VALUES(user_id);
 INSERT INTO responsable (id_persona) VALUES (16), (17)
     ON DUPLICATE KEY UPDATE id_persona=id_persona;
 INSERT INTO cajero (id_persona, turno_trabajo) VALUES
