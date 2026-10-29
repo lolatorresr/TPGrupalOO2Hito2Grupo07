@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cierre de caja - Epicentro Gourmet</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/modern-business.css}"/>
+</head>
+<body class="bg-light">
+
+<nav th:replace="~{layout :: navbar}"></nav>
+
+<main class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Cierre de caja</h2>
+        <a th:href="@{/empleado}" class="btn btn-outline-secondary">Volver a mi página</a>
+    </div>
+
+    <div th:if="${mensajeExito}" class="alert alert-success" th:text="${mensajeExito}"></div>
+    <div th:if="${mensajeError}" class="alert alert-danger" th:text="${mensajeError}"></div>
+
+    <!-- Caja de hoy de cada unidad donde trabaja -->
+    <h5 class="mb-3" th:text="'Hoy, ' + ${#temporals.format(#temporals.createToday(), 'dd/MM/yyyy')}"></h5>
+
+    <div th:if="${#lists.isEmpty(cajasDeHoy)}" class="alert alert-secondary">
+        Hoy no trabajás en ninguna unidad con un festival en curso.
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-6" th:each="c : ${cajasDeHoy}">
+            <div class="card h-100" th:classappend="${c.cerrada} ? 'border-success'">
+                <div class="card-header fw-bold d-flex justify-content-between">
+                    <span th:text="${c.unidadNombre + ' (' + c.unidadCodigo + ')'}"></span>
+                    <span th:if="${c.cerrada}" class="badge bg-success">Cerrada</span>
+                    <span th:unless="${c.cerrada}" class="badge bg-warning text-dark">Abierta</span>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3" th:text="${c.festivalNombre}"></p>
+                    <p class="mb-1">Pedidos del día: <strong th:text="${c.cantidadPedidos}"></strong></p>
+                    <p class="mb-3">Recaudación del día:
+                        <strong th:text="'$' + ${#numbers.formatDecimal(c.montoTotal, 1, 'POINT', 2, 'COMMA')}"></strong>
+                    </p>
+
+                    <p th:if="${c.cerrada}" class="text-success mb-0"
+                       th:text="'Cerrada por ' + ${c.cajeroNombre}"></p>
+
+                    <form th:unless="${c.cerrada}" th:action="@{/caja/cerrar/{id}(id=${c.unidadId})}" method="post">
+                        <p th:if="${c.cantidadPedidos == 0}" class="text-warning small">
+                            Todavía no hay pedidos hoy: la caja se cerraría en $0.
+                        </p>
+                        <button type="submit" class="btn btn-danger"
+                                onclick="return confirm('¿Cerrar la caja de hoy? Después no se podrán cargar más pedidos en esta unidad.');">
+                            Cerrar caja
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de cierres -->
+    <div class="card">
+        <div class="card-header fw-bold">Historial de cierres</div>
+        <div class="card-body p-0">
+            <table class="table table-striped mb-0">
+                <thead class="table-dark">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Unidad</th>
+                    <th>Festival</th>
+                    <th>Cerró</th>
+                    <th class="text-end">Pedidos</th>
+                    <th class="text-end">Recaudación</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="h : ${historial}">
+                    <td th:text="${#temporals.format(h.fecha, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${h.unidadNombre}"></td>
+                    <td th:text="${h.festivalNombre}"></td>
+                    <td th:text="${h.cajeroNombre}"></td>
+                    <td class="text-end" th:text="${h.cantidadPedidos}"></td>
+                    <td class="text-end" th:text="'$' + ${#numbers.formatDecimal(h.montoTotal, 1, 'POINT', 2, 'COMMA')}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(historial)}">
+                    <td colspan="6" class="text-center text-muted py-3">Todavía no hay cierres de caja.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{layout :: footer}"></footer>
+<div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>

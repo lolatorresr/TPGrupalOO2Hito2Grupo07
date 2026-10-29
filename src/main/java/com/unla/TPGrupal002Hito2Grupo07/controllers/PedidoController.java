@@ -1,15 +1,8 @@
 package com.unla.TPGrupal002Hito2Grupo07.controllers;
 
-import com.unla.TPGrupal002Hito2Grupo07.dtos.FestivalDTO;
-import com.unla.TPGrupal002Hito2Grupo07.dtos.ItemPedidoDTO;
-import com.unla.TPGrupal002Hito2Grupo07.dtos.PedidoDTO;
-import com.unla.TPGrupal002Hito2Grupo07.dtos.PersonaDTO;
-import com.unla.TPGrupal002Hito2Grupo07.dtos.UnidadDeVentaDTO;
+import com.unla.TPGrupal002Hito2Grupo07.dtos.*;
 import com.unla.TPGrupal002Hito2Grupo07.helpers.ViewRouteHelper;
-import com.unla.TPGrupal002Hito2Grupo07.services.IFestivalService;
-import com.unla.TPGrupal002Hito2Grupo07.services.IPedidoService;
-import com.unla.TPGrupal002Hito2Grupo07.services.IPersonaService;
-import com.unla.TPGrupal002Hito2Grupo07.services.IUnidadDeVentaService;
+import com.unla.TPGrupal002Hito2Grupo07.services.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
-import com.unla.TPGrupal002Hito2Grupo07.dtos.TipoPersona;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -54,6 +46,10 @@ public class PedidoController {
     @Autowired
     @Qualifier("festivalService")
     private IFestivalService festivalService;
+
+    @Autowired
+    @Qualifier("cierreCajaService")
+    private ICierreCajaService cierreCajaService;
 
     @GetMapping("/")
     public ModelAndView index(Authentication auth) {
@@ -108,6 +104,10 @@ public class PedidoController {
             FestivalDTO festival = festivalService.findById(unidad.getFestivalId());
             if (festival == null || !festival.isEnCurso()) {
                 bindingResult.reject("error.pedido", "Solo se pueden cargar pedidos en un festival en curso.");
+            }
+            // Validación de carga: la caja de hoy de la unidad no puede estar cerrada
+            if (cierreCajaService.estaCerrada(unidad.getIdUnidadDeVenta(), LocalDate.now())) {
+                bindingResult.reject("error.pedido", "La caja de hoy de esta unidad ya fue cerrada: no se pueden cargar más pedidos.");
             }
         }
         // Validación de carga 1: un pedido solo puede tener la fecha del día en que se carga
@@ -193,9 +193,12 @@ public class PedidoController {
         if (esAdmin(auth)) {
             return unidadService.getAllActivas();
         }
+        LocalDate hoy = LocalDate.now();
         return unidadesDeStaff(auth).stream().filter(u -> {
             FestivalDTO festival = festivalService.findById(u.getFestivalId());
-            return festival != null && festival.isEnCurso();
+            return festival != null && festival.isEnCurso()
+                    // Con la caja de hoy cerrada ya no se cargan pedidos en esa unidad
+                    && !cierreCajaService.estaCerrada(u.getIdUnidadDeVenta(), hoy);
         }).toList();
     }
 }
