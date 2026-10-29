@@ -78,7 +78,7 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 
 ## Diagrama de clases
 Diagrama de clases del sistema, iterado sobre el del Hito 1 para la gestión de festivales:
-[Ver diagrama de clases](https://drive.google.com/file/d/1Y29fBcgz-xEDBkAVU8fDW0nB7N6uYK2k/view?usp=sharing) (también en [docs/diagrama-de-clases.drawio](docs/diagrama-de-clases.drawio), abrible con [diagrams.net](https://viewer.diagrams.net/?url=https://raw.githubusercontent.com/lolatorresr/TPGrupalOO2Hito2Grupo07/main/docs/diagrama-de-clases.drawio)).
+[Ver diagrama de clases](https://drive.google.com/file/d/1Y29fBcgz-xEDBkAVU8fDW0nB7N6uYK2k/view?usp=sharing) (también en [docs/diagrama-de-clases.drawio](docs/diagrama-de-clases.drawio), se puede abrir con [diagrams.net](https://viewer.diagrams.net/?url=https://raw.githubusercontent.com/lolatorresr/TPGrupalOO2Hito2Grupo07/main/docs/diagrama-de-clases.drawio)).
 
 ## Pasos para correr la aplicación
 1. Requisitos: Java 17, Maven 3.9+ y MySQL 8.
