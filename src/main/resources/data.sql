@@ -63,8 +63,8 @@ INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_
 VALUES (3, 'Carlos', 'López', 28333444, '1982-11-03', '2021-09-10', 'carlos.lopez@epicentro.com', 102)
     ON DUPLICATE KEY UPDATE user_id=VALUES(user_id);
 
-INSERT INTO cajero (id_persona, turno_trabajo, recaudacion_total)
-VALUES (3, 'MAÑANA', 0)
+INSERT INTO cajero (id_persona, turno_trabajo)
+VALUES (3, 'MAÑANA')
     ON DUPLICATE KEY UPDATE turno_trabajo=turno_trabajo;
 
 -- Cocinero del staff
@@ -190,6 +190,13 @@ VALUES (102, 1, 45)
 
 INSERT IGNORE INTO unidad_plato (unidad_id, plato_id) VALUES (101, 101), (101, 102), (102, 103), (102, 102);
 INSERT IGNORE INTO unidad_staff (unidad_id, persona_id) VALUES (101, 101), (102, 101), (101, 3), (102, 2);
+
+-- ---------- Cierre de caja de ejemplo ----------
+-- Pizza Nostra (unidad 101) cerró el 22/10 con el pedido 102: 3 pizzas + 3 gaseosas = 27.000.
+-- Cerró Carlos López (cajero1). Sirve para que el historial de cierres no aparezca vacío.
+INSERT INTO cierre_caja (id_cierre_caja, fecha, unidad_venta_id, festival_id, cajero_id, cantidad_pedidos, monto_total, created_at)
+VALUES (1, '2026-10-22', 101, 2, 3, 1, 27000.00, NOW())
+    ON DUPLICATE KEY UPDATE monto_total=VALUES(monto_total);
 
 -- Pedidos del festival en curso (ya ocurridos)
 INSERT INTO pedido (id_pedido, fecha_transaccion, festival_id, unidad_venta_id) VALUES

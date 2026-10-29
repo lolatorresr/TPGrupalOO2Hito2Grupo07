@@ -15,8 +15,6 @@ public class Cajero extends Persona {
 
     private String turnoTrabajo;
 
-    // No se carga en el alta: arranca en 0 y se actualiza cuando se registre la recaudación
-    private double recaudacionTotal;
 
     public Cajero(String nombre, String apellido, long dni, LocalDate fechaNacimiento,
                   LocalDate fechaIngreso, String email, User credencial,
