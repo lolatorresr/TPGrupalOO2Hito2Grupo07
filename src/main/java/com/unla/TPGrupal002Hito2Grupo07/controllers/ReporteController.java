@@ -12,6 +12,7 @@ import com.unla.TPGrupal002Hito2Grupo07.services.IReporteService;
 import com.unla.TPGrupal002Hito2Grupo07.services.IUnidadDeVentaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -30,6 +33,8 @@ import java.util.List;
 @RequestMapping("/reportes")
 @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE')")
 public class ReporteController {
+
+    private static final DateTimeFormatter FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @Autowired
     @Qualifier("reporteService")
@@ -107,25 +112,60 @@ public class ReporteController {
     @GetMapping("/rentabilidad")
     public ModelAndView rentabilidad(@RequestParam(required = false, defaultValue = "0") int festivalId,
                                      @RequestParam(required = false, defaultValue = "0") int unidadId,
+                                     @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+                                     @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
                                      Authentication authentication) {
         ModelAndView mAV = new ModelAndView(ViewRouteHelper.REPORTE_RENTABILIDAD);
         mAV.addObject("festivales", festivalService.getAll());
         mAV.addObject("festivalId", festivalId);
         mAV.addObject("unidadId", unidadId);
-        if (festivalService.findById(festivalId) == null) {
+        mAV.addObject("desde", desde);
+        mAV.addObject("hasta", hasta);
+        FestivalDTO festival = festivalService.findById(festivalId);
+        if (festival == null) {
             return mAV;
         }
+        mAV.addObject("festival", festival);
         // Unidades que se pueden consultar: las del responsable en ese festival, o todas para el administrador
         List<UnidadDeVentaDTO> unidades = unidadesConsultables(festivalId, authentication);
         mAV.addObject("unidades", unidades);
         boolean unidadPermitida = unidades.stream().anyMatch(u -> u.getIdUnidadDeVenta() == unidadId);
         if (unidadId != 0 && !unidadPermitida) {
             mAV.addObject("error", "No puede consultar esa unidad de venta.");
-        } else if (unidadPermitida) {
-            ReporteRentabilidadDTO reporte = reporteService.rentabilidadNeta(festivalId, unidadId);
-            mAV.addObject("reporte", reporte);
+            return mAV;
         }
+        if (!unidadPermitida) {
+            return mAV;
+        }
+        // Rango de fechas opcional (CU rentabilidad neta entre dos fechas); sin fechas se toma el festival completo
+        String errorFechas = validarRango(desde, hasta, festival);
+        if (errorFechas != null) {
+            mAV.addObject("error", errorFechas);
+            return mAV;
+        }
+        ReporteRentabilidadDTO reporte = desde == null
+                ? reporteService.rentabilidadNeta(festivalId, unidadId)
+                : reporteService.rentabilidadNetaEntreFechas(festivalId, unidadId, desde, hasta);
+        mAV.addObject("reporte", reporte);
         return mAV;
+    }
+
+    /** Devuelve el mensaje de error del rango de fechas, o null si es válido (o no se ingresó). */
+    private String validarRango(LocalDate desde, LocalDate hasta, FestivalDTO festival) {
+        if (desde == null && hasta == null) {
+            return null;
+        }
+        if (desde == null || hasta == null) {
+            return "Para consultar un período hay que completar las dos fechas.";
+        }
+        if (desde.isAfter(hasta)) {
+            return "La fecha desde no puede ser posterior a la fecha hasta.";
+        }
+        if (hasta.isBefore(festival.getFechaInicio()) || desde.isAfter(festival.getFechaFin())) {
+            return "El período no coincide con las fechas del festival ("
+                    + festival.getFechaInicio().format(FECHA) + " al " + festival.getFechaFin().format(FECHA) + ").";
+        }
+        return null;
     }
 
     private List<UnidadDeVentaDTO> unidadesConsultables(int festivalId, Authentication authentication) {
