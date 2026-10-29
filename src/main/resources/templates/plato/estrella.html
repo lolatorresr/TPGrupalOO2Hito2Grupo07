@@ -25,7 +25,7 @@
             <form th:action="@{/plato-estrella/buscar}" method="post" class="row g-3 align-items-end">
                 <div class="col-md-5">
                     <label class="form-label">Festival:</label>
-                    <select name="idFestival" class="form-select" required>
+                    <select id="idFestival" name="idFestival" class="form-select" required>
                         <option value="">-- Seleccionar --</option>
                         <option th:each="f : ${festivales}"
                                 th:value="${f.idFestival}"
@@ -35,10 +35,11 @@
                 </div>
                 <div class="col-md-5">
                     <label class="form-label">Unidad de venta:</label>
-                    <select name="idUnidad" class="form-select" required>
+                    <select id="idUnidad" name="idUnidad" class="form-select" required>
                         <option value="">-- Seleccionar --</option>
                         <option th:each="u : ${unidades}"
                                 th:value="${u.idUnidadDeVenta}"
+                                th:data-festival="${u.festivalId}"
                                 th:text="${u.nombreComercial + ' (' + u.codigo + ')'}"
                                 th:selected="${u.idUnidadDeVenta == idUnidadSeleccionada}"></option>
                     </select>
@@ -50,6 +51,7 @@
         </div>
     </div>
 
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
     <div th:if="${buscado}">
         <div th:if="${platoEstrella != null}" class="card border-warning">
             <div class="card-header bg-warning fw-bold">Plato estrella</div>
@@ -65,9 +67,31 @@
             No se registraron pedidos de platos para la unidad de venta y el festival seleccionados.
         </div>
     </div>
-    <div class="text-muted" th:unless="${buscado}">Seleccione un festival y una unidad para consultar.</div>
+    <div class="text-muted" th:if="${buscado == null and error == null}">Seleccione un festival y una unidad para consultar.</div>
     </main>
     <footer th:replace="~{layout :: footer}"></footer>
     <div th:replace="~{layout :: scripts}"></div>
+    <script>
+        // Cada unidad pertenece a un solo festival: al elegir el festival, las unidades de otros
+        // festivales quedan en gris y no se pueden seleccionar.
+        (function () {
+            var festival = document.getElementById('idFestival');
+            var unidad = document.getElementById('idUnidad');
+            function filtrarUnidades() {
+                var elegido = festival.value;
+                Array.from(unidad.options).forEach(function (op) {
+                    if (!op.value) return;
+                    var deOtroFestival = elegido !== '' && op.dataset.festival !== elegido;
+                    op.disabled = deOtroFestival;
+                    op.classList.toggle('text-muted', deOtroFestival);
+                });
+                if (unidad.selectedOptions[0] && unidad.selectedOptions[0].disabled) {
+                    unidad.value = '';
+                }
+            }
+            festival.addEventListener('change', filtrarUnidades);
+            filtrarUnidades();
+        })();
+    </script>
 </body>
 </html>
