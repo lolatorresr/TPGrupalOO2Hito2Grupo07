@@ -20,6 +20,48 @@
     <div th:if="${mensajeAviso}" class="alert alert-warning" th:text="${mensajeAviso}"></div>
     <div th:if="${mensajeError}" class="alert alert-danger" th:text="${mensajeError}"></div>
 
+    <!-- Filtros por uno o varios atributos (solo empleados activos) -->
+    <form th:action="@{/personas}" method="get" class="card card-body mb-4">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Nombre o apellido</label>
+                <input type="text" name="texto" th:value="${fTexto}" class="form-control" placeholder="Ej: Diego">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">DNI</label>
+                <input type="text" name="dni" th:value="${fDni}" class="form-control" placeholder="Ej: 3844">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Tipo</label>
+                <select name="tipo" class="form-select">
+                    <option value="">Todos</option>
+                    <option th:each="t : ${tiposPersona}" th:value="${t}" th:text="${t.descripcion}"
+                            th:selected="${t == fTipo}"></option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Categoría</label>
+                <select name="categoria" class="form-select">
+                    <option value="">Todas</option>
+                    <option th:each="c : ${categoriasCocina}" th:value="${c}" th:text="${c.descripcion}"
+                            th:selected="${c == fCategoria}"></option>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">Turno</label>
+                <select name="turno" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="MAÑANA" th:selected="${fTurno == 'MAÑANA'}">Mañana</option>
+                    <option value="NOCHE" th:selected="${fTurno == 'NOCHE'}">Noche</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                <a th:href="@{/personas}" class="btn btn-outline-secondary w-100" th:if="${hayFiltros}">Limpiar</a>
+            </div>
+        </div>
+    </form>
+
     <div class="card">
         <div class="card-header fw-bold">Empleados activos</div>
         <div class="card-body p-0">
@@ -62,8 +104,8 @@
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(personas)}">
-                    <td colspan="7" class="text-center text-muted py-3">No hay empleados activos registrados todavía.
-                    </td>
+                    <td colspan="7" class="text-center text-muted py-3"
+                        th:text="${hayFiltros} ? 'No hay empleados activos que coincidan con los filtros.' : 'No hay empleados activos registrados todavía.'"></td>
                 </tr>
                 </tbody>
             </table>

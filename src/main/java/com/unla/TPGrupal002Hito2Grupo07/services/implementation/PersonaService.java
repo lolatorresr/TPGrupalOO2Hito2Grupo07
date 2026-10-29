@@ -69,6 +69,26 @@ public class PersonaService implements IPersonaService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<PersonaDTO> filtrarActivas(String texto, String dni, TipoPersona tipo,
+                                           CategoriaCocina categoria, String turno) {
+        String textoBuscado = texto != null ? texto.trim().toLowerCase() : "";
+        String dniBuscado = dni != null ? dni.trim() : "";
+        String turnoBuscado = turno != null ? turno.trim() : "";
+        // Se parte de los empleados activos (sin dados de baja ni responsables)
+        // y se aplican solo los filtros que el usuario completó
+        return getAllActivas().stream()
+                .filter(p -> textoBuscado.isEmpty()
+                        || (p.getNombre() + " " + p.getApellido()).toLowerCase().contains(textoBuscado)
+                        || (p.getApellido() + " " + p.getNombre()).toLowerCase().contains(textoBuscado))
+                .filter(p -> dniBuscado.isEmpty() || String.valueOf(p.getDni()).contains(dniBuscado))
+                .filter(p -> tipo == null || p.getTipo() == tipo)
+                .filter(p -> categoria == null || p.getCategoria() == categoria)
+                .filter(p -> turnoBuscado.isEmpty() || turnoBuscado.equalsIgnoreCase(p.getTurnoTrabajo()))
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public PersonaDTO findById(int id) {
         return personaRepository.findById(id).map(this::toDTO).orElse(null);
     }
