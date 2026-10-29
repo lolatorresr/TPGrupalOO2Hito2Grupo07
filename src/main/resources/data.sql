@@ -40,6 +40,15 @@ INSERT INTO festival (id_festival, nombre, temporada, fecha_inicio, fecha_fin) V
     ON DUPLICATE KEY UPDATE nombre=VALUES(nombre), temporada=VALUES(temporada),
     fecha_inicio=VALUES(fecha_inicio), fecha_fin=VALUES(fecha_fin);
 
+-- ---------- Parámetros del negocio (sueldos y canon) ----------
+-- Una sola fila. Para cambiar un monto se edita acá (o en la tabla), no en el código.
+INSERT INTO parametros_negocio (id_parametro, sueldo_base, valor_antiguedad, plus_cocinero, plus_ayudante,
+                                plus_lavaplatos, costo_m2, plus_electricidad, descuento_montaje) VALUES
+    (1, 100000.00, 5000.00, 150000.00, 100000.00, 50000.00, 500.00, 2000.00, 10.00)
+    ON DUPLICATE KEY UPDATE sueldo_base=VALUES(sueldo_base), valor_antiguedad=VALUES(valor_antiguedad),
+    plus_cocinero=VALUES(plus_cocinero), plus_ayudante=VALUES(plus_ayudante), plus_lavaplatos=VALUES(plus_lavaplatos),
+                         costo_m2=VALUES(costo_m2), plus_electricidad=VALUES(plus_electricidad), descuento_montaje=VALUES(descuento_montaje);
+
 -- ---------- Platos (precio de venta y costo de producción) ----------
 INSERT INTO plato (id_plato, nombre, precio, costo) VALUES
     ( 1, 'Hamburguesa Completa',         8500.00,  3200.00),

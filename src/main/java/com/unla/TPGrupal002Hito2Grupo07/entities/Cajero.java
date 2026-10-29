@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 @Entity
 @Table(name = "cajero")
@@ -23,9 +24,11 @@ public class Cajero extends Persona {
         this.turnoTrabajo = turnoTrabajo;
     }
 
-    // TODO: calcular con los valores de la clase de parámetros (pendiente)
+    /** (Sueldo base + años de antigüedad * valor por año) * factor del festival. */
     @Override
-    public double calcularSueldo(int diasFestival) {
-        return 0;
+    public double calcularSueldo(int diasFestival, ParametrosNegocio parametros) {
+        int aniosAntiguedad = Period.between(fechaIngreso, LocalDate.now()).getYears();
+        double sueldoParcial = parametros.getSueldoBase() + aniosAntiguedad * parametros.getValorAntiguedad();
+        return sueldoParcial * factorFestival(diasFestival);
     }
 }

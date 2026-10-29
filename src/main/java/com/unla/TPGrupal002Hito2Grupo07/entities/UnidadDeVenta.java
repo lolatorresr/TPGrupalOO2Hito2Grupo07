@@ -61,8 +61,8 @@ public abstract class UnidadDeVenta {
         this.superficie = superficie;
     }
 
-    /** Monto de canon a pagar por la unidad, según su tipo. */
-    public abstract double calcularCanon();
+    /** Monto de canon a pagar por la unidad, según su tipo y los valores de ParametrosNegocio. */
+    public abstract double calcularCanon(ParametrosNegocio parametros);
 
     /** Nombre legible del tipo de unidad, para vistas y reportes. */
     public abstract String getTipo();

@@ -29,9 +29,10 @@ public class Cocinero extends Persona {
         this.categoria = categoria;
     }
 
-    // TODO: calcular con los valores de la clase de parámetros (pendiente)
+    /** (Sueldo base + plus de su categoría) * factor del festival. */
     @Override
-    public double calcularSueldo(int diasFestival) {
-        return 0;
+    public double calcularSueldo(int diasFestival, ParametrosNegocio parametros) {
+        double sueldoParcial = parametros.getSueldoBase() + parametros.getPlusCategoria(categoria);
+        return sueldoParcial * factorFestival(diasFestival);
     }
 }

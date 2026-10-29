@@ -1,6 +1,5 @@
 package com.unla.TPGrupal002Hito2Grupo07.entities;
 
-import com.unla.TPGrupal002Hito2Grupo07.helpers.CostosFestival;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -28,11 +27,11 @@ public class PuestoDesarmable extends UnidadDeVenta {
         this.tiempoMontajeMinutos = tiempoMontajeMinutos;
     }
 
-    /** (superficie * $500) - (tiempo de montaje * $10). */
+    /** (superficie * costo por m²) - (minutos de montaje * descuento por minuto). */
     @Override
-    public double calcularCanon() {
-        return superficie * CostosFestival.COSTO_POR_M2
-                - tiempoMontajeMinutos * CostosFestival.DESCUENTO_POR_MINUTO_MONTAJE;
+    public double calcularCanon(ParametrosNegocio parametros) {
+        return superficie * parametros.getCostoM2()
+                - tiempoMontajeMinutos * parametros.getDescuentoMontaje();
     }
 
     @Override

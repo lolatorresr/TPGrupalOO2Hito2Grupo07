@@ -65,5 +65,15 @@ public abstract class Persona {
     }
 
     // Método abstracto de negocio requerido por el diagrama
-    public abstract double calcularSueldo(int diasFestival);
+    /**
+     * Sueldo de la persona por un festival de la duración indicada. Cada subclase calcula
+     * su sueldo parcial con los valores de ParametrosNegocio y le aplica el factor del festival.
+     */
+    public abstract double calcularSueldo(int diasFestival, ParametrosNegocio parametros);
+
+    /** Factor por duración: 0,5 por cada tramo de 15 días (un festival de 1 a 14 días es 0,5). */
+    protected double factorFestival(int diasFestival) {
+        int dias = Math.max(diasFestival, 1);
+        return (dias / 15 + 1) * 0.5;
+    }
 }

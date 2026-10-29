@@ -1,6 +1,5 @@
 package com.unla.TPGrupal002Hito2Grupo07.entities;
 
-import com.unla.TPGrupal002Hito2Grupo07.helpers.CostosFestival;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -28,12 +27,12 @@ public class FoodTruck extends UnidadDeVenta {
         this.requiereConexionElectrica = requiereConexionElectrica;
     }
 
-    /** (superficie * $500) + $2000 si requiere conexión eléctrica. */
+    /** (superficie * costo por m²) + plus de electricidad si requiere conexión eléctrica. */
     @Override
-    public double calcularCanon() {
-        double canon = superficie * CostosFestival.COSTO_POR_M2;
+    public double calcularCanon(ParametrosNegocio parametros) {
+        double canon = superficie * parametros.getCostoM2();
         if (requiereConexionElectrica) {
-            canon += CostosFestival.PLUS_ELECTRICIDAD;
+            canon += parametros.getPlusElectricidad();
         }
         return canon;
     }
