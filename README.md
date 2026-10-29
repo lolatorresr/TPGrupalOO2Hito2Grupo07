@@ -1,4 +1,4 @@
-# TPGrupal OO2Hito1 Grupo07
+# TPGrupal OO2Hito2 Grupo07
 Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 
 ## Información del Grupo
