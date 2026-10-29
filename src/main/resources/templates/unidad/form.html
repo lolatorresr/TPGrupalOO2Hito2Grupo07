@@ -51,6 +51,7 @@
                         <option value="0">-- Sin asignar --</option>
                         <option th:each="f : ${festivales}" th:value="${f.idFestival}" th:text="${f.nombre + ' (' + f.temporada + ')'}"></option>
                     </select>
+                    <p th:if="${#fields.hasErrors('festivalId')}" th:errors="*{festivalId}" class="text-danger"></p>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Responsable:</label>
