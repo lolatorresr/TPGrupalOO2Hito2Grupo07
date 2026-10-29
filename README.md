@@ -95,7 +95,7 @@ Diagrama de clases del sistema, iterado sobre el del Hito 1 para la gestión de 
    | `DB_NAME` | Nombre de la base | `TPGrupalOO2Hito2Grupo07` |
    | `DB_USER` | Usuario de MySQL | `root` |
    | `DB_PASSWORD` | Contraseña de MySQL | `root` |
-   | `EMAIL_USER` | Cuenta de Gmail desde la que se envían los mails a los empleados | vacío (no se envía) |
+   | `EMAIL_USER` | Cuenta de Gmail desde la que se envían los mails a los empleados | vacío |
    | `EMAIL_PASSWORD` | Contraseña de aplicación de esa cuenta | vacío |
 
    Ejemplo en Linux / macOS: `export DB_USER=miusuario DB_PASSWORD=miclave` antes de ejecutar. En Windows (PowerShell): `$env:DB_USER="miusuario"`.
