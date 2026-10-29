@@ -23,9 +23,8 @@ public class Responsable extends Persona {
         super(nombre, apellido, dni, fechaNacimiento, fechaIngreso, email, credencial);
     }
 
-    // TODO: calcular con los valores de la clase de parámetros (pendiente, igual que Cajero y Cocinero)
+    /** Sueldo base * factor del festival (no tiene plus). */
     @Override
-    public double calcularSueldo(int diasFestival) {
-        return 0;
-    }
-}
+    public double calcularSueldo(int diasFestival, ParametrosNegocio parametros) {
+        return parametros.getSueldoBase() * factorFestival(diasFestival);
+    }}

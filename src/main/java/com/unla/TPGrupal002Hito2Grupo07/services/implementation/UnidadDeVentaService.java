@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.unla.TPGrupal002Hito2Grupo07.services.IParametrosNegocioService;
 
 import java.util.List;
 
@@ -33,6 +34,9 @@ public class UnidadDeVentaService implements IUnidadDeVentaService {
     @Qualifier("personaRepository")
     private IPersonaRepository personaRepository;
 
+    @Autowired
+    @Qualifier("parametrosNegocioService")
+    private IParametrosNegocioService parametrosService;
 
     @Override
     @Transactional(readOnly = true)
@@ -147,7 +151,7 @@ public class UnidadDeVentaService implements IUnidadDeVentaService {
         dto.setCodigo(unidad.getCodigo());
         dto.setSuperficie(unidad.getSuperficie());
         dto.setActivo(unidad.isActivo());
-        dto.setCanon(unidad.calcularCanon());
+        dto.setCanon(unidad.calcularCanon(parametrosService.getParametros()));
         dto.setTipoDescripcion(unidad.getTipo());
         if (unidad.getFestival() != null) {
             dto.setFestivalId(unidad.getFestival().getIdFestival());

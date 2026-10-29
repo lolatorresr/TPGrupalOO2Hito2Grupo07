@@ -15,6 +15,8 @@ import com.unla.TPGrupal002Hito2Grupo07.repositories.IPedidoRepository;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IUnidadDeVentaRepository;
 import com.unla.TPGrupal002Hito2Grupo07.services.ILiquidacionService;
 import com.unla.TPGrupal002Hito2Grupo07.services.IReporteService;
+import com.unla.TPGrupal002Hito2Grupo07.entities.ParametrosNegocio;
+import com.unla.TPGrupal002Hito2Grupo07.services.IParametrosNegocioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -47,6 +49,10 @@ public class ReporteService implements IReporteService {
     @Qualifier("liquidacionService")
     private ILiquidacionService liquidacionService;
 
+    @Autowired
+    @Qualifier("parametrosNegocioService")
+    private IParametrosNegocioService parametrosService;
+
     @Override
     @Transactional(readOnly = true)
     public List<ReporteRankingUnidadDTO> rankingPorRecaudacion(int idFestival) {
@@ -77,14 +83,14 @@ public class ReporteService implements IReporteService {
     @Transactional(readOnly = true)
     public List<ReporteMayoresCanonDTO> mayoresCanon(int idFestival, int cantidad) {
         List<UnidadDeVenta> unidades = new ArrayList<>(unidadRepository.findByFestival_IdFestivalAndActivoTrue(idFestival));
-        // El canon lo calcula cada unidad según su tipo (calcularCanon)
-        unidades.sort(Comparator.comparingDouble(UnidadDeVenta::calcularCanon).reversed()
-                .thenComparing(UnidadDeVenta::getNombreComercial));
-        List<ReporteMayoresCanonDTO> reporte = new ArrayList<>();
+        // El canon lo calcula cada unidad según su tipo (calcularCanon) con los valores de la base
+        ParametrosNegocio parametros = parametrosService.getParametros();
+        unidades.sort(Comparator.comparingDouble((UnidadDeVenta u) -> u.calcularCanon(parametros)).reversed()
+                .thenComparing(UnidadDeVenta::getNombreComercial));        List<ReporteMayoresCanonDTO> reporte = new ArrayList<>();
         int posicion = 1;
         for (UnidadDeVenta u : unidades.subList(0, Math.min(cantidad, unidades.size()))) {
             reporte.add(new ReporteMayoresCanonDTO(posicion++, u.getNombreComercial(), u.getCodigo(),
-                    u.getTipo(), u.calcularCanon()));
+                    u.getTipo(), u.calcularCanon(parametros)));
         }
         return reporte;
     }
@@ -168,8 +174,7 @@ public class ReporteService implements IReporteService {
             }
         }
         detalleSueldos.sort(Comparator.comparing(ReporteSueldoDTO::getEmpleado));
-        double canon = unidad.calcularCanon() * proporcion;
-
+        double canon = unidad.calcularCanon(parametrosService.getParametros()) * proporcion;
         return new ReporteRentabilidadDTO(festival.getNombre(), unidad.getNombreComercial(), unidad.getCodigo(),
                 unidad.getTipo(), inicio, fin, diasFestival, diasPeriodo, pedidos, ventas, costoPlatos, sueldos, canon,
                 ventas - costoPlatos - sueldos - canon, detalleSueldos);
