@@ -33,7 +33,7 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 | Reactivar empleado dado de baja (método de actualización específico), data.sql sin la columna activo y ajustes de email y usuario | Juan Pablo Lombisano Bentos - [PR #19](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/19) |
 | Alta de pedido: entre los empleados, solo los cajeros pueden cargar pedidos | Juan Pablo Lombisano Bentos - [PR #20](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/20) |
 | Cierre de caja del cajero al finalizar el día (CierreCaja, historial de cierres y bloqueo de nuevos pedidos con la caja cerrada) | Juan Pablo Lombisano Bentos - [PR #21](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/21) |
-| Reportes del responsable: recaudación de un festival (ReporteVentaDTO), rentabilidad neta de una unidad en un festival y rentabilidad neta entre dos fechas. Incluye más datos de prueba, calendario común en todos los campos de fecha, listado de pedidos filtrado por festival y corrección del plus del cocinero ayudante | Lucia Daniela Ruiz - PR: [PR #22](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/22) |
+| Reportes del responsable: recaudación de un festival (ReporteVentaDTO), rentabilidad neta de una unidad en un festival y rentabilidad neta entre dos fechas | Lucia Daniela Ruiz - PR: [PR #22](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/22) |
 
 ## Pasos para correr la aplicación
 1. Requisitos: Java 17, Maven 3.9+ y MySQL 8.
