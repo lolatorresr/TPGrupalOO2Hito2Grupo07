@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import java.time.LocalDate;
+
 import java.util.List;
 
 @Repository("pedidoRepository")
@@ -46,4 +46,19 @@ public interface IPedidoRepository extends JpaRepository<Pedido, Integer> {
     List<Plato> findPlatoEstrella(@Param("idFestival") int idFestival,
                                   @Param("idUnidad") int idUnidad,
                                   Pageable pageable);
+
+
+    // ---------- Cierre de caja (Juan Pablo) ----------
+    /** Recaudación del día de una unidad: suma de los subtotales de sus pedidos de esa fecha (0 si no hubo). */
+    @Query("SELECT COALESCE(SUM(ip.subTotal), 0) FROM Pedido p JOIN p.ItemPlatos ip "
+            + "WHERE p.unidadVenta.idUnidadDeVenta = :idUnidad AND p.fechaTransaccion = :fecha")
+    double recaudacionDelDia(@Param("idUnidad") int idUnidad, @Param("fecha") LocalDate fecha);
+
+    /** Cantidad de pedidos del día de una unidad. */
+    @Query("SELECT COUNT(p) FROM Pedido p "
+            + "WHERE p.unidadVenta.idUnidadDeVenta = :idUnidad AND p.fechaTransaccion = :fecha")
+    long cantidadPedidosDelDia(@Param("idUnidad") int idUnidad, @Param("fecha") LocalDate fecha);
+
+    /** Pedidos del día de una unidad, para mostrar el detalle antes de cerrar la caja. */
+    public abstract List<Pedido> findByUnidadVenta_IdUnidadDeVentaAndFechaTransaccionOrderByIdPedidoAsc(int idUnidad, LocalDate fecha);
 }

@@ -14,6 +14,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.validation.constraints.Size;
 
 @Getter @Setter @NoArgsConstructor
 public class PersonaDTO {
@@ -43,6 +44,8 @@ public class PersonaDTO {
 
     @NotBlank(message = "El email es obligatorio.")
     @Email(message = "El email no tiene un formato válido.")
+    // El email es el usuario para iniciar sesión (columna username de 45 caracteres)
+    @Size(max = 45, message = "El email no puede superar los 45 caracteres.")
     private String email;
 
     // Solo el id del usuario asociado; no se expone la entidad User (password, roles)

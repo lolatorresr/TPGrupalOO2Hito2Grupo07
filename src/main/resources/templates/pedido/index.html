@@ -12,16 +12,16 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Pedidos</h2>
-        <a th:href="@{/pedidos/form}" class="btn btn-success">+ Nuevo Pedido</a>
-    </div>
+        <a th:href="@{/pedidos/form}" th:if="${puedeCargar}" class="btn btn-success">+ Nuevo Pedido</a>    </div>
 
     <!-- Empleados y responsables ven solo los pedidos de las unidades donde trabajan -->
     <div th:if="${soloMisUnidades}" class="alert alert-info">
         Se muestran los pedidos de las unidades de venta en las que trabaja.
     </div>
 
-    <!-- Mensaje que llega por flash attribute después de guardar -->
+    <!-- Mensajes que llegan por flash attribute (después de guardar o al rechazar la carga) -->
     <div th:if="${mensajeExito}" class="alert alert-success" th:text="${mensajeExito}"></div>
+    <div th:if="${mensajeError}" class="alert alert-danger" th:text="${mensajeError}"></div>
 
     <div class="card">
         <div class="card-header fw-bold">Pedidos registrados</div>

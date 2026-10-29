@@ -10,6 +10,7 @@
 --   responsable2 -> Ana Martínez    (Pizza Nostra y Empanadas del Norte)
 --   responsable3 -> Julián Pereyra  (Pizza Truck y Cositas Dulces)
 --   empleado1    -> Diego Fernández (lavaplatos de Choripanes del Sur)
+--   cajero1      -> Carlos López    (cajero de Burger Truck y Pizza Nostra; puede cerrar caja)
 -- =====================================================================
 
 -- ---------- Usuarios ----------
@@ -18,14 +19,16 @@ INSERT INTO user (id, username, password, enabled, created_at, updated_at) VALUE
     (2, 'responsable1', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
     (3, 'responsable2', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
     (4, 'responsable3', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
-    (5, 'empleado1', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW())
+    (5, 'empleado1', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW()),
+    (6, 'cajero1', '$2a$10$YFUsBtgsmVCYDbs0DJfO3efGeZPgE3xcD5ektiqczlC5phrR6m8/e', 1, NOW(), NOW())
     ON DUPLICATE KEY UPDATE username=username;
 INSERT INTO user_role (id, role, created_at, updated_at, user_id) VALUES
     (1, 'ROLE_ADMIN', NOW(), NOW(), 1),
     (2, 'ROLE_RESPONSABLE', NOW(), NOW(), 2),
     (3, 'ROLE_RESPONSABLE', NOW(), NOW(), 3),
     (4, 'ROLE_RESPONSABLE', NOW(), NOW(), 4),
-    (5, 'ROLE_EMPLEADO', NOW(), NOW(), 5)
+    (5, 'ROLE_EMPLEADO', NOW(), NOW(), 5),
+    (6, 'ROLE_EMPLEADO', NOW(), NOW(), 6)
     ON DUPLICATE KEY UPDATE role=role;
 
 -- ---------- Festivales ----------
@@ -71,7 +74,7 @@ INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_
     ( 1, 'Martín',     'García',    30111222, '1985-04-12', '2022-03-01', 'responsable1@epicentro.com',       2),
     ( 2, 'Ana',        'Martínez',  32555666, '1988-07-19', '2020-05-04', 'responsable2@epicentro.com',       3),
     ( 3, 'Julián',     'Pereyra',   33666777, '1989-01-25', '2021-04-19', 'responsable3@epicentro.com',       4),
-    ( 4, 'Carlos',     'López',     28333444, '1982-11-03', '2021-09-10', 'carlos.lopez@epicentro.com',       NULL),
+    ( 4, 'Carlos',     'López',     28333444, '1982-11-03', '2021-09-10', 'carlos.lopez@epicentro.com',       6),
     ( 5, 'Lucía',      'Pérez',     35222333, '1990-08-25', '2023-06-15', 'lucia.perez@epicentro.com',        NULL),
     ( 6, 'Diego',      'Fernández', 38444555, '1995-02-10', '2024-01-20', 'diego.fernandez@epicentro.com',    5),
     ( 7, 'Sofía',      'Romero',    40111222, '1997-03-14', '2025-03-01', 'sofia.romero@epicentro.com',       NULL),
@@ -86,13 +89,13 @@ INSERT INTO persona (id_persona, nombre, apellido, dni, fecha_nacimiento, fecha_
     ON DUPLICATE KEY UPDATE nombre=nombre;
 INSERT INTO responsable (id_persona) VALUES (1), (2), (3)
     ON DUPLICATE KEY UPDATE id_persona=id_persona;
-INSERT INTO cajero (id_persona, turno_trabajo, recaudacion_total) VALUES
-    ( 4, 'MAÑANA',  0),
-    ( 7, 'NOCHE',   0),
-    ( 9, 'MAÑANA',  0),
-    (11, 'NOCHE',   0),
-    (12, 'MAÑANA',  0),
-    (14, 'NOCHE',   0)
+INSERT INTO cajero (id_persona, turno_trabajo) VALUES
+    ( 4, 'MAÑANA'),
+    ( 7, 'NOCHE'),
+    ( 9, 'MAÑANA'),
+    (11, 'NOCHE'),
+    (12, 'MAÑANA'),
+    (14, 'NOCHE')
     ON DUPLICATE KEY UPDATE turno_trabajo=turno_trabajo;
 INSERT INTO cocinero (id_persona, especialidad, categoria) VALUES
     ( 5, 'Parrilla',    'COCINERO'),
@@ -755,3 +758,10 @@ INSERT INTO item_plato (id_item_plato, plato_id, cantidad, sub_total, pedido_id)
     (400, 24,  2,   4000.00, 199),
     (401, 19,  1,   2500.00, 200)
     ON DUPLICATE KEY UPDATE plato_id=VALUES(plato_id), cantidad=VALUES(cantidad), sub_total=VALUES(sub_total), pedido_id=VALUES(pedido_id);
+
+-- ---------- Cierre de caja de ejemplo ----------
+-- Pizza Nostra (unidad 5) cerró el 22/10/2026: 8 pedidos por $192.000. Cerró Carlos López (cajero1).
+-- Sirve para que el historial de cierres no aparezca vacío.
+INSERT INTO cierre_caja (id_cierre_caja, fecha, unidad_venta_id, festival_id, cajero_id, cantidad_pedidos, monto_total, created_at)
+VALUES (1, '2026-10-22', 5, 2, 4, 8, 192000.00, NOW())
+    ON DUPLICATE KEY UPDATE monto_total=VALUES(monto_total);

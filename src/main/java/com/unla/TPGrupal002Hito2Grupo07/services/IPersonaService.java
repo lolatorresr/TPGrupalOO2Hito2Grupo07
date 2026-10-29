@@ -10,6 +10,9 @@ public interface IPersonaService {
     /** Empleados activos (con la credencial habilitada). */
     public List<PersonaDTO> getAllActivas();
 
+    /** Empleados dados de baja lógicamente (se pueden reactivar). */
+    public List<PersonaDTO> getAllInactivas();
+
     public PersonaDTO findById(int id);
 
     /** Alta o mod. Si el id es 0 crea, si no actualiza la persona existente. */

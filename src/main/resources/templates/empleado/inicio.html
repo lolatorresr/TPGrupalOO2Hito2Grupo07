@@ -13,7 +13,7 @@
 <main class="container py-4">
 
     <h2 class="mb-4" th:text="'Hola, ' + ${empleado.nombre}"></h2>
-
+    <div th:if="${mensajeError}" class="alert alert-danger" th:text="${mensajeError}"></div>
     <!-- Hoy: festival activo en el que trabaja -->
     <div th:if="${!#lists.isEmpty(actuales)}" class="alert alert-success">
         <div class="mb-2" th:each="a : ${actuales}">
@@ -27,10 +27,11 @@
             </p>
         </div>
         <hr>
-        <!-- Pedidos: el empleado carga los pedidos de la unidad en la que trabaja hoy -->
-        <a th:href="@{/pedidos/form}" class="btn btn-success btn-sm">+ Nuevo pedido</a>
+        <!-- Pedidos: solo el cajero carga pedidos; todos pueden ver los de su unidad -->
+        <a th:href="@{/pedidos/form}" th:if="${empleado.tipo?.name() == 'CAJERO'}" class="btn btn-success btn-sm">+ Nuevo pedido</a>
         <a th:href="@{/pedidos/}" class="btn btn-outline-success btn-sm">Ver pedidos de mi unidad</a>
-    </div>
+        <a th:href="@{/caja}" th:if="${empleado.tipo?.name() == 'CAJERO'}" class="btn btn-outline-danger btn-sm">Cerrar caja</a>
+    </div>Ver pedidos de mi unidad</a>    </div>
     <div th:if="${#lists.isEmpty(actuales)}" class="alert alert-secondary">
         Hoy no tenés que trabajar en ningún festival activo.
     </div>

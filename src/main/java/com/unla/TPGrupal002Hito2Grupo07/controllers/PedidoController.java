@@ -1,15 +1,8 @@
 package com.unla.TPGrupal002Hito2Grupo07.controllers;
 
-import com.unla.TPGrupal002Hito2Grupo07.dtos.FestivalDTO;
-import com.unla.TPGrupal002Hito2Grupo07.dtos.ItemPedidoDTO;
-import com.unla.TPGrupal002Hito2Grupo07.dtos.PedidoDTO;
-import com.unla.TPGrupal002Hito2Grupo07.dtos.PersonaDTO;
-import com.unla.TPGrupal002Hito2Grupo07.dtos.UnidadDeVentaDTO;
+import com.unla.TPGrupal002Hito2Grupo07.dtos.*;
 import com.unla.TPGrupal002Hito2Grupo07.helpers.ViewRouteHelper;
-import com.unla.TPGrupal002Hito2Grupo07.services.IFestivalService;
-import com.unla.TPGrupal002Hito2Grupo07.services.IPedidoService;
-import com.unla.TPGrupal002Hito2Grupo07.services.IPersonaService;
-import com.unla.TPGrupal002Hito2Grupo07.services.IUnidadDeVentaService;
+import com.unla.TPGrupal002Hito2Grupo07.services.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,6 +47,10 @@ public class PedidoController {
     @Qualifier("festivalService")
     private IFestivalService festivalService;
 
+    @Autowired
+    @Qualifier("cierreCajaService")
+    private ICierreCajaService cierreCajaService;
+
     @GetMapping("/")
     public ModelAndView index(Authentication auth) {
         ModelAndView mAV = new ModelAndView(ViewRouteHelper.PEDIDO_INDEX);
@@ -65,12 +62,20 @@ public class PedidoController {
             mAV.addObject("pedidos", pedidoService.getDeUnidades(misUnidades));
             mAV.addObject("soloMisUnidades", true);
         }
+        // Para mostrar u ocultar el botón "+ Nuevo Pedido"
+        mAV.addObject("puedeCargar", puedeCargarPedidos(auth));
         return mAV;
     }
 
     /** Paso 1: elegir la unidad. Paso 2 (con unidadId): aparecen los platos que ofrece esa unidad. */
     @GetMapping("/form")
-    public ModelAndView form(@RequestParam(required = false, defaultValue = "0") int unidadId, Authentication auth) {
+    public ModelAndView form(@RequestParam(required = false, defaultValue = "0") int unidadId,
+                             Authentication auth, RedirectAttributes redirectAttributes) {
+        // Validación de carga: entre los empleados, solo los cajeros cargan pedidos
+        if (!puedeCargarPedidos(auth)) {
+            redirectAttributes.addFlashAttribute("mensajeError", "Solo los cajeros pueden cargar pedidos.");
+            return new ModelAndView(new RedirectView(ViewRouteHelper.PEDIDO_ROOT, true));
+        }
         List<UnidadDeVentaDTO> unidades = unidadesParaPedir(auth);
         // Si el usuario trabaja en una sola unidad, queda elegida directamente
         if (unidadId == 0 && unidades.size() == 1) {
@@ -99,6 +104,10 @@ public class PedidoController {
             FestivalDTO festival = festivalService.findById(unidad.getFestivalId());
             if (festival == null || !festival.isEnCurso()) {
                 bindingResult.reject("error.pedido", "Solo se pueden cargar pedidos en un festival en curso.");
+            }
+            // Validación de carga: la caja de hoy de la unidad no puede estar cerrada
+            if (cierreCajaService.estaCerrada(unidad.getIdUnidadDeVenta(), LocalDate.now())) {
+                bindingResult.reject("error.pedido", "La caja de hoy de esta unidad ya fue cerrada: no se pueden cargar más pedidos.");
             }
         }
         // Validación de carga 1: un pedido solo puede tener la fecha del día en que se carga
@@ -153,6 +162,23 @@ public class PedidoController {
         return auth != null && auth.getAuthorities().stream().anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
     }
 
+    /**
+     * Quién puede cargar pedidos: el administrador, el responsable y, entre los empleados,
+     * solo los cajeros. Los cocineros pueden ver los pedidos de su unidad pero no cargarlos.
+     */
+    private boolean puedeCargarPedidos(Authentication auth) {
+        if (auth == null) {
+            return false;
+        }
+        boolean adminOResponsable = auth.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()) || "ROLE_RESPONSABLE".equals(a.getAuthority()));
+        if (adminOResponsable) {
+            return true;
+        }
+        PersonaDTO persona = personaService.findByUsername(auth.getName());
+        return persona != null && persona.getTipo() == TipoPersona.CAJERO;
+    }
+
     /** Unidades activas en cuyo staff figura la persona logueada (vacío si la credencial no tiene persona). */
     private List<UnidadDeVentaDTO> unidadesDeStaff(Authentication auth) {
         PersonaDTO persona = auth != null ? personaService.findByUsername(auth.getName()) : null;
@@ -161,12 +187,18 @@ public class PedidoController {
 
     /** Unidades en las que el usuario puede cargar un pedido: todas si es admin, si no las suyas en festivales en curso. */
     private List<UnidadDeVentaDTO> unidadesParaPedir(Authentication auth) {
+        if (!puedeCargarPedidos(auth)) {
+            return List.of();
+        }
         if (esAdmin(auth)) {
             return unidadService.getAllActivas();
         }
+        LocalDate hoy = LocalDate.now();
         return unidadesDeStaff(auth).stream().filter(u -> {
             FestivalDTO festival = festivalService.findById(u.getFestivalId());
-            return festival != null && festival.isEnCurso();
+            return festival != null && festival.isEnCurso()
+                    // Con la caja de hoy cerrada ya no se cargan pedidos en esa unidad
+                    && !cierreCajaService.estaCerrada(u.getIdUnidadDeVenta(), hoy);
         }).toList();
     }
 }

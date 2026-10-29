@@ -32,8 +32,12 @@ public class PersonaController {
     public String index(Model model) {
         // Trae entidades que no estén eliminadas lógicamente[cite: 14]
         model.addAttribute("personas", personaService.getAllActivas());
+        model.addAttribute("inactivas", personaService.getAllInactivas());
         return "persona/index";
     }
+
+
+
 
     // 2. FORMULARIO DE ALTA
     @GetMapping("/nuevo")
@@ -43,7 +47,7 @@ public class PersonaController {
         return "persona/form";
     }
 
-    // 3. FORMULARIO DE EDICIÓN
+    // 3. FORMULARIO DE EDICION
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable("id") int id, Model model) {
         PersonaDTO dto = personaService.findById(id);
@@ -55,7 +59,7 @@ public class PersonaController {
         return "persona/form";
     }
 
-    // 4. GUARDAR (ALTA Y MODIFICACIÓN) CON VALIDACIONES DE CARGA
+    // 4. GUARDAR (ALTA Y MODIFICACION) CON VALIDACIONES DE CARGA
     @PostMapping("/guardar")
     public String guardar(@Valid @ModelAttribute("personaDTO") PersonaDTO dto,
                           BindingResult bindingResult,
@@ -86,7 +90,7 @@ public class PersonaController {
         return "redirect:/personas";
     }
 
-    // 5. BAJA LÓGICA
+    // 5. BAJA LOGICA
     @PostMapping("/eliminar/{id}")
     public String eliminar(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
         // La eliminación de los empleados será de tipo lógica[cite: 14]
@@ -94,6 +98,19 @@ public class PersonaController {
             redirectAttributes.addFlashAttribute("mensajeExito", "Persona dada de baja lógicamente.");
         } else {
             redirectAttributes.addFlashAttribute("mensajeError", "No se pudo dar de baja: la persona no existe o no tiene credencial.");
+        }
+        return "redirect:/personas";
+    }
+
+    // 6. REACTIVACION: método de actualización específico para un empleado dado de baja
+    @PostMapping("/reactivar/{id}")
+    public String reactivar(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+        if (personaService.reactivar(id)) {
+            redirectAttributes.addFlashAttribute("mensajeExito",
+                    "Empleado reactivado: ya puede volver a iniciar sesión con su usuario.");
+        } else {
+            redirectAttributes.addFlashAttribute("mensajeError",
+                    "No se pudo reactivar: la persona no existe o no tiene credencial.");
         }
         return "redirect:/personas";
     }
