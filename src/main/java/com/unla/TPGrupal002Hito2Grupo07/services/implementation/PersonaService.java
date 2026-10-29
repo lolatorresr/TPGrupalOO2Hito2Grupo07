@@ -163,7 +163,7 @@ public class PersonaService implements IPersonaService {
         if (dto.getFechaNacimiento() != null) {
             int edad = Period.between(dto.getFechaNacimiento(), LocalDate.now()).getYears();
             if (edad < 18) {
-                throw new IllegalArgumentException("El empleado debe ser mayor de 18 anios.");
+                throw new IllegalArgumentException("El empleado debe ser mayor de 18 años.");
             }
         }
 

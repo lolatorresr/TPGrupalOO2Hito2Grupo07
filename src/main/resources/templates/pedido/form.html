@@ -27,7 +27,9 @@
                                 th:text="${u.nombreComercial + ' (' + u.codigo + ') - ' + (u.festivalNombre ?: 'sin festival')}"></option>
                     </select>
                     <small class="text-muted" th:unless="${#lists.isEmpty(unidades)}">Al elegir la unidad se cargan los platos que ofrece.</small>
-                    <small class="text-danger" th:if="${#lists.isEmpty(unidades)}">No trabaja en ninguna unidad de venta de un festival en curso, por lo que no puede cargar pedidos.</small>
+                    <small class="text-danger" th:if="${#lists.isEmpty(unidades) and !#lists.isEmpty(cajaCerrada)}"
+                           th:text="'La caja de hoy de ' + ${#strings.listJoin(cajaCerrada, ', ')} + ' ya fue cerrada, por lo que no se pueden cargar más pedidos.'"></small>
+                    <small class="text-danger" th:if="${#lists.isEmpty(unidades) and #lists.isEmpty(cajaCerrada)}">No trabaja en ninguna unidad de venta de un festival en curso, por lo que no puede cargar pedidos.</small>
                 </div>
             </form>
         </div>

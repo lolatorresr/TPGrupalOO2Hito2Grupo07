@@ -61,4 +61,10 @@ public interface IPedidoRepository extends JpaRepository<Pedido, Integer> {
 
     /** Pedidos del día de una unidad, para mostrar el detalle antes de cerrar la caja. */
     public abstract List<Pedido> findByUnidadVenta_IdUnidadDeVentaAndFechaTransaccionOrderByIdPedidoAsc(int idUnidad, LocalDate fecha);
+
+    /** Cantidad total vendida de un plato por una unidad en un festival (para el plato estrella). */
+    @Query("SELECT COALESCE(SUM(ip.cantidad), 0) FROM Pedido p JOIN p.ItemPlatos ip "
+            + "WHERE p.festival.idFestival = :idFestival AND p.unidadVenta.idUnidadDeVenta = :idUnidad "
+            + "AND ip.plato.idPlato = :idPlato")
+    long cantidadVendida(@Param("idFestival") int idFestival, @Param("idUnidad") int idUnidad, @Param("idPlato") int idPlato);
 }

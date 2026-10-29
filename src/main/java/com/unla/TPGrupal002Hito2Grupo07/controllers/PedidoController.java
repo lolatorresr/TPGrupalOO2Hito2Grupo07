@@ -101,7 +101,12 @@ public class PedidoController {
         if (dto.getFechaTransaccion() == null) {
             dto.setFechaTransaccion(LocalDate.now());
         }
-        return formView(dto, unidades);
+        ModelAndView mAV = formView(dto, unidades);
+        // Si no queda ninguna unidad, aclarar si es porque la caja de hoy ya fue cerrada
+        if (unidades.isEmpty()) {
+            mAV.addObject("cajaCerrada", unidadesConCajaCerradaHoy(auth));
+        }
+        return mAV;
     }
 
     @PostMapping("/save")
@@ -170,6 +175,7 @@ public class PedidoController {
         ModelAndView mAV = new ModelAndView(ViewRouteHelper.PEDIDO_FORM);
         mAV.addObject(PEDIDO_ATTR, dto);
         mAV.addObject("unidades", unidades);
+        mAV.addObject("cajaCerrada", List.of());
         mAV.addObject("hoy", LocalDate.now());
         return mAV;
     }
@@ -202,6 +208,19 @@ public class PedidoController {
     }
 
     /** Unidades en las que el usuario puede cargar un pedido: todas si es admin, si no las suyas en festivales en curso. */
+    /** Unidades vigentes del usuario cuya caja de hoy ya fue cerrada (no admiten más pedidos). */
+    private List<String> unidadesConCajaCerradaHoy(Authentication auth) {
+        if (!puedeCargarPedidos(auth) || esAdmin(auth)) {
+            return List.of();
+        }
+        LocalDate hoy = LocalDate.now();
+        return unidadesDeStaff(auth).stream().filter(u -> {
+            FestivalDTO festival = festivalService.findById(u.getFestivalId());
+            return festival != null && festival.isEnCurso()
+                    && cierreCajaService.estaCerrada(u.getIdUnidadDeVenta(), hoy);
+        }).map(UnidadDeVentaDTO::getNombreComercial).toList();
+    }
+
     private List<UnidadDeVentaDTO> unidadesParaPedir(Authentication auth) {
         if (!puedeCargarPedidos(auth)) {
             return List.of();
