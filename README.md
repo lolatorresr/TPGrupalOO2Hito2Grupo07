@@ -69,6 +69,8 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 | Alta de pedido: entre los empleados, solo los cajeros pueden cargar pedidos | Juan Pablo Lombisano Bentos - [PR #20](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/20) |
 | Cierre de caja del cajero al finalizar el día (CierreCaja, historial de cierres y bloqueo de nuevos pedidos con la caja cerrada) | Juan Pablo Lombisano Bentos - [PR #21](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/21) |
 | Reportes del responsable: recaudación de un festival (ReporteVentaDTO), rentabilidad neta de una unidad en un festival y rentabilidad neta entre dos fechas. | Lucia Daniela Ruiz - [PR #22](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/22) |
+| Filtro de empleados por uno o varios atributos (solo empleados activos) | Juan Pablo Lombisano Bentos - [PR #23](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/23) |
+| Listado de casos de uso principales en el README | Lucia Daniela Ruiz - [PR #24](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/24) |
 
 ## Pasos para correr la aplicación
 1. Requisitos: Java 17, Maven 3.9+ y MySQL 8.
