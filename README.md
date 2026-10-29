@@ -71,6 +71,7 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 | Reportes del responsable: recaudación de un festival (ReporteVentaDTO), rentabilidad neta de una unidad en un festival y rentabilidad neta entre dos fechas. | Lucia Daniela Ruiz - [PR #22](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/22) |
 | Filtro de empleados por uno o varios atributos (solo empleados activos) | Juan Pablo Lombisano Bentos - [PR #23](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/23) |
 | Listado de casos de uso principales en el README | Lucia Daniela Ruiz - [PR #24](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/24) |
+| Parámetros de negocio en la base de datos (sueldo base, antigüedad, plus por categoría, costos del canon) usados por la liquidación y el canon, y ajuste de seguridad (platos y unidades solo con sesión) | Juan Pablo Lombisano Bentos - [PR #25](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/25) |
 
 ## Diagrama de clases
 Diagrama de clases del sistema, iterado sobre el del Hito 1 para la gestión de festivales:
