@@ -11,6 +11,41 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 | Juan Pablo Lombisano Bentos | @Juanplombisano |
 | Lucia Daniela Ruiz | @LDR16 |
 
+## Casos de uso principales
+
+**Visitante (sin iniciar sesión)**
+- Ver la página de inicio con los festivales y sus unidades de venta.
+- Registrar una unidad de venta con su responsable (genera el usuario del responsable).
+- Iniciar sesión como administrador, responsable o empleado.
+
+**Administrador**
+- Ver festivales y las unidades de venta de cada festival.
+- Ranking de unidades de un festival por recaudación.
+- Unidades con mayor canon de un festival (parámetro x).
+- Consultar la recaudación y la rentabilidad neta de cualquier unidad.
+- Ver todos los pedidos, filtrados por festival.
+
+**Responsable de unidad de venta**
+- Alta, baja lógica, modificación y reactivación de empleados (cajeros y cocineros), con envío de mail con las credenciales.
+- Filtrar empleados por uno o varios atributos.
+- Alta de platos con precio de venta y costo.
+- Reporte de recaudación de un festival (ReporteVentaDTO).
+- Rentabilidad neta de su unidad en un festival y entre dos fechas (ventas − costo de platos − sueldos − canon).
+- Plato estrella de su unidad en un festival (PlatoDTO).
+- Ver los pedidos de sus unidades, filtrados por festival.
+
+**Empleado**
+- Ver los festivales y unidades de venta en los que trabajó y si hoy trabaja en un festival activo.
+- Ver el sueldo de cada festival y descargar el recibo de sueldo en PDF.
+- Cajero: cargar pedidos de su unidad en el festival en curso y cerrar la caja al finalizar el día.
+
+**Reglas del sistema**
+- Canon: Food Truck = superficie × $500 (+ $2.000 con conexión eléctrica); Puesto Desarmable = superficie × $500 − minutos de montaje × $10.
+- Liquidación: sueldo base $100.000, antigüedad $5.000 por año (cajeros), plus por categoría de cocina ($150.000 / $100.000 / $50.000), proporcional a la duración del festival.
+- Validaciones: período del festival válido, código de unidad de 10 caracteres con formato propio, personal mayor de edad, pedidos solo con fecha del día y en festivales en curso.
+
+## Casos de uso implementados y responsables
+
 | Método | Responsable |
 | :--- | :--- |
 | Entidades base: Festival, Plato, Pedido e ItemPlato | Lola Torres Rodriguez - [PR #1](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/1) |
