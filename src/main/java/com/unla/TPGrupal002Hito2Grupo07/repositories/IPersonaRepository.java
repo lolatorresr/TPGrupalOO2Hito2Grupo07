@@ -4,6 +4,7 @@ import com.unla.TPGrupal002Hito2Grupo07.entities.Persona;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.io.Serializable;
 import java.util.List;
@@ -22,6 +23,20 @@ public interface IPersonaRepository extends JpaRepository<Persona, Serializable>
     /** Empleados dados de baja (con credencial deshabilitada), sin incluir responsables. */
     @Query("SELECT p FROM Persona p WHERE p.credencial IS NOT NULL AND p.credencial.enabled = false AND TYPE(p) <> Responsable")
     public abstract List<Persona> findEmpleadosInactivos();
+
+    /** Empleados activos que trabajan en alguna unidad del responsable (listado del responsable). */
+    @Query("SELECT p FROM Persona p WHERE p.credencial.enabled = true AND TYPE(p) <> Responsable "
+            + "AND EXISTS (SELECT u FROM UnidadDeVenta u JOIN u.staff s "
+            + "WHERE s.idPersona = p.idPersona AND u.responsable.idPersona = :idResponsable)")
+    public abstract List<Persona> findEmpleadosActivosDelResponsable(@Param("idResponsable") int idResponsable);
+
+    /** Empleados dados de baja que trabajaban en alguna unidad del responsable (para reactivarlos). */
+    @Query("SELECT p FROM Persona p WHERE p.credencial IS NOT NULL AND p.credencial.enabled = false "
+            + "AND TYPE(p) <> Responsable "
+            + "AND EXISTS (SELECT u FROM UnidadDeVenta u JOIN u.staff s "
+            + "WHERE s.idPersona = p.idPersona AND u.responsable.idPersona = :idResponsable)")
+    public abstract List<Persona> findEmpleadosInactivosDelResponsable(@Param("idResponsable") int idResponsable);
+
     public abstract Optional<Persona> findByDni(long dni);
 
     public abstract Optional<Persona> findByEmail(String email);

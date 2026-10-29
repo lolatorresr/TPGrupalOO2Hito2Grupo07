@@ -128,8 +128,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Fecha de ingreso:</label>
-                    <input type="text" th:field="*{fechaIngreso}" class="form-control fecha" required placeholder="dd/mm/aaaa">
-                    <p th:if="${#fields.hasErrors('fechaIngreso')}" th:errors="*{fechaIngreso}" class="text-danger"></p>
+                    <input type="text" th:field="*{fechaIngreso}" class="form-control fecha" data-max="hoy" required placeholder="dd/mm/aaaa">                    <p th:if="${#fields.hasErrors('fechaIngreso')}" th:errors="*{fechaIngreso}" class="text-danger"></p>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Email:</label>

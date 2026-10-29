@@ -9,12 +9,12 @@
     <link rel="stylesheet" th:href="@{/css/calendario.css}"/>
 </head>
 <body>
-    <nav th:replace="~{layout :: navbar}"></nav>
-    <main class="container py-4">
+<nav th:replace="~{layout :: navbar}"></nav>
+<main class="container py-4">
 
     <h2 class="mb-4" th:text="${personaDTO.idPersona > 0} ? 'Modificar Empleado' : 'Nuevo Empleado'"></h2>
 
-    <!-- Errores de negocio que lanza el service (edad, DNI o email repetidos) -->
+    <!-- Errores de negocio que lanza el service (edad, DNI o email repetidos, unidad no válida) -->
     <div th:if="${errorNegocio}" class="alert alert-danger" th:text="${errorNegocio}"></div>
 
     <div class="card mb-4">
@@ -59,7 +59,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Fecha de ingreso:</label>
-                    <input type="text" th:field="*{fechaIngreso}" class="form-control fecha" required placeholder="dd/mm/aaaa">
+                    <input type="text" th:field="*{fechaIngreso}" class="form-control fecha" data-max="hoy" required placeholder="dd/mm/aaaa">
                     <p th:if="${#fields.hasErrors('fechaIngreso')}" th:errors="*{fechaIngreso}" class="text-danger"></p>
                 </div>
 
@@ -71,6 +71,19 @@
                 <!-- En el alta la credencial se genera sola (usuario = email, contraseña aleatoria, rol Empleado) -->
                 <div class="col-md-6 d-flex align-items-end" th:if="${personaDTO.idPersona == 0}">
                     <small class="text-muted">El usuario será el email y la contraseña se enviará por mail.</small>
+                </div>
+
+                <!-- Alta: unidad de venta del responsable donde va a trabajar (solo festivales vigentes) -->
+                <div class="col-md-6" th:if="${personaDTO.idPersona == 0}">
+                    <label class="form-label">Unidad de venta:</label>
+                    <select th:field="*{idUnidad}" class="form-select">
+                        <option value="0">-- Seleccionar --</option>
+                        <option th:each="u : ${unidadesResponsable}" th:value="${u.idUnidadDeVenta}"
+                                th:text="${u.nombreComercial + ' (' + u.festivalNombre + ')'}"></option>
+                    </select>
+                    <small class="text-danger" th:if="${#lists.isEmpty(unidadesResponsable)}">
+                        No tenés unidades de venta en festivales vigentes: no se pueden dar de alta empleados.
+                    </small>
                 </div>
 
                 <!-- Campos de Cajero -->
@@ -122,11 +135,11 @@
         document.getElementById('tipo').addEventListener('change', actualizarCampos);
         actualizarCampos();
     </script>
-    </main>
-    <footer th:replace="~{layout :: footer}"></footer>
-    <div th:replace="~{layout :: scripts}"></div>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/es.js"></script>
-    <script th:src="@{/js/calendario.js}"></script>
+</main>
+<footer th:replace="~{layout :: footer}"></footer>
+<div th:replace="~{layout :: scripts}"></div>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/es.js"></script>
+<script th:src="@{/js/calendario.js}"></script>
 </body>
 </html>

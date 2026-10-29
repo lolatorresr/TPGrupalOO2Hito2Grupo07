@@ -87,6 +87,40 @@ public class PersonaService implements IPersonaService {
                 .toList();
     }
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PersonaDTO> filtrarActivasDelResponsable(int idResponsable, String texto, String dni,
+                                                         TipoPersona tipo, CategoriaCocina categoria, String turno) {
+        String textoBuscado = texto != null ? texto.trim().toLowerCase() : "";
+        String dniBuscado = dni != null ? dni.trim() : "";
+        String turnoBuscado = turno != null ? turno.trim() : "";
+        // Se parte de los empleados activos de las unidades del responsable y se aplican los filtros completados
+        return personaRepository.findEmpleadosActivosDelResponsable(idResponsable).stream()
+                .map(this::toDTO)
+                .filter(p -> textoBuscado.isEmpty()
+                        || (p.getNombre() + " " + p.getApellido()).toLowerCase().contains(textoBuscado)
+                        || (p.getApellido() + " " + p.getNombre()).toLowerCase().contains(textoBuscado))
+                .filter(p -> dniBuscado.isEmpty() || String.valueOf(p.getDni()).contains(dniBuscado))
+                .filter(p -> tipo == null || p.getTipo() == tipo)
+                .filter(p -> categoria == null || p.getCategoria() == categoria)
+                .filter(p -> turnoBuscado.isEmpty() || turnoBuscado.equalsIgnoreCase(p.getTurnoTrabajo()))
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PersonaDTO> getInactivasDelResponsable(int idResponsable) {
+        return personaRepository.findEmpleadosInactivosDelResponsable(idResponsable)
+                .stream().map(this::toDTO).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean esEmpleadoDelResponsable(int idPersona, int idResponsable) {
+        return unidadRepository.existsByResponsable_IdPersonaAndStaff_IdPersona(idResponsable, idPersona);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public PersonaDTO findById(int id) {
@@ -163,6 +197,7 @@ public class PersonaService implements IPersonaService {
 
         Persona persona;
         String passwordGenerada = null;
+        UnidadDeVenta unidadAlta = null;
         if (dto.getIdPersona() > 0) {
             persona = personaRepository.findById(dto.getIdPersona()).orElseThrow();
             // Si cambia el email, cambia también el usuario con el que inicia sesión
@@ -176,6 +211,10 @@ public class PersonaService implements IPersonaService {
                 credencial.setUsername(dto.getEmail());
             }
         } else {
+            // Validación de carga: el empleado se da de alta en una unidad de venta (la del responsable)
+            unidadAlta = unidadRepository.findById(dto.getIdUnidad())
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Debe seleccionar la unidad de venta donde va a trabajar el empleado."));
             // Validación de carga: el email será el usuario, no puede estar tomado por otra cuenta
             if (userRepository.findByUsername(dto.getEmail()).isPresent()) {
                 throw new IllegalArgumentException("Ya existe un usuario con ese email.");
@@ -188,8 +227,12 @@ public class PersonaService implements IPersonaService {
         }
         copiarDatos(dto, persona);
         Persona personaGuardada = personaRepository.save(persona);
+        // Alta: el empleado pasa a formar parte del staff de la unidad elegida
+        if (unidadAlta != null) {
+            unidadAlta.getStaff().add(personaGuardada);
+            unidadRepository.save(unidadAlta);
+        }
         PersonaDTO resultado = toDTO(personaGuardada);
-
         if (passwordGenerada != null) {
             UserRole userRole = new UserRole();
             userRole.setUser(personaGuardada.getCredencial());

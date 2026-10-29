@@ -39,6 +39,7 @@ public class PersonaDTO {
     private LocalDate fechaNacimiento;
 
     @NotNull(message = "La fecha de ingreso es obligatoria.")
+    @PastOrPresent(message = "La fecha de ingreso no puede ser futura.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaIngreso;
 
@@ -57,6 +58,9 @@ public class PersonaDTO {
     // Cocinero
     private String especialidad;
     private CategoriaCocina categoria;
+
+    // Alta: unidad de venta del responsable donde va a trabajar el empleado
+    private int idUnidad;
 
     // Solo lectura, para listados
     private String tipoDescripcion;

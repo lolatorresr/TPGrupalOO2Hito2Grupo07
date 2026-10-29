@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.unla.TPGrupal002Hito2Grupo07.services.IParametrosNegocioService;
 
 import java.util.List;
+import java.time.LocalDate;
 
 @Service("unidadDeVentaService")
 public class UnidadDeVentaService implements IUnidadDeVentaService {
@@ -52,6 +53,14 @@ public class UnidadDeVentaService implements IUnidadDeVentaService {
     @Override
     public List<UnidadDeVentaDTO> getActivasDeStaff(int idPersona) {
         return unidadRepository.findActivasByStaff(idPersona).stream().map(this::toDTO).toList();
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UnidadDeVentaDTO> getVigentesDelResponsable(int idResponsable) {
+        return unidadRepository.findVigentesDelResponsable(idResponsable, LocalDate.now())
+                .stream().map(this::toDTO).toList();
     }
 
     @Override
