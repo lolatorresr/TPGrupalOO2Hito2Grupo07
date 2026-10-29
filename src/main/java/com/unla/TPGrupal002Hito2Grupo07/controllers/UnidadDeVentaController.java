@@ -6,6 +6,7 @@ import com.unla.TPGrupal002Hito2Grupo07.entities.Festival;
 import com.unla.TPGrupal002Hito2Grupo07.helpers.ViewRouteHelper;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IFestivalRepository;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IPersonaRepository;
+import com.unla.TPGrupal002Hito2Grupo07.services.IFestivalService;
 import com.unla.TPGrupal002Hito2Grupo07.services.IUnidadDeVentaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,10 @@ public class UnidadDeVentaController {
     @Autowired
     @Qualifier("personaRepository")
     private IPersonaRepository personaRepository;
+
+    @Autowired
+    @Qualifier("festivalService")
+    private IFestivalService festivalService;
 
     /** Listado de unidades activas, opcionalmente de un solo festival (?festivalId=). */
     @GetMapping("/")
@@ -111,7 +116,8 @@ public class UnidadDeVentaController {
         ModelAndView mAV = new ModelAndView(ViewRouteHelper.UNIDAD_FORM);
         mAV.addObject(UNIDAD_ATTR, dto);
         mAV.addObject("tipos", TipoUnidad.values());
-        mAV.addObject("festivales", festivalRepository.findAll());
+        // Una unidad nueva solo puede ir a un festival en curso o próximo; al editar se muestran todos
+        mAV.addObject("festivales", dto.getIdUnidadDeVenta() == 0 ? festivalService.getNoFinalizados() : festivalService.getAll());
         mAV.addObject("responsables", personaRepository.findByCredencialEnabledTrue());
         return mAV;
     }
