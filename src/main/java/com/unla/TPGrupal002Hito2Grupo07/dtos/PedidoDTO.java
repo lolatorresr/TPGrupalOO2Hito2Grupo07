@@ -31,6 +31,7 @@ public class PedidoDTO {
     // Solo lectura, para listados
     private String unidadNombre;
     private String unidadCodigo;
+    private int festivalId;
     private String festivalNombre;
     private int cantidadPlatos;
     private double total;
