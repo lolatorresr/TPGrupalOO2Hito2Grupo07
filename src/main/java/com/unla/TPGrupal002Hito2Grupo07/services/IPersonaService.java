@@ -2,6 +2,8 @@ package com.unla.TPGrupal002Hito2Grupo07.services;
 
 import com.unla.TPGrupal002Hito2Grupo07.dtos.AsignacionDTO;
 import com.unla.TPGrupal002Hito2Grupo07.dtos.PersonaDTO;
+import com.unla.TPGrupal002Hito2Grupo07.dtos.TipoPersona;
+import com.unla.TPGrupal002Hito2Grupo07.entities.CategoriaCocina;
 
 import java.util.List;
 
@@ -12,6 +14,13 @@ public interface IPersonaService {
 
     /** Empleados dados de baja lógicamente (se pueden reactivar). */
     public List<PersonaDTO> getAllInactivas();
+
+    /**
+     * Empleados activos filtrados por uno o varios atributos. Los parámetros vacíos o null
+     * no filtran. Solo trae empleados no eliminados lógicamente (y sin responsables).
+     */
+    public List<PersonaDTO> filtrarActivas(String texto, String dni, TipoPersona tipo,
+                                           CategoriaCocina categoria, String turno);
 
     public PersonaDTO findById(int id);
 
