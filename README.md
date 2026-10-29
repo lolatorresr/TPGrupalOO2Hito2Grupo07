@@ -73,10 +73,11 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 | Listado de casos de uso principales en el README | Lucia Daniela Ruiz - [PR #24](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/24) |
 | Parámetros de negocio en la base de datos (sueldo base, antigüedad, plus por categoría, costos del canon) usados por la liquidación y el canon, y ajuste de seguridad (platos y unidades solo con sesión) | Juan Pablo Lombisano Bentos - [PR #25](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/25) |
 | Validaciones de unidad (solo festivales vigentes) y plato estrella (solo unidades propias), y datos de prueba para la defensa | Lucia Daniela Ruiz - [PR #26](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/26) |
+| Empleados por responsable: alta en una unidad propia, listados y acciones solo sobre sus empleados | Juan Pablo Lombisano Bentos - [PR #27](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/27) |
 
 ## Diagrama de clases
 Diagrama de clases del sistema, iterado sobre el del Hito 1 para la gestión de festivales:
-[Ver diagrama de clases](https://viewer.diagrams.net/?url=https://raw.githubusercontent.com/lolatorresr/TPGrupalOO2Hito2Grupo07/main/docs/diagrama-de-clases.drawio) (fuente editable en [docs/diagrama-de-clases.drawio](docs/diagrama-de-clases.drawio)).
+[Ver diagrama de clases](https://drive.google.com/file/d/1Y29fBcgz-xEDBkAVU8fDW0nB7N6uYK2k/view?usp=sharing) (también en [docs/diagrama-de-clases.drawio](docs/diagrama-de-clases.drawio), abrible con [diagrams.net](https://viewer.diagrams.net/?url=https://raw.githubusercontent.com/lolatorresr/TPGrupalOO2Hito2Grupo07/main/docs/diagrama-de-clases.drawio)).
 
 ## Pasos para correr la aplicación
 1. Requisitos: Java 17, Maven 3.9+ y MySQL 8.

@@ -57,6 +57,9 @@
             <div class="card-header bg-warning fw-bold">Plato estrella</div>
             <div class="card-body">
                 <h4 class="card-title" th:text="${platoEstrella.nombre}"></h4>
+                <p class="card-text mb-1"><strong>Festival:</strong> <span th:text="${platoEstrella.festival}"></span></p>
+                <p class="card-text mb-1"><strong>Unidad de venta:</strong> <span th:text="${platoEstrella.unidadDeVenta}"></span></p>
+                <p class="card-text mb-1"><strong>Cantidad vendida:</strong> <span th:text="${platoEstrella.cantidad}"></span></p>
                 <p class="card-text mb-1"><strong>Precio de venta:</strong>
                     <span th:text="'$' + ${#numbers.formatDecimal(platoEstrella.precio, 1, 'POINT', 2, 'COMMA')}"></span></p>
                 <p class="card-text mb-0"><strong>Costo de producción:</strong>

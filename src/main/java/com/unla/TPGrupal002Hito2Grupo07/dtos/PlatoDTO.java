@@ -23,6 +23,10 @@ public class PlatoDTO {
     @NotNull(message = "El costo es obligatorio.")
     @PositiveOrZero(message = "El costo de producción no puede ser negativo.")
     private double costo;
+
+    // Plato estrella: festival y unidad de venta consultados, y cantidad vendida del plato
+    private String festival;
+    private String unidadDeVenta;
     private int cantidad;
 
     public PlatoDTO(int idPlato, String nombre, double precio, double costo, int cantidad){

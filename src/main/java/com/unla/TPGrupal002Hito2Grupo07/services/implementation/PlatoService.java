@@ -2,8 +2,10 @@ package com.unla.TPGrupal002Hito2Grupo07.services.implementation;
 
 import com.unla.TPGrupal002Hito2Grupo07.dtos.PlatoDTO;
 import com.unla.TPGrupal002Hito2Grupo07.entities.Plato;
+import com.unla.TPGrupal002Hito2Grupo07.repositories.IFestivalRepository;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IPedidoRepository;
 import com.unla.TPGrupal002Hito2Grupo07.repositories.IPlatoRepository;
+import com.unla.TPGrupal002Hito2Grupo07.repositories.IUnidadDeVentaRepository;
 import com.unla.TPGrupal002Hito2Grupo07.services.IPlatoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,14 @@ public class PlatoService implements IPlatoService {
     @Autowired
     @Qualifier("pedidoRepository")
     private IPedidoRepository pedidoRepository;
+
+    @Autowired
+    @Qualifier("festivalRepository")
+    private IFestivalRepository festivalRepository;
+
+    @Autowired
+    @Qualifier("unidadDeVentaRepository")
+    private IUnidadDeVentaRepository unidadRepository;
 
     private ModelMapper modelMapper = new ModelMapper();
 
@@ -57,7 +67,13 @@ public class PlatoService implements IPlatoService {
     public PlatoDTO obtenerPlatoEstrella(int idFestival, int idUnidad) {
         List<Plato> resultados = pedidoRepository.findPlatoEstrella(idFestival, idUnidad, PageRequest.of(0,1));
         if(resultados != null && !resultados.isEmpty()){
-            return modelMapper.map(resultados.get(0), PlatoDTO.class);
+            Plato plato = resultados.get(0);
+            PlatoDTO dto = modelMapper.map(plato, PlatoDTO.class);
+            // El DTO del reporte lleva el festival, la unidad y la cantidad vendida del plato
+            festivalRepository.findById(idFestival).ifPresent(f -> dto.setFestival(f.getNombre()));
+            unidadRepository.findById(idUnidad).ifPresent(u -> dto.setUnidadDeVenta(u.getNombreComercial() + " (" + u.getCodigo() + ")"));
+            dto.setCantidad((int) pedidoRepository.cantidadVendida(idFestival, idUnidad, plato.getIdPlato()));
+            return dto;
         }
         return null;
     }
