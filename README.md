@@ -62,3 +62,4 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 | responsable2 | admin123 | ROLE_RESPONSABLE (Ana Martínez, unidades Pizza Nostra y Empanadas del Norte) |
 | responsable3 | admin123 | ROLE_RESPONSABLE (Julián Pereyra, unidades Pizza Truck y Cositas Dulces) |
 | empleado1 | admin123 | ROLE_EMPLEADO (Diego Fernández, trabaja en Choripanes del Sur) |
+| cajero1 | admin123 | ROLE_EMPLEADO (Carlos López, cajero de Burger Truck y Pizza Nostra; puede cerrar caja) |
