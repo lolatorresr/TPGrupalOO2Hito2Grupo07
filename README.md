@@ -72,6 +72,10 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 | Filtro de empleados por uno o varios atributos (solo empleados activos) | Juan Pablo Lombisano Bentos - [PR #23](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/23) |
 | Listado de casos de uso principales en el README | Lucia Daniela Ruiz - [PR #24](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/24) |
 
+## Diagrama de clases
+Diagrama de clases del sistema, iterado sobre el del Hito 1 para la gestión de festivales:
+[Ver diagrama de clases](https://viewer.diagrams.net/?url=https://raw.githubusercontent.com/lolatorresr/TPGrupalOO2Hito2Grupo07/main/docs/diagrama-de-clases.drawio) (fuente editable en [docs/diagrama-de-clases.drawio](docs/diagrama-de-clases.drawio)).
+
 ## Pasos para correr la aplicación
 1. Requisitos: Java 17, Maven 3.9+ y MySQL 8.
 2. Crear la base de datos (las tablas las genera Hibernate al arrancar):
