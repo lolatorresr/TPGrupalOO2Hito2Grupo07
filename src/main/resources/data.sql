@@ -809,22 +809,22 @@ INSERT INTO cocinero (id_persona, especialidad, categoria) VALUES
     (21, 'Cocina asiática', 'COCINERO')
     ON DUPLICATE KEY UPDATE especialidad=especialidad;
 
--- Gelatto: Food Truck con electricidad (freezer): canon = 10 * 500 + 2000 = 7000
--- Koko Bao Bar: Puesto Desarmable: canon = 12 * 500 - 60 * 10 = 5400
+-- Gelatto: Puesto Desarmable: canon = 10 * 500 - 45 * 10 = 4550
+-- Koko Bao Bar: Food Truck con electricidad (cocina): canon = 12 * 500 + 2000 = 8000
 INSERT INTO unidad_de_venta (id_unidad_de_venta, nombre_comercial, codigo, superficie, activo, festival_id, responsable_id) VALUES
-    ( 8, 'Gelatto',       'FT-GEL0008', 10, 1, 2, 16),
-    ( 9, 'Koko Bao Bar',  'PD-KOK0009', 12, 1, 2, 17),
-    (10, 'Gelatto',       'FT-GEL0010', 10, 1, 3, 16),
-    (11, 'Koko Bao Bar',  'PD-KOK0011', 12, 1, 3, 17)
+    ( 8, 'Gelatto',       'PD-GEL0008', 10, 1, 2, 16),
+    ( 9, 'Koko Bao Bar',  'FT-KOK0009', 12, 1, 2, 17),
+    (10, 'Gelatto',       'PD-GEL0010', 10, 1, 3, 16),
+    (11, 'Koko Bao Bar',  'FT-KOK0011', 12, 1, 3, 17)
     ON DUPLICATE KEY UPDATE nombre_comercial=nombre_comercial;
-INSERT INTO food_truck (id_unidad_de_venta, patente, requiere_conexion_electrica) VALUES
-    ( 8, 'AF654LM', 1),
-    (10, 'AF654LM', 1)
-    ON DUPLICATE KEY UPDATE patente=patente;
 INSERT INTO puesto_desarmable (id_unidad_de_venta, cantidad_carpas, tiempo_montaje_minutos) VALUES
-    ( 9, 2, 60),
-    (11, 2, 60)
+    ( 8, 1, 45),
+    (10, 1, 45)
     ON DUPLICATE KEY UPDATE cantidad_carpas=cantidad_carpas;
+INSERT INTO food_truck (id_unidad_de_venta, patente, requiere_conexion_electrica) VALUES
+    ( 9, 'AF654LM', 1),
+    (11, 'AF654LM', 1)
+    ON DUPLICATE KEY UPDATE patente=patente;
 
 INSERT INTO plato (id_plato, nombre, precio, costo) VALUES
     (25, 'Helado en vasito chico',      3500.00,   700.00),
