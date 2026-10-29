@@ -74,6 +74,7 @@ Hito 2: Spring Boot - Sistema de Gestión Epicentro Gourmet
 | Parámetros de negocio en la base de datos (sueldo base, antigüedad, plus por categoría, costos del canon) usados por la liquidación y el canon, y ajuste de seguridad (platos y unidades solo con sesión) | Juan Pablo Lombisano Bentos - [PR #25](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/25) |
 | Validaciones de unidad (solo festivales vigentes) y plato estrella (solo unidades propias), y datos de prueba para la defensa | Lucia Daniela Ruiz - [PR #26](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/26) |
 | Empleados por responsable: alta en una unidad propia, listados y acciones solo sobre sus empleados | Juan Pablo Lombisano Bentos - [PR #27](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/27) |
+| PlatoDTO con festival, unidad y cantidad vendida, mensaje de caja cerrada en pedidos y ajustes finales | Lucia Daniela Ruiz - [PR #28](https://github.com/lolatorresr/TPGrupalOO2Hito2Grupo07/pull/28) |
 
 ## Diagrama de clases
 Diagrama de clases del sistema, iterado sobre el del Hito 1 para la gestión de festivales:
