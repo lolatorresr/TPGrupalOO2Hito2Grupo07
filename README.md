@@ -108,3 +108,5 @@ Diagrama de clases del sistema, iterado sobre el del Hito 1 para la gestión de 
 | responsable3 | admin123 | ROLE_RESPONSABLE (Julián Pereyra, unidades Pizza Truck y Cositas Dulces) |
 | empleado1 | admin123 | ROLE_EMPLEADO (Diego Fernández, trabaja en Choripanes del Sur) |
 | cajero1 | admin123 | ROLE_EMPLEADO (Carlos López, cajero de Burger Truck y Pizza Nostra; puede cerrar caja) |
+| responsable4 | admin123 | ROLE_RESPONSABLE (Paula Ferreyra, Gelatto en Primavera Sound y en Verano 2027) |
+| responsable5 | admin123 | ROLE_RESPONSABLE (Kenji Tanaka, Koko Bao Bar en Primavera Sound y en Verano 2027) |
