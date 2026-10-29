@@ -27,15 +27,30 @@ public class PersonaController {
         return CategoriaCocina.values();
     }
 
-    // 1. LISTAR PERSONAS ACTIVAS
+    // 1. LISTAR PERSONAS ACTIVAS, CON FILTROS POR UNO O VARIOS ATRIBUTOS
     @GetMapping("")
-    public String index(Model model) {
-        // Trae entidades que no estén eliminadas lógicamente[cite: 14]
-        model.addAttribute("personas", personaService.getAllActivas());
+    public String index(@RequestParam(required = false) String texto,
+                        @RequestParam(required = false) String dni,
+                        @RequestParam(required = false) TipoPersona tipo,
+                        @RequestParam(required = false) CategoriaCocina categoria,
+                        @RequestParam(required = false) String turno,
+                        Model model) {
+        // Solo empleados no eliminados lógicamente; los filtros vacíos no se aplican
+        model.addAttribute("personas", personaService.filtrarActivas(texto, dni, tipo, categoria, turno));
         model.addAttribute("inactivas", personaService.getAllInactivas());
+
+        // Para que el formulario conserve lo que eligió el usuario
+        model.addAttribute("tiposPersona", new TipoPersona[]{TipoPersona.CAJERO, TipoPersona.COCINERO});
+        model.addAttribute("fTexto", texto);
+        model.addAttribute("fDni", dni);
+        model.addAttribute("fTipo", tipo);
+        model.addAttribute("fCategoria", categoria);
+        model.addAttribute("fTurno", turno);
+        boolean hayFiltros = (texto != null && !texto.isBlank()) || (dni != null && !dni.isBlank())
+                || tipo != null || categoria != null || (turno != null && !turno.isBlank());
+        model.addAttribute("hayFiltros", hayFiltros);
         return "persona/index";
     }
-
 
 
 
